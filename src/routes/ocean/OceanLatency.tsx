@@ -32,14 +32,14 @@ const OceanLatency: React.FC = () => {
         list: "carrierList",
       },
     })
-      .then((res) => {
+      .then((res: any) => {
         setCarrierList(res.data.sort());
         setError({
           hasError: false,
           errorMsg: "",
         });
       })
-      .catch((err) => {
+      .catch((err: any) => {
         setError({
           hasError: true,
           errorMsg: err.message,
@@ -55,13 +55,9 @@ const OceanLatency: React.FC = () => {
   // };
 
   useEffect(() => {
-    let ignore = false;
     setTimeout(() => {
       setLoad(true);
     }, 2500);
-    return () => {
-      ignore = true;
-    };
   }, []);
 
   return (
