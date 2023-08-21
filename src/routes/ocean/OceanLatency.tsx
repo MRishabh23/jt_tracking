@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Select, Spin } from "antd";
 import Report from "../../components/report";
-import axios from "Axios";
+import axios from "axios";
 
 // type FieldType = {
 //   username?: string;
