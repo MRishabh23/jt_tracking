@@ -14,4 +14,4 @@ const ReferenceHistory: React.FC = () => {
   )
 }
 
-export default ReferenceHistory
+export default React.memo(ReferenceHistory)

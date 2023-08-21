@@ -84,4 +84,4 @@ const OceanLatency: React.FC = () => {
   )
 };
 
-export default OceanLatency;
+export default React.memo(OceanLatency);

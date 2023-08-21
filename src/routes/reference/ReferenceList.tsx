@@ -15,4 +15,4 @@ const ReferenceList: React.FC = () => {
   )
 }
 
-export default ReferenceList
+export default React.memo(ReferenceList)

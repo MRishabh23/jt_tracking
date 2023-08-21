@@ -140,12 +140,16 @@ const Dashboard: React.FC = () => {
             child={["Latency"]}
             open={ocean}
             setOpen={setOcean}
+            drawer={open}
+            setDrawer={setOpen}
           />
           <CustomMenu
             name="Reference"
             child={["List", "History"]}
             open={ref}
             setOpen={setRef}
+            drawer={open}
+            setDrawer={setOpen}
           />
         </div>
       </Drawer>
@@ -187,6 +191,7 @@ const Dashboard: React.FC = () => {
             <Link to="/">
               <img
                 className="h-8 mx-auto"
+                loading="lazy"
                 src={!collapsed ? jtLogo : jtSoloLogo}
                 alt="Justransform"
               />
@@ -219,4 +224,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default React.memo(Dashboard);

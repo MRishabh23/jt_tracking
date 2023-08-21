@@ -18,7 +18,7 @@ const ErrorPage: React.FC = () => {
   )
 }
 
-export default ErrorPage
+export default React.memo(ErrorPage);
 
 
 

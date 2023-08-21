@@ -1,18 +1,26 @@
-//import React from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 
-const CustomMenu = ({ name, child, open, setOpen, drawer, setDrawer }: any) => {
+interface props{
+  name: string,
+  child: Array<string>,
+  open: boolean,
+  setOpen: Function,
+  drawer: boolean,
+  setDrawer: Function
+}
+
+const CustomMenu: React.FC<props> = ({ name, child, open, setOpen, drawer, setDrawer }) => {
   return (
     <div>
-      <div
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between cursor-pointer"
-      >
-        <p className="text-xl">{name}</p>
+      <div className="flex items-center justify-between cursor-pointer">
+        <Link to={`/dashboard/${name.toLowerCase()}`} className="hover:text-black/70" onClick={() => setDrawer(!drawer)}>
+          <p className="text-xl">{name}</p>
+        </Link>
         <span>
-          <BiChevronDown className={`text-xl ${open ? "hidden" : "block"}`} />
-          <BiChevronUp className={`text-xl ${open ? "block" : "hidden"}`} />
+          <BiChevronDown onClick={() => setOpen(!open)} className={`text-xl ${open ? "hidden" : "block"}`} />
+          <BiChevronUp onClick={() => setOpen(!open)} className={`text-xl ${open ? "block" : "hidden"}`} />
         </span>
       </div>
       <div className={open ? `block transition duration-400 ease-in-out` : `hidden`}>
@@ -26,4 +34,4 @@ const CustomMenu = ({ name, child, open, setOpen, drawer, setDrawer }: any) => {
   );
 };
 
-export default CustomMenu;
+export default React.memo(CustomMenu);

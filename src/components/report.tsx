@@ -1,6 +1,7 @@
 import React from "react";
 import { Table, Tag } from "antd";
-import type { ColumnsType, TableProps } from "antd/es/table";
+//import type { ColumnsType, TableProps } from "antd/es/table";
+import type { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
 
 interface DataType {
@@ -470,20 +471,20 @@ const Report: React.FC = () => {
     },
   ];
 
-  const onChange: TableProps<DataType>["onChange"] = (
-    pagination,
-    filters,
-    sorter,
-    extra
-  ) => {
-    //console.log("params", pagination, filters, sorter, extra);
-  };
+  // const onChange: TableProps<DataType>["onChange"] = (
+  //   pagination,
+  //   filters,
+  //   sorter,
+  //   extra
+  // ) => {
+  //   console.log("params", pagination, filters, sorter, extra);
+  // };
   return (
     <div>
       <Table
         columns={columns}
         dataSource={data}
-        onChange={onChange}
+        //onChange={onChange}
         pagination={{ pageSize: 24, disabled: true, hideOnSinglePage: true }}
         scroll={{ x: "1100px", y: "650px" }}
         //style={{height: 600}}
@@ -492,4 +493,4 @@ const Report: React.FC = () => {
   );
 };
 
-export default Report;
+export default React.memo(Report);

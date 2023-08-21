@@ -23,4 +23,4 @@ const ReferenceDashboard: React.FC = () => {
     )
   }
   
-  export default ReferenceDashboard
+  export default React.memo(ReferenceDashboard)

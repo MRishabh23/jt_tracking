@@ -6,4 +6,4 @@ const AirLatency: React.FC = () => {
   )
 }
 
-export default AirLatency
+export default React.memo(AirLatency)

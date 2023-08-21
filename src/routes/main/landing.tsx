@@ -39,7 +39,7 @@ const Landing: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-stone-50">
+    <div className="flex flex-col h-screen bg-stone-50">
       <header className="flex-[1_1_0%] flex justify-center items-center bg-primary1">
         <h1 className="text-2xl font-semibold tracking-wider text-white xxs:text-3xl xs:text-4xl">SHIPMENT TRACKING</h1>
       </header>
@@ -65,4 +65,4 @@ const Landing: React.FC = () => {
   );
 };
 
-export default Landing;
+export default React.memo(Landing);

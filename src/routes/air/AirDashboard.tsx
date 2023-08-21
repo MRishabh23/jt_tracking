@@ -18,4 +18,4 @@ const AirDashboard: React.FC = () => {
   )
 }
 
-export default AirDashboard
+export default React.memo(AirDashboard)

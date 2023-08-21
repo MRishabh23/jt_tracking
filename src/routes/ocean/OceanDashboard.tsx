@@ -18,4 +18,4 @@ const OceanDashboard: React.FC = () => {
   )
 }
 
-export default OceanDashboard
+export default React.memo(OceanDashboard)

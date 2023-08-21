@@ -7,4 +7,4 @@ const App: React.FC = () => (
   </div>
 );
 
-export default App;
+export default React.memo(App);
