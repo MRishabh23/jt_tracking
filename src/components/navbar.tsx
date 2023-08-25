@@ -4,15 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { RiMenu3Fill } from "react-icons/ri";
 import CustomMenu from "../components/custom-menu";
 import { IoClose } from "react-icons/io5";
-// import {
-//     Layout,
-//     Menu,
-//     MenuProps,
-//     Drawer,
-//     Popover,
-//     Avatar,
-//     Dropdown,
-//   } from "antd";
 
 interface props {}
 

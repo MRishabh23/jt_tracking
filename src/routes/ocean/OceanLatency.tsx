@@ -74,10 +74,6 @@ const OceanLatency: React.FC<props> = () => {
       });
   };
 
-  // const onFinishFailed = (errorInfo: any) => {
-  //   console.log('Failed:', errorInfo);
-  // };
-
   const getList = async () => {
     const sendData = {
       type: "latency",

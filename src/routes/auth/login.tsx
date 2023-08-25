@@ -53,10 +53,6 @@ const Login: React.FC<props> = () => {
       });
   };
 
-  //   const onFinishFailed = (errorInfo: any) => {
-  //     console.log("Failed:", errorInfo);
-  //   };
-
   return (
     <>
       {contextHolder}
@@ -68,7 +64,6 @@ const Login: React.FC<props> = () => {
           name="loginForm"
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          //onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item<FieldType>
