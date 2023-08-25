@@ -4,6 +4,11 @@ import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
 
+interface props {
+  latencyList: Array<object> | null;
+  carrierList: Array<string> | null;
+}
+
 interface DataType {
   key: React.Key;
   carrier: string;
@@ -13,13 +18,14 @@ interface DataType {
   oneToTwo: number;
   twoToFour: number;
   fourToEight: number;
-  eightToSixteen: number;
+  eightToTwelve: number;
+  twelveToSixteen: number;
   sixteenToTwentyFour: number;
   twentyFourToFourtyEight: number;
   fourtyEightAbove: number;
 }
 
-const Report: React.FC = () => {
+const Report: React.FC<props> = ({ latencyList, carrierList }) => {
   const colors = ["geekblue", "green", "volcano"];
   let color: any;
   // const handleClick = (record: any) => {
@@ -31,30 +37,18 @@ const Report: React.FC = () => {
       title: "Carrier",
       dataIndex: "carrier",
       key: "carrier",
-      filters: [
-        {
-          text: "CMA-CGM",
-          value: "CMA-CGM",
-        },
-        {
-          text: "HAPAG-LLOYD",
-          value: "HAPAG-LLOYD",
-        },
-        {
-          text: "HYUNDAI",
-          value: "HYUNDAI",
-        },
-        {
-          text: "EVERGREEN",
-          value: "EVERGREEN",
-        },
-      ],
+      filters: carrierList !== null ? carrierList.map((item: string) => {
+        return {
+          text: item,
+          value: item
+        }
+      }) : [],
       filterMode: "tree",
       filterSearch: true,
       onFilter: (value: any, record) => record.carrier.includes(value),
       fixed: true,
       width: 130,
-      align: "center"
+      align: "center",
     },
     {
       title: "RefType",
@@ -92,7 +86,7 @@ const Report: React.FC = () => {
       onFilter: (value: any, record) => record.refType.includes(value),
       fixed: true,
       width: 125,
-      align: "center"
+      align: "center",
     },
     {
       title: "Total",
@@ -110,7 +104,7 @@ const Report: React.FC = () => {
         </Link>
       ),
       sorter: (a, b) => a.total - b.total,
-      align: "center"
+      align: "center",
     },
     {
       title: "0_1",
@@ -128,7 +122,7 @@ const Report: React.FC = () => {
         </Link>
       ),
       sorter: (a, b) => a.zeroToOne - b.zeroToOne,
-      align: "center"
+      align: "center",
     },
     {
       title: "1_2",
@@ -146,7 +140,7 @@ const Report: React.FC = () => {
         </Link>
       ),
       sorter: (a, b) => a.oneToTwo - b.oneToTwo,
-      align: "center"
+      align: "center",
     },
     {
       title: "2_4",
@@ -164,7 +158,7 @@ const Report: React.FC = () => {
         </Link>
       ),
       sorter: (a, b) => a.twoToFour - b.twoToFour,
-      align: "center"
+      align: "center",
     },
     {
       title: "4_8",
@@ -182,25 +176,43 @@ const Report: React.FC = () => {
         </Link>
       ),
       sorter: (a, b) => a.fourToEight - b.fourToEight,
-      align: "center"
+      align: "center",
     },
     {
-      title: "8_16",
-      dataIndex: "eightToSixteen",
-      key: "eightToSixteen",
+      title: "8_12",
+      dataIndex: "eightToTwelve",
+      key: "eightToTwelve",
       render: (text, record: any) => (
         <Link
           to={{
             pathname: "/dashboard/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=8_16&count=${record.eightToSixteen}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=8_12&count=${record.eightToTwelve}`,
           }}
           target="_blank"
         >
           {text}
         </Link>
       ),
-      sorter: (a, b) => a.eightToSixteen - b.eightToSixteen,
-      align: "center"
+      sorter: (a, b) => a.eightToTwelve - b.eightToTwelve,
+      align: "center",
+    },
+    {
+      title: "12_16",
+      dataIndex: "twelveToSixteen",
+      key: "twelveToSixteen",
+      render: (text, record: any) => (
+        <Link
+          to={{
+            pathname: "/dashboard/reference/list",
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=12_16&count=${record.twelveToSixteen}`,
+          }}
+          target="_blank"
+        >
+          {text}
+        </Link>
+      ),
+      sorter: (a, b) => a.twelveToSixteen - b.twelveToSixteen,
+      align: "center",
     },
     {
       title: "16_24",
@@ -218,7 +230,7 @@ const Report: React.FC = () => {
         </Link>
       ),
       sorter: (a, b) => a.sixteenToTwentyFour - b.sixteenToTwentyFour,
-      align: "center"
+      align: "center",
     },
     {
       title: "24_48",
@@ -236,7 +248,7 @@ const Report: React.FC = () => {
         </Link>
       ),
       sorter: (a, b) => a.twentyFourToFourtyEight - b.twentyFourToFourtyEight,
-      align: "center"
+      align: "center",
     },
     {
       title: ">48",
@@ -254,223 +266,104 @@ const Report: React.FC = () => {
         </Link>
       ),
       sorter: (a, b) => a.fourtyEightAbove - b.fourtyEightAbove,
-      align: "center"
+      align: "center",
     },
   ];
 
-  const data: DataType[] = [
-    {
-      key: "1",
-      carrier: "CMA-CGM",
-      refType: "Booking",
-      total: 200,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "2",
-      carrier: "CMA-CGM",
-      refType: "BillOfLading",
-      total: 400,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "3",
-      carrier: "CMA-CGM",
-      refType: "Container",
-      total: 100,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "4",
-      carrier: "HAPAG-LLOYD",
-      refType: "Booking",
-      total: 500,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "5",
-      carrier: "HAPAG-LLOYD",
-      refType: "BillOfLading",
-      total: 250,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "6",
-      carrier: "HAPAG-LLOYD",
-      refType: "Container",
-      total: 50,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "7",
-      carrier: "HYUNDAI",
-      refType: "Booking",
-      total: 900,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "8",
-      carrier: "HYUNDAI",
-      refType: "BillOfLading",
-      total: 570,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "9",
-      carrier: "HYUNDAI",
-      refType: "Container",
-      total: 290,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "10",
-      carrier: "EVERGREEN",
-      refType: "Booking",
-      total: 670,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "11",
-      carrier: "EVERGREEN",
-      refType: "BillOfLading",
-      total: 130,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "12",
-      carrier: "EVERGREEN",
-      refType: "Container",
-      total: 70,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "13",
-      carrier: "COSCO",
-      refType: "Booking",
-      total: 710,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "14",
-      carrier: "COSCO",
-      refType: "BillOfLading",
-      total: 470,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-    {
-      key: "15",
-      carrier: "COSCO",
-      refType: "Container",
-      total: 170,
-      zeroToOne: 10,
-      oneToTwo: 20,
-      twoToFour: 10,
-      fourToEight: 10,
-      eightToSixteen: 10,
-      sixteenToTwentyFour: 10,
-      twentyFourToFourtyEight: 20,
-      fourtyEightAbove: 20,
-    },
-  ];
-
+  const data2: DataType[] =
+    latencyList === null
+      ? [
+          {
+            key: 109020,
+            carrier: "random",
+            refType: "Booking",
+            total: 0,
+            zeroToOne: 0,
+            oneToTwo: 0,
+            twoToFour: 0,
+            fourToEight: 0,
+            eightToTwelve: 0,
+            twelveToSixteen: 0,
+            sixteenToTwentyFour: 0,
+            twentyFourToFourtyEight: 0,
+            fourtyEightAbove: 0,
+          },
+        ]
+      : latencyList.sort(function(a: any, b: any) {
+        const nameA = a.carrier.toUpperCase(); // ignore upper and lowercase
+        const nameB = b.carrier.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      }).map((item: any, index) => {
+          let totalCount: number = 0;
+          if (item.first !== null && item.first !== undefined) {
+            totalCount += +item.first;
+          }
+          if (item.second !== null && item.second !== undefined) {
+            totalCount += +item.second;
+          }
+          if (item.third !== null && item.third !== undefined) {
+            totalCount += +item.third;
+          }
+          if (item.fourth !== null && item.fourth !== undefined) {
+            totalCount += +item.fourth;
+          }
+          if (item.fifth !== null && item.fifth !== undefined) {
+            totalCount += +item.fifth;
+          }
+          if (item.sixth !== null && item.sixth !== undefined) {
+            totalCount += +item.sixth;
+          }
+          if (item.seventh !== null && item.seventh !== undefined) {
+            totalCount += +item.seventh;
+          }
+          if (item.eight !== null && item.eight !== undefined) {
+            totalCount += +item.eight;
+          }
+          if (item.ninth !== null && item.ninth !== undefined) {
+            totalCount += +item.ninth;
+          }
+          return {
+            key: index,
+            carrier: item.carrier,
+            refType:
+              item.refType === "BOOKING_NUMBER"
+                ? "Booking"
+                : item.refType === "CONTAINER_NUMBER"
+                ? "Container"
+                : "BillOfLading",
+            total: totalCount,
+            zeroToOne:
+              item.first !== null && item.first !== undefined ? +item.first : 0,
+            oneToTwo:
+              item.second !== null && item.second !== undefined
+                ? +item.second
+                : 0,
+            twoToFour:
+              item.third !== null && item.third !== undefined ? +item.third : 0,
+            fourToEight:
+              item.fourth !== null && item.fourth !== undefined
+                ? +item.fourth
+                : 0,
+            eightToTwelve:
+              item.fifth !== null && item.fifth !== undefined ? +item.fifth : 0,
+            twelveToSixteen:
+              item.sixth !== null && item.sixth !== undefined ? +item.sixth : 0,
+            sixteenToTwentyFour:
+              item.seventh !== null && item.seventh !== undefined
+                ? +item.seventh
+                : 0,
+            twentyFourToFourtyEight:
+              item.eight !== null && item.eight !== undefined ? +item.eight : 0,
+            fourtyEightAbove:
+              item.ninth !== null && item.ninth !== undefined ? +item.ninth : 0,
+          };
+        });
   // const onChange: TableProps<DataType>["onChange"] = (
   //   pagination,
   //   filters,
@@ -483,7 +376,7 @@ const Report: React.FC = () => {
     <div>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={data2}
         //onChange={onChange}
         pagination={{ pageSize: 24, disabled: true, hideOnSinglePage: true }}
         scroll={{ x: "1100px", y: "650px" }}
