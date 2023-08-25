@@ -21,7 +21,7 @@ const App: React.FC<props> = () => {
   useEffect(() => {
     const controller = new AbortController();
     const u: any = localStorage.getItem("UserName")
-    if(u != ""){
+    if(u !== null && u !== undefined && u !== ""){
       setAuthentication(u);
     }
     return () => controller.abort();

@@ -53,11 +53,11 @@ const Landing: React.FC<props> = () => {
   useEffect(() => {
     const controller = new AbortController();
     const u: any = localStorage.getItem("UserName")
-    if(u != ""){
+    if(u !== null && u !== undefined && u !== ""){
       setUser(u);
     }
     return () => controller.abort();
-  }, []);
+  }, [user]);
 
   return (
     <>

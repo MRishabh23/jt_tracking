@@ -172,11 +172,11 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const controller = new AbortController();
     const u: any = localStorage.getItem("UserName");
-    if (u != "") {
+    if(u !== null && u !== undefined && u !== ""){
       setUser(u);
     }
     return () => controller.abort();
-  }, []);
+  }, [user]);
 
   return (
     <div className="h-full bg-gray-50">
