@@ -33,7 +33,7 @@ const Login: React.FC<props> = () => {
     };
     await loginCall(sendData)
       .then((res) => {
-        console.log("res", res)
+        //console.log("res", res)
         if (res.attempt == "failed") {
           throw {message: res.data};
         } else {
@@ -47,7 +47,7 @@ const Login: React.FC<props> = () => {
         setBtnLoad(false)
       })
       .catch((err) => {
-        console.log("Err", err)
+        //console.log("Err", err)
         msg("error", err.message);
         setBtnLoad(false)
       });
