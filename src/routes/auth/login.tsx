@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, Form, Input, message } from "antd";
+import { Form, Input, message } from "antd";
 import { loginCall } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
+import { VscLoading } from "react-icons/vsc";
 
 interface props{}
 
@@ -32,6 +33,7 @@ const Login: React.FC<props> = () => {
     };
     await loginCall(sendData)
       .then((res) => {
+        console.log("res", res)
         if (res.attempt == "failed") {
           throw {message: res.data};
         } else {
@@ -98,13 +100,12 @@ const Login: React.FC<props> = () => {
 
               <div className="flex justify-center p-2">
                 <Form.Item style={{ margin: "auto 0" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={btnLoad}
+                  <button
+                    type="submit"
+                    className="px-4 py-1 flex text-white justify-center items-center border-[1px] border-blue-600 bg-blue-500 rounded-md hover:bg-blue-400"
                   >
-                    Sign In
-                  </Button>
+                    <VscLoading className={`mr-2 animate-spin ${btnLoad ? 'block' : 'hidden'}`} /> Sign In
+                  </button>
                 </Form.Item>
               </div>
             </Form>
