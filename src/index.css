@@ -19,22 +19,3 @@ html, body{
     background-color: #1677ff;
     box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 }
-
-.layoutClass{
-    display: flex;
-    flex-direction: column !important;
-}
-
-.layoutClass2{
-    width: 100% !important;
-}
-
-@media only screen and (min-width: 1024px) {
-    .layoutClass{
-        flex-direction: row !important;
-    }
-
-    .layoutClass2{
-        width: 0 !important;
-    }
-}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Landing from "./routes/main/landing";
 import ErrorPage from "./routes/error/ErrorPage";
 import AirDashboard from "./routes/air/AirDashboard";
@@ -63,7 +63,7 @@ const App: React.FC<props> = () => {
               <Route path="list" element={<ReferenceList />} />
               <Route path="history" element={<ReferenceHistory />} />
             </Route>
-            <Route path="*" element={<ErrorPage />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
         <Footer />
