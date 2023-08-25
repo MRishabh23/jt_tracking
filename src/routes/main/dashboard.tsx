@@ -299,7 +299,7 @@ const Dashboard: React.FC = () => {
                     className="flex items-center justify-center w-10 h-10 cursor-pointer"
                     shape="square"
                   >
-                    {user !== "" && user.includes("fk") ? "FK" : user !== "" && user.includes("jt") ? "JT" : "U"}
+                    {user !== null && user !== "" && user.includes("fk") ? "FK" : user !== null && user !== "" && user.includes("jt") ? "JT" : "U"}
                   </Avatar>
                 </Popover>
               )}
