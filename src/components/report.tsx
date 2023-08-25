@@ -95,7 +95,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=total&count=${record.total}`,
           }}
           target="_blank"
@@ -113,7 +113,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=0_1&count=${record.zeroToOne}`,
           }}
           target="_blank"
@@ -131,7 +131,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=1_2&count=${record.oneToTwo}`,
           }}
           target="_blank"
@@ -149,7 +149,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=2_4&count=${record.twoToFour}`,
           }}
           target="_blank"
@@ -167,7 +167,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=4_8&count=${record.fourToEight}`,
           }}
           target="_blank"
@@ -185,7 +185,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=8_12&count=${record.eightToTwelve}`,
           }}
           target="_blank"
@@ -203,7 +203,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=12_16&count=${record.twelveToSixteen}`,
           }}
           target="_blank"
@@ -221,7 +221,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=16_24&count=${record.sixteenToTwentyFour}`,
           }}
           target="_blank"
@@ -239,7 +239,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=24_48&count=${record.twentyFourToFourtyEight}`,
           }}
           target="_blank"
@@ -257,7 +257,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (text, record: any) => (
         <Link
           to={{
-            pathname: "/dashboard/reference/list",
+            pathname: "/reference/list",
             search: `?carrier=${record.carrier}&refType=${record.refType}&type=gt48&count=${record.fourtyEightAbove}`,
           }}
           target="_blank"
@@ -379,7 +379,7 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
         dataSource={data2}
         //onChange={onChange}
         pagination={{ pageSize: 24, disabled: true, hideOnSinglePage: true }}
-        scroll={{ x: "1100px", y: "650px" }}
+        scroll={{ x: "1100px", y: "420px" }}
         //style={{height: 600}}
       />
     </div>

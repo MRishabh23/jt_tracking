@@ -10,9 +10,9 @@ html, body{
     background: #f5f5f4;
 }
 
-/* #root{
+#root{
     height: 100vh;
-} */
+}
 
 :where(.css-dev-only-do-not-override-byeoj0).ant-btn-primary {
     color: #fff;
@@ -27,12 +27,6 @@ html, body{
 
 .layoutClass2{
     width: 100% !important;
-}
-
-@media only screen and (min-width: 1024px) {
-    #root{
-        height: 100vh;
-    }
 }
 
 @media only screen and (min-width: 1024px) {

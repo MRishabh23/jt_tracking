@@ -120,11 +120,11 @@ const OceanLatency: React.FC<props> = () => {
           {error.errorMsg}
         </div>
       ) : (
-        <div className="w-full">
-          <div className="flex items-center justify-center">
+        <div className="w-full px-4 py-2 md:px-10 md:py-4">
+          <div className="flex items-center justify-center pt-2">
             <h3 className="text-3xl">Latency Report</h3>
           </div>
-          <div className="mt-12">
+          <div className="mt-8 lg:mt-12">
             <Form
               name="basic"
               onFinish={onFinish}
@@ -134,7 +134,7 @@ const OceanLatency: React.FC<props> = () => {
               <Form.Item
                 label={<p className="text-lg">Carrier</p>}
                 name="carrier"
-                className="min-w-[200px] lg:flex-1"
+                className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
                 rules={[
                   { required: true, message: "Please input carrier!" },
                 ]}
@@ -173,7 +173,7 @@ const OceanLatency: React.FC<props> = () => {
               <Form.Item
                 label={<p className="text-lg">Queue</p>}
                 name="queue"
-                className="min-w-[200px] lg:flex-1"
+                className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
               >
                 <Select placeholder="select a queue..." allowClear={true}>
                   <Select.Option value="normal">Normal</Select.Option>
@@ -185,7 +185,7 @@ const OceanLatency: React.FC<props> = () => {
               <Form.Item
                 label={<p className="text-lg">Reference</p>}
                 name="refType"
-                className="min-w-[200px] lg:flex-1"
+                className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
               >
                 <Select placeholder="select reference type..." allowClear={true}>
                   <Select.Option value="booking">Booking</Select.Option>
