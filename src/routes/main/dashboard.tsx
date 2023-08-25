@@ -200,7 +200,7 @@ const Dashboard: React.FC = () => {
               dropdownRender={() => (
                 <div className="p-6 bg-white rounded-md shadow-2xl">
                   <p className="mb-2 text-lg font-medium">
-                    Welcome, <span className="text-amber-400 uppercase">{user}</span>
+                    Welcome, <span className="uppercase text-amber-400">{user}</span>
                   </p>
                   <div className="flex justify-center gap-2">
                     <Link
@@ -299,11 +299,7 @@ const Dashboard: React.FC = () => {
                     className="flex items-center justify-center w-10 h-10 cursor-pointer"
                     shape="square"
                   >
-                    {user.includes("fk")
-                      ? "FK"
-                      : user.includes("jt")
-                      ? "JT"
-                      : "U"}
+                    {user !== "" && user.includes("fk") ? "FK" : user !== "" && user.includes("jt") ? "JT" : "U"}
                   </Avatar>
                 </Popover>
               )}
