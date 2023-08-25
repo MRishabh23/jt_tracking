@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+//import React from "react";
+//import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createHashRouter } from "react-router-dom";
 import Landing from "./routes/main/landing";
 import ErrorPage from "./routes/error/ErrorPage";
 import Dashboard from "./routes/main/dashboard";
@@ -30,7 +32,7 @@ const App: React.FC<props> = () => {
   let router;
 
   if(authentication !== ""){
-    router = createBrowserRouter([
+    router = createHashRouter([
       {
         path: "/",
         element: <Landing />,
@@ -73,7 +75,7 @@ const App: React.FC<props> = () => {
       },
     ]);
   }else{
-    router = createBrowserRouter([
+    router = createHashRouter([
       {
         path: "/",
         element: <Login />,
@@ -86,10 +88,11 @@ const App: React.FC<props> = () => {
     <>
         <RouterProvider
           router={router}
-          fallbackElement={<div>Loading......</div>}
         />
     </>
   );
 };
+
+
 
 export default React.memo(App);
