@@ -22,6 +22,7 @@ const App: React.FC<props> = () => {
   window.addEventListener('storage', e => {
     if(e.key === 'Username' && e.oldValue && !e.newValue) {
        dispatch(logoutAction());
+       window.location.reload();
      }
  });
   useEffect(() => {
