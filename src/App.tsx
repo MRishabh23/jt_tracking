@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Landing from "./routes/main/landing";
 import AirDashboard from "./routes/air/AirDashboard";
@@ -11,59 +11,58 @@ import ReferenceHistory from "./routes/reference/ReferenceHistory";
 import Login from "./routes/auth/login";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAction, logoutAction } from "./store/actions/auth.action";
 
 interface props {}
 
 const App: React.FC<props> = () => {
-  const [authentication, setAuthentication] = useState("");
-
+  const hasAuth = useSelector((state: any) => state.auth.hasAuth);
+  const dispatch = useDispatch();
+  window.addEventListener('storage', e => {
+    if(e.key === 'Username' && e.oldValue && !e.newValue) {
+       dispatch(logoutAction());
+     }
+ });
   useEffect(() => {
     const controller = new AbortController();
-    const u: any = localStorage.getItem("UserName");
-    if (u !== null && u !== undefined && u !== "") {
-      setAuthentication(u);
+    const user: any = localStorage.getItem("Username");
+    if (user !== null && user !== undefined && user !== "") {
+      dispatch(loginAction());
+    }else{
+      dispatch(logoutAction());
     }
     return () => controller.abort();
-  }, [authentication]);
-
-  const MainPage = () => {
-    if (authentication !== "") {
-      return (
-        <>
-          <Landing />
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Login />
-        </>
-      );
-    }
-  };
+  }, [hasAuth]);
 
   return (
     <>
       <div className="flex flex-col h-screen bg-stone-50">
         <Navbar />
         <main className="flex justify-center items-center h-[84%]">
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/air">
-              <Route index element={<AirDashboard />} />
-              <Route path="latency" element={<AirLatency />} />
-            </Route>
-            <Route path="/ocean">
-              <Route index element={<OceanDashboard />} />
-              <Route path="latency" element={<OceanLatency />} />
-            </Route>
-            <Route path="/reference">
-              <Route index element={<ReferenceDashboard />} />
-              <Route path="list" element={<ReferenceList />} />
-              <Route path="history" element={<ReferenceHistory />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+          {hasAuth === true ? (
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/air">
+                <Route index element={<AirDashboard />} />
+                <Route path="latency" element={<AirLatency />} />
+              </Route>
+              <Route path="/ocean">
+                <Route index element={<OceanDashboard />} />
+                <Route path="latency" element={<OceanLatency />} />
+              </Route>
+              <Route path="/reference">
+                <Route index element={<ReferenceDashboard />} />
+                <Route path="list" element={<ReferenceList />} />
+                <Route path="history" element={<ReferenceHistory />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          ) : (
+            <Routes>
+              <Route path="/" element={<Login />} />
+            </Routes>
+          )}
         </main>
         <Footer />
       </div>

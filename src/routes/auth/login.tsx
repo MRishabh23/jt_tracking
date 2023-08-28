@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, message } from "antd";
 import { loginCall } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { VscLoading } from "react-icons/vsc";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAction } from "../../store/actions/auth.action";
 
 interface props {}
 
@@ -17,6 +19,10 @@ const Login: React.FC<props> = () => {
   const [btnLoad, setBtnLoad] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const hasAuth = useSelector((state: any) => state.auth.hasAuth)
+
+  //console.log(hasAuth)
 
   const msg = (type: any, content: string) => {
     messageApi.open({
@@ -33,25 +39,36 @@ const Login: React.FC<props> = () => {
     };
     await loginCall(sendData)
       .then((res) => {
-        //console.log("res", res)
-        if (res.attempt == "failed") {
+        if (res.attempt === "failed") {
           throw { message: res.data };
         } else {
           msg("success", "Login Successful!!");
-          localStorage.setItem("UserName", res.data);
-          setTimeout(() => {
-            navigate("/");
-            window.location.reload();
-          }, 1000);
+          localStorage.setItem("Username", res.data);
+          dispatch(loginAction())
+          if(hasAuth === true){
+            setTimeout(() => {
+              navigate("/");
+              window.location.reload();
+            }, 1000);
+          }
         }
         setBtnLoad(false);
       })
       .catch((err) => {
-        //console.log("Err", err)
         msg("error", err.message);
         setBtnLoad(false);
       });
   };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const user: any = localStorage.getItem("Username");
+    if (user !== null && user !== undefined && user !== "") {
+      dispatch(loginAction())
+    }
+    return () => controller.abort();
+  },[])
+  
 
   return (
     <>

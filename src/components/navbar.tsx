@@ -4,17 +4,23 @@ import { Link, useNavigate } from "react-router-dom";
 import { RiMenu3Fill } from "react-icons/ri";
 import CustomMenu from "../components/custom-menu";
 import { IoClose } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutAction, loginAction } from "../store/actions/auth.action";
 
 interface props {}
 
 const Navbar: React.FC<props> = () => {
   const [user, setUser] = useState("");
   const [open, setOpen] = useState(false);
+  const hasAuth = useSelector((state: any) => state.auth.hasAuth);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const handleSignOut = () => {
-    localStorage.setItem("UserName", "");
+    localStorage.removeItem("Username");
+    setUser("");
+    dispatch(logoutAction());
     navigate("/");
     window.location.reload();
   };
@@ -22,15 +28,18 @@ const Navbar: React.FC<props> = () => {
   const handleDrawer = () => {
     setOpen(!open);
   };
-
   useEffect(() => {
     const controller = new AbortController();
-    const u: any = localStorage.getItem("UserName");
-    if (u !== null && u !== undefined && u !== "") {
-      setUser(u);
+    const user: any = localStorage.getItem("Username");
+    if (user !== null && user !== undefined && user !== "") {
+      setUser(user);
+      dispatch(loginAction())
+    }else{
+      dispatch(logoutAction());
+      navigate("/");
     }
     return () => controller.abort();
-  }, [user]);
+  }, [hasAuth, user]);
 
   const SampleDrawer = () => {
     const [air, setAir] = useState(false);
@@ -89,8 +98,8 @@ const Navbar: React.FC<props> = () => {
 
   return (
     <>
-      <header className={`h-[8%] flex items-center bg-primary1 px-3 xl:px-8 2xl:px-14 ${user !== undefined && user !== null && user !== "" ? 'justify-between' : 'justify-center'}`}>
-        {user !== undefined && user !== null && user !== "" ? (
+      <header className={`h-[8%] flex items-center bg-primary1 px-3 xl:px-8 2xl:px-14 ${hasAuth === true ? 'justify-between' : 'justify-center'}`}>
+        {hasAuth === true ? (
           <>
             <div className="flex items-center justify-center gap-2">
               {/* hamburg menu */}
