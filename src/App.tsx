@@ -36,14 +36,29 @@ const App: React.FC<props> = () => {
     return () => controller.abort();
   }, [hasAuth]);
 
+  const MainPage = () => {
+    if (hasAuth !== "") {
+      return (
+        <>
+          <Landing />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Login />
+        </>
+      );
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col h-screen bg-stone-50">
         <Navbar />
         <main className="flex justify-center items-center h-[84%]">
-          {hasAuth === true ? (
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route path="/" element={<MainPage />} />
               <Route path="/air">
                 <Route index element={<AirDashboard />} />
                 <Route path="latency" element={<AirLatency />} />
@@ -59,11 +74,6 @@ const App: React.FC<props> = () => {
               </Route>
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
-          ) : (
-            <Routes>
-              <Route path="/" element={<Login />} />
-            </Routes>
-          )}
         </main>
         <Footer />
       </div>

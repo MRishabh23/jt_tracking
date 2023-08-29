@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Select, Spin } from "antd";
 import Report from "../../components/report";
-import { oceanCalls } from "../../api/oceanApi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  carrierListAction,
+  defaultListAction,
+  latencyListAction,
+} from "../../store/actions/ocean.action";
 
 // type FieldType = {
 //   username?: string;
@@ -13,107 +18,85 @@ interface props {}
 
 const OceanLatency: React.FC<props> = () => {
   const [load, setLoad] = useState(false);
-  const [carrierList, setCarrierList] = useState<Array<string> | null>(null);
-  const [latencyList, setLatencyList] = useState<Array<object> | null>(null);
-  const [error, setError] = useState({
-    hasError: false,
-    errorMsg: "",
-  });
+  const cList = useSelector((state: any) => state.ocean.carrierList);
+  const hasError = useSelector((state: any) => state.ocean.hasError);
+  const errorMsg = useSelector((state: any) => state.ocean.errorMsg);
+  const dispatch = useDispatch();
+  const dList = useSelector((state: any) => state.ocean.defaultList);
+  const lList = useSelector((state: any) => state.ocean.latencyList);
+  const [list, setList] = useState([]);
+  const [firstReq, setFirstReq] = useState(false);
 
   const carrierFunction = async () => {
     const sendData = {
       list: "carrierList",
     };
-    await oceanCalls(sendData)
-      .then((res) => {
-        setCarrierList(res.sort());
-        setError({
-          hasError: false,
-          errorMsg: "",
-        });
-      })
-      .catch((err) => {
-        setError({
-          hasError: true,
-          errorMsg: err,
-        });
-      });
+
+    dispatch(await carrierListAction(sendData));
   };
 
   const onFinish = async (values: any) => {
     //console.log("Success:", values);
+    const carrArr = values.carrier.length > 0 ? values.carrier : [];
+    const queStr =
+      values.queue === undefined
+        ? "normal"
+        : values.queue !== undefined && values.queue !== ""
+        ? values.queue
+        : "normal";
+    const refStr =
+      values.refType === "booking"
+        ? "BOOKING_NUMBER"
+        : values.refType === "container"
+        ? "CONTAINER_NUMBER"
+        : values.refType === "bol"
+        ? "BILL_OF_LADING"
+        : "";
+
     const sendData = {
       type: "latency",
       mode: "ocean",
-      report: values.queue == "normal" ? "default" : values.queue == "adaptive" ? "adaptive" : "default",
-      carriers: values.carrier,
-      referenceType:
-        values.refType === "booking"
-          ? "BOOKING_NUMBER"
-          : values.refType === "container"
-          ? "CONTAINER_NUMBER"
-          : values.refType === "bol"
-          ? "BILL_OF_LADING"
-          : "",
+      report: queStr,
+      carriers: carrArr,
+      referenceType: refStr,
     };
     setLoad(false);
-    await oceanCalls(sendData)
-      .then((res) => {
-        setLatencyList(res);
-        setLoad(true);
-        setError({
-          hasError: false,
-          errorMsg: "",
-        });
-      })
-      .catch((err) => {
-        setError({
-          hasError: true,
-          errorMsg: err,
-        });
-      });
+    dispatch(await latencyListAction(sendData));
   };
 
   const getList = async () => {
     const sendData = {
       type: "latency",
       mode: "ocean",
-      report: "default",
+      report: "normal",
       carriers: [],
       referenceType: "",
     };
-    await oceanCalls(sendData)
-      .then((res) => {
-        if (latencyList === null) {
-          setLatencyList(res);
-          setLoad(true);
-          setError({
-            hasError: false,
-            errorMsg: "",
-          });
-        }
-        //console.log("res", res)
-      })
-      .catch((err) => {
-        //console.log("err", err)
-        setError({
-          hasError: true,
-          errorMsg: err,
-        });
-      });
+
+    if (dList.length === 0 && firstReq === false) {
+      setFirstReq(true);
+      dispatch(await defaultListAction(sendData));
+    }
   };
 
   useEffect(() => {
     const controller = new AbortController();
     getList();
+    if (lList.length > 0) {
+      setList(lList);
+      setLoad(true);
+    } else if (dList.length > 0) {
+      setList(dList);
+      setLoad(true);
+    }
     return () => controller.abort();
-  }, []);
+  }, [lList, dList]);
 
   return (
     <>
-      {error.hasError ? (
+      {hasError ? (
         <div className="flex items-center justify-center h-full text-2xl font-medium bg-red-100 rounded-md">
-          {error.errorMsg}
+          {errorMsg}
         </div>
       ) : (
         <div className="w-full px-4 py-2 md:px-10 md:py-4">
@@ -131,24 +114,23 @@ const OceanLatency: React.FC<props> = () => {
                 label={<p className="text-lg">Carrier</p>}
                 name="carrier"
                 className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-                rules={[
-                  { required: true, message: "Please input carrier!" },
-                ]}
+                rules={[{ required: true, message: "Please input carrier!" }]}
               >
                 <Select
-                allowClear={true}
+                  allowClear={true}
                   mode="multiple"
                   placeholder="select carriers..."
                   onFocus={() => {
-                    if (carrierList === null) {
+                    // if (carrierList === null) {
+                    if (cList.length === 0) {
                       carrierFunction();
                     } else {
                       return;
                     }
                   }}
                 >
-                  {carrierList !== null ? (
-                    carrierList.map((item: any, index) => (
+                  {cList.length > 0 ? (
+                    cList.map((item: any, index: any) => (
                       <Select.Option
                         key={index}
                         value={`${item.toLowerCase()}`}
@@ -183,7 +165,10 @@ const OceanLatency: React.FC<props> = () => {
                 name="refType"
                 className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
               >
-                <Select placeholder="select reference type..." allowClear={true}>
+                <Select
+                  placeholder="select reference type..."
+                  allowClear={true}
+                >
                   <Select.Option value="booking">Booking</Select.Option>
                   <Select.Option value="bol">BillOfLading</Select.Option>
                   <Select.Option value="container">Container</Select.Option>
@@ -202,7 +187,7 @@ const OceanLatency: React.FC<props> = () => {
           </div>
           <div className="mt-7">
             {load ? (
-              <Report latencyList={latencyList} carrierList={carrierList} />
+              <Report latencyList={list} carrierList={cList} />
             ) : (
               <div className="flex items-center justify-center">
                 <Spin tip="Loading..." size="large">
