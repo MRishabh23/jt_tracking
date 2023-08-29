@@ -37,7 +37,7 @@ const App: React.FC<props> = () => {
   }, [hasAuth]);
 
   const MainPage = () => {
-    if (hasAuth !== "") {
+    if (hasAuth === true) {
       return (
         <>
           <Landing />
