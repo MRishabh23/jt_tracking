@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Select, Spin } from "antd";
+import { Form, Select, Spin } from "antd";
 import Report from "../../components/report";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,6 +7,7 @@ import {
   defaultListAction,
   latencyListAction,
 } from "../../store/actions/ocean.action";
+import { oceanCalls } from "../../api/oceanApi";
 
 // type FieldType = {
 //   username?: string;
@@ -22,17 +23,29 @@ const OceanLatency: React.FC<props> = () => {
   const hasError = useSelector((state: any) => state.ocean.hasError);
   const errorMsg = useSelector((state: any) => state.ocean.errorMsg);
   const dispatch = useDispatch();
-  const dList = useSelector((state: any) => state.ocean.defaultList);
-  const lList = useSelector((state: any) => state.ocean.latencyList);
   const [list, setList] = useState([]);
-  const [firstReq, setFirstReq] = useState(false);
 
   const carrierFunction = async () => {
     const sendData = {
       list: "carrierList",
     };
 
-    dispatch(await carrierListAction(sendData));
+    const data = {
+      carrierList: [],
+      hasError: false,
+      errorMsg: ""
+    }
+
+    await oceanCalls(sendData)
+    .then((res) => {
+      data.carrierList = res.sort();
+      dispatch(carrierListAction(data));
+    })
+    .catch((err) => {
+      data.hasError = true;
+      data.errorMsg = err;
+      dispatch(carrierListAction(data));
+    });
   };
 
   const onFinish = async (values: any) => {
@@ -60,8 +73,30 @@ const OceanLatency: React.FC<props> = () => {
       carriers: carrArr,
       referenceType: refStr,
     };
+
+    let data = {
+      latencyList: [],
+      hasError: false,
+      errorMsg: ""
+    }
+
     setLoad(false);
-    dispatch(await latencyListAction(sendData));
+    await oceanCalls(sendData)
+    .then((res) => {
+      data.latencyList = res;
+      dispatch(latencyListAction(data));
+      setList(res);
+      setLoad(true);
+    })
+    .catch((err) => {
+      data.hasError = true;
+      data.errorMsg = err;
+      dispatch(latencyListAction(data));
+      setList([]);
+      setLoad(true);
+    });
+    
+    
   };
 
   const getList = async () => {
@@ -73,24 +108,33 @@ const OceanLatency: React.FC<props> = () => {
       referenceType: "",
     };
 
-    if (dList.length === 0 && firstReq === false) {
-      setFirstReq(true);
-      dispatch(await defaultListAction(sendData));
-    }
+    let data = {
+      defaultList: [],
+      hasError: false,
+      errorMsg: ""
+    };
+    setLoad(false);
+    await oceanCalls(sendData)
+    .then((res) => {
+      data.defaultList = res;
+      dispatch(defaultListAction(data));
+      setList(res);
+      setLoad(true);
+    })
+    .catch((err) => {
+      data.hasError = true;
+      data.errorMsg = err;
+      dispatch(defaultListAction(data));
+      setList([]);
+      setLoad(true);
+    });
   };
 
   useEffect(() => {
     const controller = new AbortController();
     getList();
-    if (lList.length > 0) {
-      setList(lList);
-      setLoad(true);
-    } else if (dList.length > 0) {
-      setList(dList);
-      setLoad(true);
-    }
     return () => controller.abort();
-  }, [lList, dList]);
+  }, []);
 
   return (
     <>
@@ -99,16 +143,16 @@ const OceanLatency: React.FC<props> = () => {
           {errorMsg}
         </div>
       ) : (
-        <div className="w-full px-4 py-2 md:px-10 md:py-4">
+        <div className="w-full px-4 py-2 m-3 mt-56 xms:mt-40 md:px-10 sm:mt-36 lg:mt-2">
           <div className="flex items-center justify-center pt-2">
             <h3 className="text-3xl">Latency Report</h3>
           </div>
-          <div className="mt-8 lg:mt-12">
+          <div className="p-3 mt-8 bg-gray-200 rounded-md lg:mt-12">
             <Form
               name="basic"
               onFinish={onFinish}
               size="middle"
-              className="flex flex-col gap-1 lg:flex-row lg:gap-2"
+              className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
             >
               <Form.Item
                 label={<p className="text-lg">Carrier</p>}
@@ -176,12 +220,12 @@ const OceanLatency: React.FC<props> = () => {
               </Form.Item>
 
               <Form.Item>
-                <Button
-                  htmlType="submit"
-                  className="text-white bg-blue-500 hover:bg-white hover:border-blue-500 hover:text-blue-500"
+                <button
+                  type="submit"
+                  className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
                 >
                   Refresh
-                </Button>
+                </button>
               </Form.Item>
             </Form>
           </div>

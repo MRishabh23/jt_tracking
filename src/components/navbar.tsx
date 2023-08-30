@@ -98,7 +98,7 @@ const Navbar: React.FC<props> = () => {
 
   return (
     <>
-      <header className={`h-[8%] flex items-center bg-primary1 px-3 xl:px-8 2xl:px-14 ${hasAuth === true ? 'justify-between' : 'justify-center'}`}>
+      <header className={`h-20 flex items-center bg-primary1 px-3 xl:px-8 2xl:px-14 ${hasAuth === true ? 'justify-between' : 'justify-center'}`}>
         {hasAuth === true ? (
           <>
             <div className="flex items-center justify-center gap-2">

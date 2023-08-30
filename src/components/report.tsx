@@ -2,6 +2,7 @@ import React from "react";
 import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
+import { listCreation } from "../routes/ocean/ocean";
 
 interface props {
   latencyList: any;
@@ -269,8 +270,10 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
     },
   ];
 
+  const mainList = listCreation(latencyList)
+
   const data2: DataType[] =
-    latencyList === null
+    latencyList === null || mainList.length === 0
       ? [
           {
             key: 109020,
@@ -288,16 +291,16 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
             fourtyEightAbove: 0,
           },
         ]
-      : latencyList
+      : mainList
           
 
   return (
-    <div>
+    <div className="p-4 bg-gray-200 rounded-md">
       <Table
         columns={columns}
         dataSource={data2}
         pagination={{ pageSize: 24, disabled: true, hideOnSinglePage: true }}
-        scroll={{ x: "1100px", y: "420px" }}
+        scroll={{ x: "1100px", y: "675px" }}
       />
     </div>
   );

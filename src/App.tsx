@@ -13,24 +13,25 @@ import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction, logoutAction } from "./store/actions/auth.action";
+import { Layout } from "antd";
 
 interface props {}
 
 const App: React.FC<props> = () => {
   const hasAuth = useSelector((state: any) => state.auth.hasAuth);
   const dispatch = useDispatch();
-  window.addEventListener('storage', e => {
-    if(e.key === 'Username' && e.oldValue && !e.newValue) {
-       dispatch(logoutAction());
-       window.location.reload();
-     }
- });
+  window.addEventListener("storage", (e) => {
+    if (e.key === "Username" && e.oldValue && !e.newValue) {
+      dispatch(logoutAction());
+      window.location.reload();
+    }
+  });
   useEffect(() => {
     const controller = new AbortController();
     const user: any = localStorage.getItem("Username");
     if (user !== null && user !== undefined && user !== "") {
       dispatch(loginAction());
-    }else{
+    } else {
       dispatch(logoutAction());
     }
     return () => controller.abort();
@@ -54,28 +55,32 @@ const App: React.FC<props> = () => {
 
   return (
     <>
-      <div className="flex flex-col h-screen bg-stone-50">
-        <Navbar />
-        <main className="flex justify-center items-center h-[84%]">
-            <Routes>
-              <Route path="/" element={<MainPage />} />
-              <Route path="/air">
-                <Route index element={<AirDashboard />} />
-                <Route path="latency" element={<AirLatency />} />
-              </Route>
-              <Route path="/ocean">
-                <Route index element={<OceanDashboard />} />
-                <Route path="latency" element={<OceanLatency />} />
-              </Route>
-              <Route path="/reference">
-                <Route index element={<ReferenceDashboard />} />
-                <Route path="list" element={<ReferenceList />} />
-                <Route path="history" element={<ReferenceHistory />} />
-              </Route>
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-        </main>
-        <Footer />
+      <div className="flex flex-col h-full bg-stone-50">
+        <Layout>
+          <Navbar />
+          <Layout style={{overflow: "auto"}}>
+            <main className="flex items-center justify-center h-full">
+              <Routes>
+                <Route path="/" element={<MainPage />} />
+                <Route path="/air">
+                  <Route index element={<AirDashboard />} />
+                  <Route path="latency" element={<AirLatency />} />
+                </Route>
+                <Route path="/ocean">
+                  <Route index element={<OceanDashboard />} />
+                  <Route path="latency" element={<OceanLatency />} />
+                </Route>
+                <Route path="/reference">
+                  <Route index element={<ReferenceDashboard />} />
+                  <Route path="list" element={<ReferenceList />} />
+                  <Route path="history" element={<ReferenceHistory />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </main>
+          </Layout>
+          <Footer />
+        </Layout>
       </div>
     </>
   );
