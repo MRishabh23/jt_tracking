@@ -19,7 +19,8 @@ const Landing: React.FC<props> = () => {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-center gap-10 p-10">
+    <div className="flex items-center justify-center h-full p-3">
+      <div className="flex flex-wrap items-center justify-center gap-10">
         {hover.map((item, index) => (
           <Link key={index} to={`/${item.route}`}>
             <div
@@ -39,6 +40,7 @@ const Landing: React.FC<props> = () => {
             </div>
           </Link>
         ))}
+      </div>
       </div>
     </>
   );

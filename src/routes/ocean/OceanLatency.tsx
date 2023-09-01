@@ -33,19 +33,19 @@ const OceanLatency: React.FC<props> = () => {
     const data = {
       carrierList: [],
       hasError: false,
-      errorMsg: ""
-    }
+      errorMsg: "",
+    };
 
     await oceanCalls(sendData)
-    .then((res) => {
-      data.carrierList = res.sort();
-      dispatch(carrierListAction(data));
-    })
-    .catch((err) => {
-      data.hasError = true;
-      data.errorMsg = err;
-      dispatch(carrierListAction(data));
-    });
+      .then((res) => {
+        data.carrierList = res.sort();
+        dispatch(carrierListAction(data));
+      })
+      .catch((err) => {
+        data.hasError = true;
+        data.errorMsg = err;
+        dispatch(carrierListAction(data));
+      });
   };
 
   const onFinish = async (values: any) => {
@@ -77,26 +77,24 @@ const OceanLatency: React.FC<props> = () => {
     let data = {
       latencyList: [],
       hasError: false,
-      errorMsg: ""
-    }
+      errorMsg: "",
+    };
 
     setLoad(false);
     await oceanCalls(sendData)
-    .then((res) => {
-      data.latencyList = res;
-      dispatch(latencyListAction(data));
-      setList(res);
-      setLoad(true);
-    })
-    .catch((err) => {
-      data.hasError = true;
-      data.errorMsg = err;
-      dispatch(latencyListAction(data));
-      setList([]);
-      setLoad(true);
-    });
-    
-    
+      .then((res) => {
+        data.latencyList = res;
+        dispatch(latencyListAction(data));
+        setList(res);
+        setLoad(true);
+      })
+      .catch((err) => {
+        data.hasError = true;
+        data.errorMsg = err;
+        dispatch(latencyListAction(data));
+        setList([]);
+        setLoad(true);
+      });
   };
 
   const getList = async () => {
@@ -111,23 +109,23 @@ const OceanLatency: React.FC<props> = () => {
     let data = {
       defaultList: [],
       hasError: false,
-      errorMsg: ""
+      errorMsg: "",
     };
     setLoad(false);
     await oceanCalls(sendData)
-    .then((res) => {
-      data.defaultList = res;
-      dispatch(defaultListAction(data));
-      setList(res);
-      setLoad(true);
-    })
-    .catch((err) => {
-      data.hasError = true;
-      data.errorMsg = err;
-      dispatch(defaultListAction(data));
-      setList([]);
-      setLoad(true);
-    });
+      .then((res) => {
+        data.defaultList = res;
+        dispatch(defaultListAction(data));
+        setList(res);
+        setLoad(true);
+      })
+      .catch((err) => {
+        data.hasError = true;
+        data.errorMsg = err;
+        dispatch(defaultListAction(data));
+        setList([]);
+        setLoad(true);
+      });
   };
 
   useEffect(() => {
@@ -143,7 +141,7 @@ const OceanLatency: React.FC<props> = () => {
           {errorMsg}
         </div>
       ) : (
-        <div className="w-full px-4 py-2 m-3 mt-56 xms:mt-40 md:px-10 sm:mt-36 lg:mt-2">
+        <div className="w-full p-3">
           <div className="flex items-center justify-center pt-2">
             <h3 className="text-3xl">Latency Report</h3>
           </div>

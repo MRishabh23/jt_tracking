@@ -15,7 +15,7 @@ const Navbar: React.FC<props> = () => {
   const hasAuth = useSelector((state: any) => state.auth.hasAuth);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleSignOut = () => {
     localStorage.removeItem("Username");
@@ -33,8 +33,8 @@ const Navbar: React.FC<props> = () => {
     const user: any = localStorage.getItem("Username");
     if (user !== null && user !== undefined && user !== "") {
       setUser(user);
-      dispatch(loginAction())
-    }else{
+      dispatch(loginAction());
+    } else {
       dispatch(logoutAction());
       navigate("/");
     }
@@ -98,7 +98,11 @@ const Navbar: React.FC<props> = () => {
 
   return (
     <>
-      <header className={`h-20 flex items-center bg-primary1 px-3 xl:px-8 2xl:px-14 ${hasAuth === true ? 'justify-between' : 'justify-center'}`}>
+      <header
+        className={`h-20 flex items-center bg-primary1 px-3 xl:px-8 2xl:px-14 ${
+          hasAuth === true ? "justify-between" : "justify-center"
+        }`}
+      >
         {hasAuth === true ? (
           <>
             <div className="flex items-center justify-center gap-2">
