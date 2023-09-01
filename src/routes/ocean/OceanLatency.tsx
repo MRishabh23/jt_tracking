@@ -151,6 +151,7 @@ const OceanLatency: React.FC<props> = () => {
               onFinish={onFinish}
               size="middle"
               className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
+              initialValues={{"queue": "normal"}}
             >
               <Form.Item
                 label={<p className="text-lg">Carrier</p>}
