@@ -39,22 +39,29 @@ const Login: React.FC<props> = () => {
     };
     await loginCall(sendData)
       .then((res) => {
-        if (res.attempt === "failed") {
-          throw { message: res.data };
-        } else {
-          msg("success", "Login Successful!!");
-          localStorage.setItem("Username", res.data);
-          dispatch(loginAction());
-          if (hasAuth === true) {
-            setTimeout(() => {
-              navigate("/");
-              window.location.reload();
-            }, 1000);
+        //console.log(res);
+        const result = res.data;
+        if(result.statusCode === "200"){
+          if (result.response.attempt === "failed") {
+            throw { message: result.response.data };
+          } else {
+            msg("success", "Login Successful!!");
+            localStorage.setItem("Username", result.response.data);
+            dispatch(loginAction());
+            if (hasAuth === true) {
+              setTimeout(() => {
+                navigate("/");
+                window.location.reload();
+              }, 1000);
+            }
           }
+        }else{
+          throw res
         }
         setBtnLoad(false);
       })
       .catch((err) => {
+        //console.log(err)
         msg("error", err.message);
         setBtnLoad(false);
       });

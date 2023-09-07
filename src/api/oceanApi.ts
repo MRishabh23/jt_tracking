@@ -14,9 +14,9 @@ export async function oceanCalls(data: object) {
     data: data,
   })
     .then((res) => {
-      return res.data;
+      return res;
     })
     .catch((err) => {
-      return err.message;
+      return err;
     });
 }

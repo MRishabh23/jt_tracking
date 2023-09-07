@@ -38,8 +38,13 @@ const OceanLatency: React.FC<props> = () => {
 
     await oceanCalls(sendData)
       .then((res) => {
-        data.carrierList = res.sort();
-        dispatch(carrierListAction(data));
+        const result = res.data;
+        if(result.statusCode === "200"){
+          data.carrierList = result.response.sort();
+          dispatch(carrierListAction(data));
+        }else{
+          throw res;
+        }
       })
       .catch((err) => {
         data.hasError = true;
@@ -83,10 +88,15 @@ const OceanLatency: React.FC<props> = () => {
     setLoad(false);
     await oceanCalls(sendData)
       .then((res) => {
-        data.latencyList = res;
-        dispatch(latencyListAction(data));
-        setList(res);
-        setLoad(true);
+        const result = res.data;
+        if(result.statusCode == "200"){
+          data.latencyList = result.response;
+          dispatch(latencyListAction(data));
+          setList(result.response);
+          setLoad(true);
+        }else{
+          throw res
+        }
       })
       .catch((err) => {
         data.hasError = true;
@@ -114,10 +124,15 @@ const OceanLatency: React.FC<props> = () => {
     setLoad(false);
     await oceanCalls(sendData)
       .then((res) => {
-        data.defaultList = res;
-        dispatch(defaultListAction(data));
-        setList(res);
-        setLoad(true);
+        const result = res.data;
+        if(result.statusCode === "200"){
+          data.defaultList = result.response;
+          dispatch(defaultListAction(data));
+          setList(result.response);
+          setLoad(true);
+        }else{
+          throw res;
+        }
       })
       .catch((err) => {
         data.hasError = true;
