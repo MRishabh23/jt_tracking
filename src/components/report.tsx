@@ -6,7 +6,6 @@ import { listCreation } from "../routes/ocean/ocean";
 
 interface props {
   latencyList: any;
-  carrierList: any;
 }
 
 interface DataType {
@@ -25,9 +24,21 @@ interface DataType {
   fourtyEightAbove: number;
 }
 
-const Report: React.FC<props> = ({ latencyList, carrierList }) => {
+const Report: React.FC<props> = ({ latencyList }) => {
   const colors = ["geekblue", "green", "volcano"];
   let color: any;
+
+  const mainList = listCreation(latencyList)
+  console.log(mainList);
+
+  let carrierL = mainList.map((item: any)=> {
+      return item.carrier
+  })
+  function removeDuplicates(carrierL: []) {
+    return [...new Set(carrierL)];
+  }
+  carrierL = removeDuplicates(carrierL);
+
 
   const columns: ColumnsType<DataType> = [
     {
@@ -35,8 +46,8 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "carrier",
       key: "carrier",
       filters:
-        carrierList !== null
-          ? carrierList.map((item: string) => {
+        carrierL !== null
+          ? carrierL.map((item: string) => {
               return {
                 text: item,
                 value: item,
@@ -57,29 +68,29 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       render: (refType) => (
         <Tag
           color={
-            refType == "Booking"
+            refType.toLowerCase().includes("booking")
               ? colors[0]
-              : refType == "Container"
+              : refType.toLowerCase().includes("container")
               ? colors[1]
               : colors[2]
           }
           key={color}
         >
-          {refType.toUpperCase()}
+          {refType}
         </Tag>
       ),
       filters: [
         {
-          text: "Booking",
-          value: "Booking",
+          text: "BOOKING_NUMBER",
+          value: "BOOKING_NUMBER",
         },
         {
-          text: "BillOfLading",
-          value: "BillOfLading",
+          text: "BILL_OF_LADING",
+          value: "BILL_OF_LADING",
         },
         {
-          text: "Container",
-          value: "Container",
+          text: "CONTAINER_NUMBER",
+          value: "CONTAINER_NUMBER",
         },
       ],
       filterSearch: true,
@@ -93,15 +104,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "total",
       key: "total",
       render: (text, record: any) => (
-        <Link
+        record.total>0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=total&count=${record.total}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=total`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>  : 0
       ),
       sorter: (a, b) => a.total - b.total,
       align: "center",
@@ -111,15 +122,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "zeroToOne",
       key: "zeroToOne",
       render: (text, record: any) => (
-        <Link
+        record.zeroToOne > 0 ?<Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=0_1&count=${record.zeroToOne}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=first`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>:0
       ),
       sorter: (a, b) => a.zeroToOne - b.zeroToOne,
       align: "center",
@@ -129,15 +140,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "oneToTwo",
       key: "oneToTwo",
       render: (text, record: any) => (
-        <Link
+        record.oneToTwo > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=1_2&count=${record.oneToTwo}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=second`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>: 0
       ),
       sorter: (a, b) => a.oneToTwo - b.oneToTwo,
       align: "center",
@@ -147,15 +158,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "twoToFour",
       key: "twoToFour",
       render: (text, record: any) => (
-        <Link
+        record.twoToFour > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=2_4&count=${record.twoToFour}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=third`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>:0
       ),
       sorter: (a, b) => a.twoToFour - b.twoToFour,
       align: "center",
@@ -165,15 +176,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "fourToEight",
       key: "fourToEight",
       render: (text, record: any) => (
-        <Link
+        record.fourToEight > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=4_8&count=${record.fourToEight}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=fourth`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>: 0
       ),
       sorter: (a, b) => a.fourToEight - b.fourToEight,
       align: "center",
@@ -183,15 +194,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "eightToTwelve",
       key: "eightToTwelve",
       render: (text, record: any) => (
-        <Link
+        record.eightToTwelve > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=8_12&count=${record.eightToTwelve}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=fifth`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>: 0
       ),
       sorter: (a, b) => a.eightToTwelve - b.eightToTwelve,
       align: "center",
@@ -201,15 +212,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "twelveToSixteen",
       key: "twelveToSixteen",
       render: (text, record: any) => (
-        <Link
+        record.twelveToSixteen > 0 ?<Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=12_16&count=${record.twelveToSixteen}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=sixth`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>: 0
       ),
       sorter: (a, b) => a.twelveToSixteen - b.twelveToSixteen,
       align: "center",
@@ -219,15 +230,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "sixteenToTwentyFour",
       key: "sixteenToTwentyFour",
       render: (text, record: any) => (
-        <Link
+        record.sixteenToTwentyFour > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=16_24&count=${record.sixteenToTwentyFour}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=seventh`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>: 0
       ),
       sorter: (a, b) => a.sixteenToTwentyFour - b.sixteenToTwentyFour,
       align: "center",
@@ -237,15 +248,15 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "twentyFourToFourtyEight",
       key: "twentyFourToFourtyEight",
       render: (text, record: any) => (
-        <Link
+        record.twentyFourToFourtyEight > 0 ?<Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=24_48&count=${record.twentyFourToFourtyEight}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=eight`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link>: 0
       ),
       sorter: (a, b) => a.twentyFourToFourtyEight - b.twentyFourToFourtyEight,
       align: "center",
@@ -255,43 +266,31 @@ const Report: React.FC<props> = ({ latencyList, carrierList }) => {
       dataIndex: "fourtyEightAbove",
       key: "fourtyEightAbove",
       render: (text, record: any) => (
-        <Link
+       record.fourtyEightAbove > 0 ? <Link  
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=gt48&count=${record.fourtyEightAbove}`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=ninth`,
           }}
           target="_blank"
         >
           {text}
-        </Link>
+        </Link> : 0
       ),
       sorter: (a, b) => a.fourtyEightAbove - b.fourtyEightAbove,
       align: "center",
     },
   ];
 
-  const mainList = listCreation(latencyList)
-
+  
+  
   const data2: DataType[] =
     latencyList === null || mainList.length === 0
       ? [
-          {
-            key: 109020,
-            carrier: "random",
-            refType: "Booking",
-            total: 0,
-            zeroToOne: 0,
-            oneToTwo: 0,
-            twoToFour: 0,
-            fourToEight: 0,
-            eightToTwelve: 0,
-            twelveToSixteen: 0,
-            sixteenToTwentyFour: 0,
-            twentyFourToFourtyEight: 0,
-            fourtyEightAbove: 0,
-          },
+          
         ]
       : mainList
+
+  
           
 
   return (

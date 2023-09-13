@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Form, Input, message } from "antd";
 import { loginCall } from "../../api/auth";
-import { useNavigate } from "react-router-dom";
 import { VscLoading } from "react-icons/vsc";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch,  } from "react-redux";
 import { loginAction } from "../../store/actions/auth.action";
 
-interface props {}
+interface props { }
 
 type FieldType = {
   username?: string;
@@ -17,13 +16,7 @@ const Login: React.FC<props> = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [btnLoad, setBtnLoad] = useState(false);
-
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const hasAuth = useSelector((state: any) => state.auth.hasAuth);
-
-  //console.log(hasAuth)
-
   const msg = (type: any, content: string) => {
     messageApi.open({
       type: type,
@@ -39,24 +32,22 @@ const Login: React.FC<props> = () => {
     };
     await loginCall(sendData)
       .then((res) => {
-        //console.log(res);
         const result = res.data;
-        if(result.statusCode === "200"){
+        if (result.statusCode === "200") {
           if (result.response.attempt === "failed") {
             throw { message: result.response.data };
           } else {
             msg("success", "Login Successful!!");
             localStorage.setItem("Username", result.response.data);
-            dispatch(loginAction());
-            if (hasAuth === true) {
-              setTimeout(() => {
-                navigate("/");
-                window.location.reload();
-              }, 1000);
-            }
+            setTimeout(() => {
+              dispatch(loginAction());
+            }, 1000)
           }
         }else{
           throw res
+        }
+        else {
+          throw { message: result.response.data };
         }
         setBtnLoad(false);
       })
@@ -67,21 +58,12 @@ const Login: React.FC<props> = () => {
       });
   };
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const user: any = localStorage.getItem("Username");
-    if (user !== null && user !== undefined && user !== "") {
-      dispatch(loginAction());
-    }
-    return () => controller.abort();
-  }, []);
-
   return (
     <>
       {contextHolder}
       <div className="flex items-center justify-center h-full">
         <div className="p-4 bg-gray-200 rounded-md">
-          <div className="mb-3">
+          <div className="mb-3 font-bold">
             <h4>Sign in to your account</h4>
           </div>
           <Form
@@ -117,9 +99,8 @@ const Login: React.FC<props> = () => {
                   className="px-4 py-1 flex text-white justify-center items-center border-[1px] border-blue-600 bg-blue-500 rounded-md hover:bg-blue-400"
                 >
                   <VscLoading
-                    className={`mr-2 animate-spin ${
-                      btnLoad ? "block" : "hidden"
-                    }`}
+                    className={`mr-2 animate-spin ${btnLoad ? "block" : "hidden"
+                      }`}
                   />{" "}
                   Sign In
                 </button>

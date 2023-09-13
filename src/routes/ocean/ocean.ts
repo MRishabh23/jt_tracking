@@ -43,12 +43,7 @@ export const listCreation = (latencyList: any) => {
       return {
         key: index,
         carrier: item.carrier,
-        refType:
-          item.refType === "BOOKING_NUMBER"
-            ? "Booking"
-            : item.refType === "CONTAINER_NUMBER"
-            ? "Container"
-            : "BillOfLading",
+        refType:item.refType,
         total: totalCount,
         zeroToOne:
           item.first !== null && item.first !== undefined ? +item.first : 0,
@@ -74,4 +69,27 @@ export const listCreation = (latencyList: any) => {
     });
 
   return list;
+};
+
+export const referenceList = (refList: any) => {
+  const rList = refList.map((item: any, index: number) => {
+    return {
+      key: index,
+      carrier: item.carrier,
+      createdAt: item.createdAt,
+      error: item.error,
+      lastCrawledAt: item.lastCrawledAt,
+      queue:  item.queue === "1" && item.error==="" 
+          ? "Normal"
+          : item.queue === "2" 
+          ? "Adaptive"
+          : "RNF",
+      referenceNumber: item.referenceNumber,
+      referenceType: item.referenceType,
+      status: item.status,
+      subscriptionId: item.subscriptionId,
+      updatedAt: item.updatedAt
+    };
+  });
+  return rList;
 };

@@ -49,7 +49,7 @@ const Navbar: React.FC<props> = () => {
     return (
       <Drawer
         title={
-          <Link to="/" className="text-white hover:text-white">
+          <Link to="/" className="text-white hover:text-gray-200">
             SHIPMENT TRACKING
           </Link>
         }
@@ -61,7 +61,7 @@ const Navbar: React.FC<props> = () => {
         headerStyle={{ background: "#10293B" }}
         extra={
           <IoClose
-            className="text-xl text-white cursor-pointer"
+            className="text-xl text-white cursor-pointer hover:text-gray-200"
             onClick={() => setOpen(!open)}
           />
         }
@@ -105,7 +105,7 @@ const Navbar: React.FC<props> = () => {
       >
         {hasAuth === true ? (
           <>
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-6">
               {/* hamburg menu */}
               <div>
                 <RiMenu3Fill
@@ -116,7 +116,7 @@ const Navbar: React.FC<props> = () => {
               </div>
               {/* heading */}
               <Link to="/">
-                <h1 className="hidden font-semibold tracking-wider text-white xs:block xs:text-3xl sm:text-4xl">
+                <h1 className="hidden font-bold tracking-wider text-white xs:block xs:text-3xl sm:text-4xl">
                   SHIPMENT TRACKING
                 </h1>
               </Link>
