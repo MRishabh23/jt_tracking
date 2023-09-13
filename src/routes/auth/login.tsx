@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Form, Input, message } from "antd";
 import { loginCall } from "../../api/auth";
 import { VscLoading } from "react-icons/vsc";
-import { useDispatch,  } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginAction } from "../../store/actions/auth.action";
 
-interface props { }
+interface props {}
 
 type FieldType = {
   username?: string;
@@ -41,12 +41,9 @@ const Login: React.FC<props> = () => {
             localStorage.setItem("Username", result.response.data);
             setTimeout(() => {
               dispatch(loginAction());
-            }, 1000)
+            }, 1000);
           }
-        }else{
-          throw res
-        }
-        else {
+        } else {
           throw { message: result.response.data };
         }
         setBtnLoad(false);
@@ -99,8 +96,9 @@ const Login: React.FC<props> = () => {
                   className="px-4 py-1 flex text-white justify-center items-center border-[1px] border-blue-600 bg-blue-500 rounded-md hover:bg-blue-400"
                 >
                   <VscLoading
-                    className={`mr-2 animate-spin ${btnLoad ? "block" : "hidden"
-                      }`}
+                    className={`mr-2 animate-spin ${
+                      btnLoad ? "block" : "hidden"
+                    }`}
                   />{" "}
                   Sign In
                 </button>

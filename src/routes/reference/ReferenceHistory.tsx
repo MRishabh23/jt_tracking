@@ -1,7 +1,7 @@
 import React, {useState}from 'react'
 import { Button, Modal, Form, Input, Drawer, Space, Select, Spin, Tooltip } from 'antd';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 //import { useSearchParams, useLocation } from 'react-router-dom'
 const customDrawerStyle = {
@@ -53,13 +53,13 @@ const ReferenceHistory: React.FC = () => {
     // console.log("my params", myParam)
     // console.log("my params total", myParam.get('total'))
   return (
-    <div className="w-full p-3 relative min-h-full">      
-      <div className="flex items-center justify-center font-semibold pt-2">
+    <div className="relative w-full min-h-full p-3">      
+      <div className="flex items-center justify-center pt-2 font-semibold">
         <h3 className="text-3xl">Reference History</h3>
       </div>
-      <div className="flex justify-evenly  p-5 mt-8 bg-gray-200 rounded-md lg:mt-12">
+      <div className="flex p-5 mt-8 bg-gray-200 rounded-md justify-evenly lg:mt-12">
         <Tooltip title="Search using SubscriptionId">
-          <Button type="primary" size="large" className="w-40 flex items-center justify-center" onClick={showModal} >
+          <Button type="primary" size="large" className="flex items-center justify-center w-40" onClick={showModal} >
             <SearchOutlined className="mr-2" /> 
             Search
           </Button>
