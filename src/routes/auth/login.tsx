@@ -43,6 +43,8 @@ const Login: React.FC<props> = () => {
               dispatch(loginAction());
             }, 1000)
           }
+        }else{
+          throw res
         }
         else {
           throw { message: result.response.data };
@@ -50,6 +52,7 @@ const Login: React.FC<props> = () => {
         setBtnLoad(false);
       })
       .catch((err) => {
+        //console.log(err)
         msg("error", err.message);
         setBtnLoad(false);
       });
