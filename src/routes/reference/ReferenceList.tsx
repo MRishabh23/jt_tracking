@@ -1,29 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Input, Drawer, Space, Select, Spin, Tooltip, Pagination } from 'antd';
-import ShipmentDashboard from '../../components/shipmentDashboard'
-import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Modal,
+  Form,
+  Input,
+  Drawer,
+  Space,
+  Select,
+  Spin,
+  Tooltip,
+  Pagination,
+} from "antd";
+import ShipmentDashboard from "../../components/shipmentDashboard";
+import { SearchOutlined, CloseOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { oceanCalls } from "../../api/oceanApi";
-import type { PaginationProps } from 'antd';
-import {
-  carrierListAction,
-} from "../../store/actions/ocean.action";
-import { referenceList } from '../ocean/ocean';
-import { useLocation, useNavigate } from 'react-router-dom';
+import type { PaginationProps } from "antd";
+import { carrierListAction } from "../../store/actions/ocean.action";
+import { referenceList } from "../ocean/ocean";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const customDrawerStyle = {
-  backgroundColor: "rgb(212 212 216)"
+  backgroundColor: "rgb(212 212 216)",
 };
 
 const ReferenceList: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const myParam: any = new URLSearchParams(location.search)
-
-
-
-
+  const myParam: any = new URLSearchParams(location.search);
 
   const cList = useSelector((state: any) => state.ocean.carrierList);
   const dispatch = useDispatch();
@@ -37,26 +42,22 @@ const ReferenceList: React.FC = () => {
   const [msgErr, setMsgErr] = useState("");
   const [list, setList] = useState([]);
 
-
   const getParamList = async (paramData: any) => {
     setLoad(false);
     setMsgErr("");
     if (page === 1 && count === 0) {
       const sendDataCount = {
         ...paramData,
-        "totalRecordCount": "true"
-      }
+        totalRecordCount: "true",
+      };
       const { limit, page, ...countData } = sendDataCount;
       await oceanCalls(countData)
         .then((res) => {
           const result = res.data;
-          if (res.status === 200 && result.statusCode === "200")
-          {
-          setCount(res.data.response[0].count)
-          }
-          else
-          {
-            throw { message: res.message }
+          if (res.status === 200 && result.statusCode === "200") {
+            setCount(res.data.response[0].count);
+          } else {
+            throw { message: res.message };
           }
         })
         .catch((err) => {
@@ -72,17 +73,15 @@ const ReferenceList: React.FC = () => {
           const refList: any = referenceList(result.response);
           setList(refList);
           setLoad(true);
-        }
-        else {
-          throw { message: res.message }
+        } else {
+          throw { message: res.message };
         }
       })
       .catch(() => {
         setList([]);
         setLoad(true);
       });
-  }
-
+  };
 
   const carrierFunction = async () => {
     const sendData = {
@@ -101,9 +100,8 @@ const ReferenceList: React.FC = () => {
         if (result.statusCode === "200") {
           data.carrierList = result.response.sort();
           dispatch(carrierListAction(data));
-        }
-        else {
-          throw { message: result.response }
+        } else {
+          throw { message: result.response };
         }
       })
       .catch((err) => {
@@ -126,57 +124,49 @@ const ReferenceList: React.FC = () => {
   };
 
   const getFilterList = async (values: any) => {
-
     const carrier = values.carrier;
     const active = values.active === undefined ? "yes" : values.active;
     const refType = values.refType === undefined ? "" : values.refType;
     const crawlQueue = values.crawlQueue === undefined ? "" : values.crawlQueue;
 
-    const sendData =
-    {
-      "mode": "ocean",
-      "type": "referenceList",
-      "report": crawlQueue,
-      "carriers": [carrier],
-      "referenceType": refType,
-      "timeCategory": "",
-      "active": active,
-      "limit": 25,
-      "page": page
-    }
+    const sendData = {
+      mode: "ocean",
+      type: "referenceList",
+      report: crawlQueue,
+      carriers: [carrier],
+      referenceType: refType,
+      timeCategory: "",
+      active: active,
+      limit: 25,
+      page: page,
+    };
     setLoad(false);
     if (page === 1 && count === 0) {
       const sendDataCount = {
-        "mode": "ocean",
-        "type": "referenceList",
-        "report": crawlQueue,
-        "carriers": [carrier],
-        "referenceType": refType,
-        "timeCategory": "",
-        "active": active,
-        "totalRecordCount": "true"
-      }
+        mode: "ocean",
+        type: "referenceList",
+        report: crawlQueue,
+        carriers: [carrier],
+        referenceType: refType,
+        timeCategory: "",
+        active: active,
+        totalRecordCount: "true",
+      };
       await oceanCalls(sendDataCount)
         .then((res) => {
           const result = res.data;
-          if (res.status === 200 && result.statusCode === "200")
-          {
-          setCount(res.data.response[0].count)
-          }
-          else
-          {
-            throw { message: res.message }
+          if (res.status === 200 && result.statusCode === "200") {
+            setCount(res.data.response[0].count);
+          } else {
+            throw { message: res.message };
           }
           // setCount(res.data.response[0].count)
-
         })
         .catch((err) => {
           setMsgErr(err.message);
           setList([]);
           setLoad(true);
-
         });
-
     }
     await oceanCalls(sendData)
       .then((res) => {
@@ -185,9 +175,8 @@ const ReferenceList: React.FC = () => {
           const refList: any = referenceList(result.response);
           setList(refList);
           setLoad(true);
-        }
-        else {
-          throw { message: res.message }
+        } else {
+          throw { message: res.message };
         }
       })
       .catch((err) => {
@@ -195,43 +184,39 @@ const ReferenceList: React.FC = () => {
         setList([]);
         setLoad(true);
       });
-
-  }
+  };
 
   const onFinishSearch = async (value: any) => {
     form1.resetFields();
     const subId = value.SubscriptionId;
-    
+
     const sendData = {
-      "mode": "ocean",
-      "type": "referenceList",
-      "searchQuery": subId
-    }
+      mode: "ocean",
+      type: "referenceList",
+      searchQuery: subId,
+    };
     setIsModalOpen(false);
     setLoad(false);
     setPage(1);
     setCount(0);
     await oceanCalls(sendData)
       .then((res) => {
-        
         const result = res.data;
         if (res.status === 200 && result.statusCode === "200") {
           const refList: any = referenceList(result.response);
           setList(refList);
           setLoad(true);
           setFrame("search");
-        }
-        else {
-          throw { message: res.message }
+        } else {
+          throw { message: res.message };
         }
       })
       .catch((err) => {
         setMsgErr(err.message);
         setList([]);
-        setLoad(true)
+        setLoad(true);
       });
-  }
-
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -244,7 +229,6 @@ const ReferenceList: React.FC = () => {
     setOpen(false);
   };
 
-
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -254,50 +238,44 @@ const ReferenceList: React.FC = () => {
   };
 
   const getList = async () => {
-    
     const sendData = {
-      "mode": "ocean",
-      "type": "referenceList",
-      "report": "normal",
-      "carriers": ["acl"],
-      "referenceType": "",
-      "timeCategory": "",
-      "active": "yes",
-      "limit": 25,
-      "page": page
-    }
+      mode: "ocean",
+      type: "referenceList",
+      report: "normal",
+      carriers: ["acl"],
+      referenceType: "",
+      timeCategory: "",
+      active: "yes",
+      limit: 25,
+      page: page,
+    };
     setLoad(false);
     if (page === 1 && count === 0) {
       const sendDataCount = {
-        "mode": "ocean",
-        "type": "referenceList",
-        "report": "normal",
-        "carriers": ["acl"],
-        "referenceType": "",
-        "timeCategory": "",
-        "active": "yes",
-        "totalRecordCount": "true"
-      }
+        mode: "ocean",
+        type: "referenceList",
+        report: "normal",
+        carriers: ["acl"],
+        referenceType: "",
+        timeCategory: "",
+        active: "yes",
+        totalRecordCount: "true",
+      };
       await oceanCalls(sendDataCount)
         .then((res) => {
           const result = res.data;
-          if (res.status === 200 && result.statusCode === "200")
-          {
-          setCount(res.data.response[0].count)
-          }
-          else
-          {
-            throw { message: res.message }
+          if (res.status === 200 && result.statusCode === "200") {
+            setCount(res.data.response[0].count);
+          } else {
+            throw { message: res.message };
           }
           // setCount(res.data.response[0].count)
-
         })
         .catch((err) => {
           setMsgErr(err.message);
           setList([]);
           setLoad(true);
         });
-
     }
 
     await oceanCalls(sendData)
@@ -308,9 +286,8 @@ const ReferenceList: React.FC = () => {
           const refList: any = referenceList(result.response);
           setList(refList);
           setLoad(true);
-        }
-        else {
-          throw { message: res.message }
+        } else {
+          throw { message: res.message };
         }
       })
       .catch((err) => {
@@ -318,11 +295,9 @@ const ReferenceList: React.FC = () => {
         setList([]);
         setLoad(true);
       });
+  };
 
-
-  }
-
-  const onChange: PaginationProps['onChange'] = async (page) => {
+  const onChange: PaginationProps["onChange"] = async (page) => {
     // console.log(page);
     setPage(page);
   };
@@ -332,93 +307,114 @@ const ReferenceList: React.FC = () => {
     if (cList.length === 0) {
       carrierFunction();
     }
-    
-    if (myParam.size !== 0) {
 
+    if (myParam.size !== 0) {
       // console.log("inside param if");
       const paramdata = {
-        "mode": "ocean",
-        "type": "referenceList",
-        "report": "normal",
-        "carriers": [myParam.get('carrier')],
-        "referenceType": myParam.get('refType'),
-        "timeCategory": myParam.get('type'),
-        "active": "yes",
-        "limit": 25,
-        "page": page
-      }
+        mode: "ocean",
+        type: "referenceList",
+        report: "normal",
+        carriers: [myParam.get("carrier")],
+        referenceType: myParam.get("refType"),
+        timeCategory: myParam.get("type"),
+        active: "yes",
+        limit: 25,
+        page: page,
+      };
       // console.log("param data last", paramdata);
       // const {currentUser, ...updatedParamData } = paramdata;
       // setParamData(data);
       // console.log("param data", paramData);
       setFrame("param");
       getParamList(paramdata);
-    }
-    else if (frame === "default") {
+    } else if (frame === "default") {
       getList();
-    }
-    else if (frame === "filter") {
+    } else if (frame === "filter") {
       getFilterList(filterValues);
     }
-   
+
     return () => controller.abort();
   }, [page, filterValues]);
 
-
   return (
-    <div className="w-full p-3 relative min-h-full">
-      <div className="flex items-center justify-center font-semibold pt-2">
+    <div className="relative w-full min-h-full p-3">
+      <div className="flex items-center justify-center pt-2 font-semibold">
         <h3 className="text-3xl">Reference List</h3>
       </div>
-      <div className="flex justify-evenly  p-5 mt-8 bg-gray-200 rounded-md lg:mt-12">
-        {myParam.size === 0 ? <>
-          <Tooltip title="Search using SubscriptionId">
-            <Button type="primary" size="large" className="w-40 flex items-center justify-center" onClick={showModal}>
-              <SearchOutlined className="mr-2" />
-              Search
+      <div className="flex p-5 mt-8 bg-gray-200 rounded-md justify-evenly lg:mt-12">
+        {myParam.size === 0 ? (
+          <>
+            <Tooltip title="Search using SubscriptionId">
+              <Button
+                type="primary"
+                size="large"
+                className="flex items-center justify-center w-40"
+                onClick={showModal}
+              >
+                <SearchOutlined className="mr-2" />
+                Search
+              </Button>
+            </Tooltip>
+            <Button
+              type="primary"
+              className="w-40"
+              size="large"
+              onClick={showDrawer}
+            >
+              Filter
             </Button>
-          </Tooltip>
-          <Button type="primary" className="w-40" size="large" onClick={showDrawer}>Filter</Button>
-        </> :
-          <Button type="primary" className="w-40" size="large" onClick={() => {
-            navigate("/reference/list");
-            window.location.reload();
-          }}>Default List</Button>
-        }
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              navigate("/reference/list");
+              window.location.reload();
+            }}
+            className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
+          >
+            Default List
+          </button>
+        )}
       </div>
       {msgErr !== "" ? (
-          <div className="flex items-center justify-center h-full text-2xl font-medium bg-red-100 rounded-md mt-5 py-3">
-            {msgErr.includes("timeout") ? "Request Timeout" : msgErr}
-          </div>
-        ) : (
-      <div className="mt-7">
-        <div className="p-4 bg-gray-200 rounded-md">
-          {load ? (
-            <ShipmentDashboard referenceList={list} />
-          ) : (
-            <div className="flex items-center justify-center">
-              <Spin tip="Loading..." size="large">
-                <div className="p-12 bg-gray-300 rounded-[4px]" />
-              </Spin>
-            </div>
-          )}
-          {(frame !== "search") ?
-            <Pagination
-              pageSize={25}
-              current={page}
-              onChange={onChange}
-              total={count}
-              simple={false}
-              showSizeChanger={false}
-            />
-            : <></>}
-
-        
+        <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
+          {msgErr.includes("timeout") ? "Request Timeout" : msgErr}
         </div>
-
-      </div>
-        )}
-      <Modal title="Search" open={isModalOpen} onOk={form.submit} onCancel={handleCancel} okText="Search">
+      ) : (
+        <div className="mt-7">
+          <div className="p-4 bg-gray-200 rounded-md">
+            {load ? (
+              <ShipmentDashboard referenceList={list} />
+            ) : (
+              <div className="flex items-center justify-center">
+                <Spin tip="Loading..." size="large">
+                  <div className="p-12 bg-gray-300 rounded-[4px]" />
+                </Spin>
+              </div>
+            )}
+            {frame !== "search" ? (
+              <Pagination
+                pageSize={25}
+                current={page}
+                onChange={onChange}
+                total={count}
+                simple={false}
+                showSizeChanger={false}
+              />
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+      )}
+      <Modal
+        title="Search"
+        open={isModalOpen}
+        onOk={form.submit}
+        onCancel={handleCancel}
+        okText="Search"
+      >
         <Form
           name="search"
           form={form}
@@ -431,7 +427,11 @@ const ReferenceList: React.FC = () => {
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
             rules={[{ required: true, message: "Enter the SubscriptionId" }]}
           >
-            <Input allowClear autoComplete="off" placeholder="Enter SubscriptionId" />
+            <Input
+              allowClear
+              autoComplete="off"
+              placeholder="Enter SubscriptionId"
+            />
           </Form.Item>
         </Form>
       </Modal>
@@ -445,15 +445,26 @@ const ReferenceList: React.FC = () => {
         style={customDrawerStyle}
         extra={
           <Space>
-            <Button type="text" shape="circle" icon={<CloseOutlined />} onClick={onClose} className="flex items-center justify-center"></Button>
+            <Button
+              type="text"
+              shape="circle"
+              icon={<CloseOutlined />}
+              onClick={onClose}
+              className="flex items-center justify-center"
+            ></Button>
           </Space>
         }
       >
         <Form
-          className='flex flex-col gap-6'
+          className="flex flex-col gap-6"
           name="basic"
           onFinish={onFinish}
-          initialValues={{ carrier: "", refType: "", active: "all", crawlQueue: "" }}
+          initialValues={{
+            carrier: "",
+            refType: "",
+            active: "all",
+            crawlQueue: "",
+          }}
           form={form1}
         >
           <Form.Item
@@ -462,16 +473,10 @@ const ReferenceList: React.FC = () => {
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
             rules={[{ required: true, message: "Please input carrier!" }]}
           >
-            <Select
-              allowClear={true}
-              placeholder="select carrier..."
-            >
+            <Select allowClear={true} placeholder="select carrier...">
               {cList.length > 0 ? (
                 cList.map((item: any, index: any) => (
-                  <Select.Option
-                    key={index}
-                    value={`${item.toLowerCase()}`}
-                  >
+                  <Select.Option key={index} value={`${item.toLowerCase()}`}>
                     {item}
                   </Select.Option>
                 ))
@@ -489,10 +494,7 @@ const ReferenceList: React.FC = () => {
             name="refType"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
-            <Select
-              placeholder="select reference type..."
-              allowClear={true}
-            >
+            <Select placeholder="select reference type..." allowClear={true}>
               <Select.Option value="BOOKING_NUMBER">Booking</Select.Option>
               <Select.Option value="BILL_OF_LADING">BillOfLading</Select.Option>
               <Select.Option value="CONTAINER_NUMBER">Container</Select.Option>
@@ -503,10 +505,7 @@ const ReferenceList: React.FC = () => {
             name="active"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
-            <Select
-              placeholder="Select active status..."
-              allowClear={true}
-            >
+            <Select placeholder="Select active status..." allowClear={true}>
               <Select.Option value="all">All</Select.Option>
               <Select.Option value="yes">Yes</Select.Option>
               <Select.Option value="no">No</Select.Option>
@@ -517,10 +516,7 @@ const ReferenceList: React.FC = () => {
             name="crawlQueue"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
-            <Select
-              placeholder="select crawl queue type..."
-              allowClear={true}
-            >
+            <Select placeholder="select crawl queue type..." allowClear={true}>
               <Select.Option value="normal">Regular</Select.Option>
               <Select.Option value="adaptive">Adaptive</Select.Option>
               <Select.Option value="notFound">Not found</Select.Option>
@@ -538,9 +534,8 @@ const ReferenceList: React.FC = () => {
           </Form.Item>
         </Form>
       </Drawer>
-      
     </div>
-  )
-}
+  );
+};
 
-export default React.memo(ReferenceList)
+export default React.memo(ReferenceList);
