@@ -8,6 +8,7 @@ html, body{
     /* border: 1px solid red; */
     height: 0px;
     background: #fafaf9;
+    user-select: none;
 }
 
 #root{
