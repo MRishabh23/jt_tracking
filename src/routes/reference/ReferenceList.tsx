@@ -345,24 +345,22 @@ const ReferenceList: React.FC = () => {
         {myParam.size === 0 ? (
           <>
             <Tooltip title="Search using SubscriptionId">
-              <Button
-                type="primary"
-                size="large"
-                className="flex items-center justify-center w-40"
+              <button
+                type="button"
                 onClick={showModal}
+                className="py-2 w-40 flex items-center justify-center text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
               >
                 <SearchOutlined className="mr-2" />
                 Search
-              </Button>
+              </button>
             </Tooltip>
-            <Button
-              type="primary"
-              className="w-40"
-              size="large"
+            <button
+              type="button"
               onClick={showDrawer}
+              className="py-2 w-40 flex items-center justify-center text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
             >
               Filter
-            </Button>
+            </button>
           </>
         ) : (
           <button
