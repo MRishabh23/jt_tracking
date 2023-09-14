@@ -9,7 +9,7 @@ export async function oceanCalls(data: object) {
   }
  return axios({
     url: import.meta.env.VITE_REST_URL,
-    timeout: 180000, 
+    timeout: 300000, 
     method: "post",
     headers: {
       "Content-Type": "application/json",
