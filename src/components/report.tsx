@@ -11,6 +11,7 @@ interface props {
 interface DataType {
   key: React.Key;
   carrier: string;
+  queue: string;
   refType: string;
   total: number;
   zeroToOne: number;
@@ -58,7 +59,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
       filterSearch: true,
       onFilter: (value: any, record) => record.carrier.includes(value),
       fixed: true,
-      width: 130,
+      width: 125,
       align: "center",
     },
     {
@@ -96,7 +97,15 @@ const Report: React.FC<props> = ({ latencyList }) => {
       filterSearch: true,
       onFilter: (value: any, record) => record.refType.includes(value),
       fixed: true,
-      width: 125,
+      width: 130,
+      align: "center",
+    },
+    {
+      title: "Queue",
+      key: "queue",
+      dataIndex: "queue",
+      fixed: true,
+      width: 90,
       align: "center",
     },
     {
@@ -107,7 +116,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.total>0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=total`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=total&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -115,6 +124,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>  : 0
       ),
       sorter: (a, b) => a.total - b.total,
+      width: 75,
       align: "center",
     },
     {
@@ -125,7 +135,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.zeroToOne > 0 ?<Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=first`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=first&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -133,6 +143,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>:0
       ),
       sorter: (a, b) => a.zeroToOne - b.zeroToOne,
+      width: 75,
       align: "center",
     },
     {
@@ -143,7 +154,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.oneToTwo > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=second`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=second&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -151,6 +162,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>: 0
       ),
       sorter: (a, b) => a.oneToTwo - b.oneToTwo,
+      width: 75,
       align: "center",
     },
     {
@@ -161,7 +173,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.twoToFour > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=third`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=third&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -169,6 +181,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>:0
       ),
       sorter: (a, b) => a.twoToFour - b.twoToFour,
+      width: 75,
       align: "center",
     },
     {
@@ -179,7 +192,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.fourToEight > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=fourth`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=fourth&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -187,6 +200,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>: 0
       ),
       sorter: (a, b) => a.fourToEight - b.fourToEight,
+      width: 75,
       align: "center",
     },
     {
@@ -197,7 +211,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.eightToTwelve > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=fifth`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=fifth&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -205,6 +219,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>: 0
       ),
       sorter: (a, b) => a.eightToTwelve - b.eightToTwelve,
+      width: 75,
       align: "center",
     },
     {
@@ -215,7 +230,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.twelveToSixteen > 0 ?<Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=sixth`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=sixth&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -223,6 +238,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>: 0
       ),
       sorter: (a, b) => a.twelveToSixteen - b.twelveToSixteen,
+      width: 75,
       align: "center",
     },
     {
@@ -233,7 +249,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.sixteenToTwentyFour > 0 ? <Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=seventh`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=seventh&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -241,6 +257,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>: 0
       ),
       sorter: (a, b) => a.sixteenToTwentyFour - b.sixteenToTwentyFour,
+      width: 75,
       align: "center",
     },
     {
@@ -251,7 +268,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         record.twentyFourToFourtyEight > 0 ?<Link
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=eight`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=eight&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -259,6 +276,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link>: 0
       ),
       sorter: (a, b) => a.twentyFourToFourtyEight - b.twentyFourToFourtyEight,
+      width: 75,
       align: "center",
     },
     {
@@ -269,7 +287,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
        record.fourtyEightAbove > 0 ? <Link  
           to={{
             pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=ninth`,
+            search: `?carrier=${record.carrier}&refType=${record.refType}&type=ninth&report=${record.queue}`,
           }}
           target="_blank"
         >
@@ -277,6 +295,7 @@ const Report: React.FC<props> = ({ latencyList }) => {
         </Link> : 0
       ),
       sorter: (a, b) => a.fourtyEightAbove - b.fourtyEightAbove,
+      width: 75,
       align: "center",
     },
   ];
