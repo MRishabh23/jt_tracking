@@ -9,11 +9,11 @@ import {
 } from "../../store/actions/ocean.action";
 import { oceanCalls } from "../../api/oceanApi";
 
-
-interface props { }
+interface props {}
 
 const OceanLatency: React.FC<props> = () => {
-  const [selectState, setSelectState] = useState<String[]>([]);
+  // const [selectState, setSelectState] = useState<String[]>([]);
+  const [isBulk, setIsBulk] = useState("false");
   const [msgErr, setMsgErr] = useState("");
   const [load, setLoad] = useState(false);
   const cList = useSelector((state: any) => state.ocean.carrierList);
@@ -24,7 +24,7 @@ const OceanLatency: React.FC<props> = () => {
 
   const reload = () => {
     window.location.reload();
-  }
+  };
 
   const carrierFunction = async () => {
     const sendData = {
@@ -43,8 +43,7 @@ const OceanLatency: React.FC<props> = () => {
         if (result.statusCode === "200") {
           data.carrierList = result.response.sort();
           dispatch(carrierListAction(data));
-        }
-        else {
+        } else {
           throw { message: result.response };
         }
       })
@@ -57,21 +56,22 @@ const OceanLatency: React.FC<props> = () => {
 
   const onFinish = async (values: any) => {
     setMsgErr("");
-    const carrArr = values.carrier.length > 0 ? values.carrier : [];
+    // const carrArr = values.carrier.length > 0 ? values.carrier : [];
+    const carrArr = [values.carrier];
     const queStr =
       values.queue === undefined
         ? "normal"
         : values.queue !== undefined && values.queue !== ""
-          ? values.queue
-          : "normal";
+        ? values.queue
+        : "normal";
     const refStr =
       values.refType === "booking"
         ? "BOOKING_NUMBER"
         : values.refType === "container"
-          ? "CONTAINER_NUMBER"
-          : values.refType === "bol"
-            ? "BILL_OF_LADING"
-            : "";
+        ? "CONTAINER_NUMBER"
+        : values.refType === "bol"
+        ? "BILL_OF_LADING"
+        : "";
 
     const sendData = {
       type: "latency",
@@ -79,7 +79,7 @@ const OceanLatency: React.FC<props> = () => {
       report: queStr,
       carriers: carrArr,
       referenceType: refStr,
-    };  
+    };
 
     let data = {
       latencyList: [],
@@ -96,9 +96,8 @@ const OceanLatency: React.FC<props> = () => {
           dispatch(latencyListAction(data));
           setList(result.response);
           setLoad(true);
-        }
-        else {
-          throw { message: res.message }
+        } else {
+          throw { message: res.message };
         }
       })
       .catch((err) => {
@@ -134,8 +133,7 @@ const OceanLatency: React.FC<props> = () => {
           dispatch(defaultListAction(data));
           setList(result.response);
           setLoad(true);
-        }
-        else {
+        } else {
           throw { message: res.message };
         }
       })
@@ -143,7 +141,7 @@ const OceanLatency: React.FC<props> = () => {
         setMsgErr(err.message);
         data.hasError = true;
         data.errorMsg = err.message;
-        console.log(data)
+        console.log(data);
         dispatch(defaultListAction(data));
         setList([]);
         setLoad(true);
@@ -157,21 +155,15 @@ const OceanLatency: React.FC<props> = () => {
     return () => controller.abort();
   }, []);
 
+  // const handleChange = (value: any) => {
+  //   let newState = [];
 
-  const handleChange = (value: any) => {
+  //   for (let x in value) {
+  //     newState.push(value[x]);
+  //   }
 
-    let newState = [];
-
-    for (let x in value) {
-
-      newState.push(value[x])
-
-    }
-
-    setSelectState(newState);
-
-
-  }
+  //   setSelectState(newState);
+  // };
 
   return (
     <>
@@ -185,7 +177,7 @@ const OceanLatency: React.FC<props> = () => {
             onFinish={onFinish}
             size="middle"
             className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
-            initialValues={{ "queue": "normal" }}
+            initialValues={{ queue: "normal" }}
           >
             <Form.Item
               label={<p className="text-lg">Carrier</p>}
@@ -195,17 +187,30 @@ const OceanLatency: React.FC<props> = () => {
             >
               <Select
                 allowClear={true}
-                mode="multiple"
+                // mode="multiple"
+                // onChange={(value) => {
+                //   handleChange(value)
+                // }}
                 onChange={(value) => {
-                  handleChange(value)
+                  console.log(value);
+                  if (
+                    value === "hapag" ||
+                    value === "cma-cgm" ||
+                    value === "msc" ||
+                    value === "evergreen" ||
+                    value === "maersk"
+                  ) {
+                    setIsBulk("true");
+                  } else {
+                    setIsBulk("false");
+                  }
                 }}
-                placeholder="select carriers..."
-           
+                placeholder="select carrier..."
               >
                 {cList.length > 0 ? (
                   cList.map((item: any, index: any) => (
                     <Select.Option
-                      disabled={selectState.length === 5 && !selectState.includes(item.toLowerCase()) ? true : false}
+                      // disabled={selectState.length === 5 && !selectState.includes(item.toLowerCase()) ? true : false}
                       key={index}
                       value={`${item.toLowerCase()}`}
                     >
@@ -238,11 +243,18 @@ const OceanLatency: React.FC<props> = () => {
               label={<p className="text-lg">Reference</p>}
               name="refType"
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
+              rules={
+                isBulk === "true"
+                  ? [
+                      {
+                        required: true,
+                        message: "Please input reference type!",
+                      },
+                    ]
+                  : []
+              }
             >
-              <Select
-                placeholder="select reference type..."
-                allowClear={true}
-              >
+              <Select placeholder="select reference type..." allowClear={true}>
                 <Select.Option value="booking">Booking</Select.Option>
                 <Select.Option value="bol">BillOfLading</Select.Option>
                 <Select.Option value="container">Container</Select.Option>

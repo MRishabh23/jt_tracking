@@ -33,6 +33,7 @@ const ReferenceList: React.FC = () => {
   const cList = useSelector((state: any) => state.ocean.carrierList);
   const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const [isBulk, setIsBulk] = useState("false");
   const [form1] = Form.useForm();
   const [load, setLoad] = useState(false);
   const [count, setCount] = useState(0);
@@ -113,6 +114,7 @@ const ReferenceList: React.FC = () => {
   };
 
   const onFinish = async (values: any) => {
+    setMsgErr("");
     setOpen(false);
     form.resetFields();
     if (frame !== "filter") {
@@ -160,7 +162,6 @@ const ReferenceList: React.FC = () => {
           } else {
             throw { message: res.message };
           }
-          // setCount(res.data.response[0].count)
         })
         .catch((err) => {
           setMsgErr(err.message);
@@ -187,6 +188,7 @@ const ReferenceList: React.FC = () => {
   };
 
   const onFinishSearch = async (value: any) => {
+    setMsgErr("");
     form1.resetFields();
     const subId = value.SubscriptionId;
 
@@ -245,7 +247,7 @@ const ReferenceList: React.FC = () => {
       carriers: ["acl"],
       referenceType: "",
       timeCategory: "",
-      active: "yes",
+      active: "all",
       limit: 25,
       page: page,
     };
@@ -258,7 +260,7 @@ const ReferenceList: React.FC = () => {
         carriers: ["acl"],
         referenceType: "",
         timeCategory: "",
-        active: "yes",
+        active: "all",
         totalRecordCount: "true",
       };
       await oceanCalls(sendDataCount)
@@ -269,7 +271,6 @@ const ReferenceList: React.FC = () => {
           } else {
             throw { message: res.message };
           }
-          // setCount(res.data.response[0].count)
         })
         .catch((err) => {
           setMsgErr(err.message);
@@ -280,7 +281,6 @@ const ReferenceList: React.FC = () => {
 
     await oceanCalls(sendData)
       .then((res) => {
-        // console.log(res);
         const result = res.data;
         if (res.status === 200 && result.statusCode === "200") {
           const refList: any = referenceList(result.response);
@@ -298,7 +298,6 @@ const ReferenceList: React.FC = () => {
   };
 
   const onChange: PaginationProps["onChange"] = async (page) => {
-    // console.log(page);
     setPage(page);
   };
 
@@ -309,11 +308,10 @@ const ReferenceList: React.FC = () => {
     }
 
     if (myParam.size !== 0) {
-      // console.log("inside param if");
       const paramdata = {
         mode: "ocean",
         type: "referenceList",
-        report: "normal",
+        report: myParam.get("report"),
         carriers: [myParam.get("carrier")],
         referenceType: myParam.get("refType"),
         timeCategory: myParam.get("type"),
@@ -321,10 +319,7 @@ const ReferenceList: React.FC = () => {
         limit: 25,
         page: page,
       };
-      // console.log("param data last", paramdata);
-      // const {currentUser, ...updatedParamData } = paramdata;
-      // setParamData(data);
-      // console.log("param data", paramData);
+    
       setFrame("param");
       getParamList(paramdata);
     } else if (frame === "default") {
@@ -471,7 +466,20 @@ const ReferenceList: React.FC = () => {
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
             rules={[{ required: true, message: "Please input carrier!" }]}
           >
-            <Select allowClear={true} placeholder="select carrier...">
+            <Select
+              allowClear={true}
+              placeholder="select carrier..."
+              onChange={(value) => {
+                console.log(value);
+                if (value === "hapag" || value === "cma-cgm" || value === "msc" || value === "evergreen" || value === "maersk") {
+                  setIsBulk("true")
+                }
+                else {
+                  setIsBulk("false");
+                }
+              }
+              }
+            >
               {cList.length > 0 ? (
                 cList.map((item: any, index: any) => (
                   <Select.Option key={index} value={`${item.toLowerCase()}`}>
@@ -491,6 +499,7 @@ const ReferenceList: React.FC = () => {
             label={<p className="text-lg">Reference</p>}
             name="refType"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
+            rules={isBulk === "true" ? [{ required: true, message: "Please input reference type!" }] : []}
           >
             <Select placeholder="select reference type..." allowClear={true}>
               <Select.Option value="BOOKING_NUMBER">Booking</Select.Option>
@@ -515,7 +524,7 @@ const ReferenceList: React.FC = () => {
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
             <Select placeholder="select crawl queue type..." allowClear={true}>
-              <Select.Option value="normal">Regular</Select.Option>
+              <Select.Option value="normal">Normal</Select.Option>
               <Select.Option value="adaptive">Adaptive</Select.Option>
               <Select.Option value="notFound">Not found</Select.Option>
             </Select>

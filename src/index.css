@@ -8,7 +8,7 @@ html, body{
     /* border: 1px solid red; */
     height: 0px;
     background: #fafaf9;
-    user-select: none;
+    /* user-select: none; */
 }
 
 #root{
@@ -17,6 +17,14 @@ html, body{
 
 :where(.css-dev-only-do-not-override-byeoj0).ant-btn-primary {
     color: #fff;
-    background-color: #1677ff;
+    background-color: #1677ff !important;
     box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+}
+
+:where(.css-byeoj0).ant-btn-primary {
+
+    color: #fff;
+    background-color: #1677ff !important;
+    box-shadow:  0 2px 0 rgba(5, 145, 255, 0.1);
+
 }

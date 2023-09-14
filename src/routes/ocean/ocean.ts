@@ -7,7 +7,7 @@ export const listCreation = (latencyList: any) => {
         return -1;
       }
       if (nameA > nameB) {
-        return 1;
+        return 1; 
       }
       return 0;
     })
@@ -43,6 +43,7 @@ export const listCreation = (latencyList: any) => {
       return {
         key: index,
         carrier: item.carrier,
+        queue: item.queue,
         refType:item.refType,
         total: totalCount,
         zeroToOne:

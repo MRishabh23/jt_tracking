@@ -97,7 +97,7 @@ const ShipmentDashboard: React.FC<props> = ({ referenceList}) => {
       align: "center",
     },
     {
-      title: "Last Updated At",
+      title: "Updated At",
       dataIndex: "updatedAt",
       key: "updatedAt",
       align: "center",
