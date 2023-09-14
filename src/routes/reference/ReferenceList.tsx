@@ -199,6 +199,7 @@ const ReferenceList: React.FC = () => {
     };
     setIsModalOpen(false);
     setLoad(false);
+    setFrame("search");
     setPage(1);
     setCount(0);
     await oceanCalls(sendData)
@@ -208,7 +209,6 @@ const ReferenceList: React.FC = () => {
           const refList: any = referenceList(result.response);
           setList(refList);
           setLoad(true);
-          setFrame("search");
         } else {
           throw { message: res.message };
         }
