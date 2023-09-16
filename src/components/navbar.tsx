@@ -14,7 +14,7 @@ const Navbar: React.FC<props> = () => {
   const hasAuth = useSelector((state: any) => state.auth.hasAuth);
   const user = useSelector((state: any) => state.auth.user);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleSignOut = () => {
@@ -26,10 +26,12 @@ const Navbar: React.FC<props> = () => {
   const handleDrawer = () => {
     setOpen(!open);
   };
-  
+
   useEffect(() => {
     let ignore = false;
-    dispatch(loginAction());
+    if (!ignore) {
+      dispatch(loginAction());
+    }
     return () => {
       ignore = true;
     };
