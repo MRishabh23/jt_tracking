@@ -1,58 +1,43 @@
-import { listCreation } from "../../routes/ocean/ocean";
 import {
   CARRIER_LIST,
-  DEFAULT_LIST,
   LATENCY_LIST,
 } from "../actions/ocean.action";
 
 const initialState = {
   carrierList: [],
-  hasError: false,
-  errorMsg: "",
-  defaultList: [],
-  latencyList: [],
+  error: ""
 };
 
 const oceanReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case CARRIER_LIST:
-      const cList = action.carrierList;
-      const cError = action.hasError;
-      const cErrorMsg = action.errorMsg;
-      if (cList !== undefined && cList.length > 0) {
+      const cList = action.obj.carrList;
+      const cError = action.obj.error;
+      if(cError !== undefined && cError !== ""){
+        return {
+          ...state,
+          error: cError,
+          carrierList: []
+        };
+      }else if (cList !== undefined && cList.length > 0) {
         return {
           ...state,
           carrierList: cList,
-          hasError: cError,
-          errorMsg: cErrorMsg,
-        };
-      }
-      return state;
-    case DEFAULT_LIST:
-      const dList = action.defaultList;
-      const dError = action.hasError;
-      const dErrorMsg = action.errorMsg;
-      if (dList !== undefined && dList.length > 0) {
-        const getL = listCreation(dList);
-        return {
-          ...state,
-          defaultList: getL,
-          hasError: dError,
-          errorMsg: dErrorMsg,
+          error: ""
         };
       }
       return state;
     case LATENCY_LIST:
-      const lList = action.latencyList;
-      const lError = action.hasError;
-      const lErrorMsg = action.errorMsg;
-      if (lList !== undefined && lList.length > 0) {
-        const getL = listCreation(lList);
+      const lError = action.obj.error;
+      if(lError !== undefined && lError !== ""){
         return {
           ...state,
-          latencyList: getL,
-          hasError: lError,
-          errorMsg: lErrorMsg,
+          error: lError
+        };
+      }else{
+        return {
+          ...state,
+          error: ""
         };
       }
       return state;

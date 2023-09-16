@@ -86,7 +86,8 @@ const ReferenceList: React.FC = () => {
 
   const carrierFunction = async () => {
     const sendData = {
-      list: "carrierList",
+      type: "CARRIER_LIST",
+      mode: "OCEAN"
     };
 
     const data = {
