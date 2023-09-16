@@ -15,8 +15,8 @@ export async function oceanCalls(data: object) {
       "Content-Type": "application/json",
     },
     auth: {
-      username: import.meta.env.VITE_REST_PROD_USERNAME,
-      password: import.meta.env.VITE_REST_PROD_PASSWORD,
+      username: import.meta.env.VITE_REST_DEV_USERNAME,
+      password: import.meta.env.VITE_REST_DEV_PASSWORD,
     },
     data: newData,
   })
