@@ -46,20 +46,25 @@ const App: React.FC<props> = () => {
         <main className="flex-1 p-4 overflow-auto">
           <Routes>
             <Route path="/" element={<MainPage />} />
-            <Route path="/air">
-              <Route index element={<AirDashboard />} />
-              <Route path="latency" element={<AirLatency />} />
-            </Route>
-            <Route path="/ocean">
-              <Route index element={<OceanDashboard />} />
-              <Route path="latency" element={<OceanLatency />} />
-            </Route>
-            <Route path="/reference">
-              <Route index element={<ReferenceDashboard />} />
-              <Route path="list" element={<ReferenceList />} />
-              <Route path="history" element={<ReferenceHistory />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" />} />
+            {hasAuth === true ? (
+              <>
+                <Route path="/air">
+                  <Route index element={<AirDashboard />} />
+                  <Route path="latency" element={<AirLatency />} />
+                </Route>
+                <Route path="/ocean">
+                  <Route index element={<OceanDashboard />} />
+                  <Route path="latency" element={<OceanLatency />} />
+                </Route>
+                <Route path="/reference">
+                  <Route index element={<ReferenceDashboard />} />
+                  <Route path="list" element={<ReferenceList />} />
+                  <Route path="history" element={<ReferenceHistory />} />
+                </Route>
+              </>
+            ) : (
+              <Route path="*" element={<Navigate to="/" />} />
+            )}
           </Routes>
         </main>
         <Footer />
