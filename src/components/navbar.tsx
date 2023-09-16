@@ -10,36 +10,30 @@ import { logoutAction, loginAction } from "../store/actions/auth.action";
 interface props {}
 
 const Navbar: React.FC<props> = () => {
-  const [user, setUser] = useState("");
   const [open, setOpen] = useState(false);
   const hasAuth = useSelector((state: any) => state.auth.hasAuth);
+  const user = useSelector((state: any) => state.auth.user);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const dispatch = useDispatch();
 
   const handleSignOut = () => {
     localStorage.removeItem("Username");
-    setUser("");
     dispatch(logoutAction());
     navigate("/");
-    window.location.reload();
   };
 
   const handleDrawer = () => {
     setOpen(!open);
   };
+  
   useEffect(() => {
-    const controller = new AbortController();
-    const user: any = localStorage.getItem("Username");
-    if (user !== null && user !== undefined && user !== "") {
-      setUser(user);
-      dispatch(loginAction());
-    } else {
-      dispatch(logoutAction());
-      navigate("/");
-    }
-    return () => controller.abort();
-  }, [hasAuth, user]);
+    let ignore = false;
+    dispatch(loginAction());
+    return () => {
+      ignore = true;
+    };
+  }, [user, hasAuth]);
 
   const SampleDrawer = () => {
     const [air, setAir] = useState(false);

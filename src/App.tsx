@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Landing from "./routes/main/landing";
 import AirDashboard from "./routes/air/AirDashboard";
@@ -11,30 +11,17 @@ import ReferenceHistory from "./routes/reference/ReferenceHistory";
 import Login from "./routes/auth/login";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
-import { useDispatch, useSelector } from "react-redux";
-import { loginAction, logoutAction } from "./store/actions/auth.action";
+import { useSelector } from "react-redux";
 
 interface props {}
 
 const App: React.FC<props> = () => {
   const hasAuth = useSelector((state: any) => state.auth.hasAuth);
-  const dispatch = useDispatch();
   window.addEventListener("storage", (e) => {
     if (e.key === "Username" && e.oldValue && !e.newValue) {
-      dispatch(logoutAction());
       window.location.reload();
     }
   });
-  useEffect(() => {
-    const controller = new AbortController();
-    const user: any = localStorage.getItem("Username");
-    if (user !== null && user !== undefined && user !== "") {
-      dispatch(loginAction());
-    } else {
-      dispatch(logoutAction());
-    }
-    return () => controller.abort();
-  }, [hasAuth]);
 
   const MainPage = () => {
     if (hasAuth === true) {

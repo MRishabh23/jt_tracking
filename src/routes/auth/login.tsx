@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { Form, Input, message } from "antd";
-import { loginCall } from "../../api/auth";
+import { Form, Input } from "antd";
+import { useLogin } from "../../api/auth";
 import { VscLoading } from "react-icons/vsc";
-import { useDispatch } from "react-redux";
-import { loginAction } from "../../store/actions/auth.action";
 
 interface props {}
 
@@ -13,47 +11,18 @@ type FieldType = {
 };
 
 const Login: React.FC<props> = () => {
-  const [messageApi, contextHolder] = message.useMessage();
 
-  const [btnLoad, setBtnLoad] = useState(false);
-  const dispatch = useDispatch();
-  const msg = (type: any, content: string) => {
-    messageApi.open({
-      type: type,
-      content: content,
-    });
-  };
+  const [authData, setAuthData] = useState({username: "", password: ""});
 
   const onFinish = async (values: any) => {
-    setBtnLoad(true);
     const sendData = {
       username: values.username,
       password: values.password,
     };
-    await loginCall(sendData)
-      .then((res) => {
-        const result = res.data;
-        if (result.statusCode === "200") {
-          if (result.response.attempt === "failed") {
-            throw { message: result.response.data };
-          } else {
-            msg("success", "Login Successful!!");
-            localStorage.setItem("Username", result.response.data);
-            setTimeout(() => {
-              dispatch(loginAction());
-            }, 1000);
-          }
-        } else {
-          throw { message: result.response.data };
-        }
-        setBtnLoad(false);
-      })
-      .catch((err) => {
-        //console.log(err)
-        msg("error", err.message);
-        setBtnLoad(false);
-      });
+    setAuthData(sendData);
   };
+
+  const {contextHolder, loading} = useLogin(authData);
 
   return (
     <>
@@ -97,7 +66,7 @@ const Login: React.FC<props> = () => {
                 >
                   <VscLoading
                     className={`mr-2 animate-spin ${
-                      btnLoad ? "block" : "hidden"
+                      loading ? "block" : "hidden"
                     }`}
                   />{" "}
                   Sign In

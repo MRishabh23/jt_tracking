@@ -1,14 +1,9 @@
 import React from "react";
-import { Table, Tag } from "antd";
+import { Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
-import { listCreation } from "../routes/ocean/ocean";
 
-interface props {
-  latencyList: any;
-}
-
-interface DataType {
+export interface LatencyDataType {
   key: React.Key;
   carrier: string;
   queue: string;
@@ -25,23 +20,93 @@ interface DataType {
   fourtyEightAbove: number;
 }
 
-const Report: React.FC<props> = ({ latencyList }) => {
-  const colors = ["geekblue", "green", "volcano"];
-  let color: any;
+export const listCreation = (latencyList: any) => {
+  const list = latencyList
+    .sort(function (a: any, b: any) {
+      const nameA = a.carrier.toUpperCase(); // ignore upper and lowercase
+      const nameB = b.carrier.toUpperCase(); // ignore upper and lowercase
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    })
+    .map((item: any, index: number) => {
+      let totalCount: number = 0;
+      if (item.first !== null && item.first !== undefined) {
+        totalCount += +item.first;
+      }
+      if (item.second !== null && item.second !== undefined) {
+        totalCount += +item.second;
+      }
+      if (item.third !== null && item.third !== undefined) {
+        totalCount += +item.third;
+      }
+      if (item.fourth !== null && item.fourth !== undefined) {
+        totalCount += +item.fourth;
+      }
+      if (item.fifth !== null && item.fifth !== undefined) {
+        totalCount += +item.fifth;
+      }
+      if (item.sixth !== null && item.sixth !== undefined) {
+        totalCount += +item.sixth;
+      }
+      if (item.seventh !== null && item.seventh !== undefined) {
+        totalCount += +item.seventh;
+      }
+      if (item.eight !== null && item.eight !== undefined) {
+        totalCount += +item.eight;
+      }
+      if (item.ninth !== null && item.ninth !== undefined) {
+        totalCount += +item.ninth;
+      }
+      return {
+        key: index,
+        carrier: item.carrier,
+        queue: item.queue,
+        refType: item.refType,
+        total: totalCount,
+        zeroToOne:
+          item.first !== null && item.first !== undefined ? +item.first : 0,
+        oneToTwo:
+          item.second !== null && item.second !== undefined ? +item.second : 0,
+        twoToFour:
+          item.third !== null && item.third !== undefined ? +item.third : 0,
+        fourToEight:
+          item.fourth !== null && item.fourth !== undefined ? +item.fourth : 0,
+        eightToTwelve:
+          item.fifth !== null && item.fifth !== undefined ? +item.fifth : 0,
+        twelveToSixteen:
+          item.sixth !== null && item.sixth !== undefined ? +item.sixth : 0,
+        sixteenToTwentyFour:
+          item.seventh !== null && item.seventh !== undefined
+            ? +item.seventh
+            : 0,
+        twentyFourToFourtyEight:
+          item.eight !== null && item.eight !== undefined ? +item.eight : 0,
+        fourtyEightAbove:
+          item.ninth !== null && item.ninth !== undefined ? +item.ninth : 0,
+      };
+    });
 
-  const mainList = listCreation(latencyList)
-  console.log(mainList);
+  return list;
+};
 
-  let carrierL = mainList.map((item: any)=> {
-      return item.carrier
-  })
+const colors = ["geekblue", "green", "volcano"];
+let color: any;
+
+export const getLatencyColumns = (mainList: any) => {
+  let carrierL = mainList.map((item: any) => {
+    return item.carrier;
+  });
   function removeDuplicates(carrierL: []) {
     return [...new Set(carrierL)];
   }
   carrierL = removeDuplicates(carrierL);
 
-
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<LatencyDataType> = [
     {
       title: "Carrier",
       dataIndex: "carrier",
@@ -112,17 +177,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "Total",
       dataIndex: "total",
       key: "total",
-      render: (text, record: any) => (
-        record.total>0 ? <Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=total&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>  : 0
-      ),
+      render: (text, record: any) =>
+        record.total > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=total&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.total - b.total,
       width: 75,
       align: "center",
@@ -131,17 +199,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "0_1",
       dataIndex: "zeroToOne",
       key: "zeroToOne",
-      render: (text, record: any) => (
-        record.zeroToOne > 0 ?<Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=first&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>:0
-      ),
+      render: (text, record: any) =>
+        record.zeroToOne > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=first&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.zeroToOne - b.zeroToOne,
       width: 75,
       align: "center",
@@ -150,17 +221,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "1_2",
       dataIndex: "oneToTwo",
       key: "oneToTwo",
-      render: (text, record: any) => (
-        record.oneToTwo > 0 ? <Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=second&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>: 0
-      ),
+      render: (text, record: any) =>
+        record.oneToTwo > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=second&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.oneToTwo - b.oneToTwo,
       width: 75,
       align: "center",
@@ -169,17 +243,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "2_4",
       dataIndex: "twoToFour",
       key: "twoToFour",
-      render: (text, record: any) => (
-        record.twoToFour > 0 ? <Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=third&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>:0
-      ),
+      render: (text, record: any) =>
+        record.twoToFour > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=third&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.twoToFour - b.twoToFour,
       width: 75,
       align: "center",
@@ -188,17 +265,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "4_8",
       dataIndex: "fourToEight",
       key: "fourToEight",
-      render: (text, record: any) => (
-        record.fourToEight > 0 ? <Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=fourth&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>: 0
-      ),
+      render: (text, record: any) =>
+        record.fourToEight > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=fourth&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.fourToEight - b.fourToEight,
       width: 75,
       align: "center",
@@ -207,17 +287,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "8_12",
       dataIndex: "eightToTwelve",
       key: "eightToTwelve",
-      render: (text, record: any) => (
-        record.eightToTwelve > 0 ? <Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=fifth&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>: 0
-      ),
+      render: (text, record: any) =>
+        record.eightToTwelve > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=fifth&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.eightToTwelve - b.eightToTwelve,
       width: 75,
       align: "center",
@@ -226,17 +309,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "12_16",
       dataIndex: "twelveToSixteen",
       key: "twelveToSixteen",
-      render: (text, record: any) => (
-        record.twelveToSixteen > 0 ?<Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=sixth&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>: 0
-      ),
+      render: (text, record: any) =>
+        record.twelveToSixteen > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=sixth&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.twelveToSixteen - b.twelveToSixteen,
       width: 75,
       align: "center",
@@ -245,17 +331,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "16_24",
       dataIndex: "sixteenToTwentyFour",
       key: "sixteenToTwentyFour",
-      render: (text, record: any) => (
-        record.sixteenToTwentyFour > 0 ? <Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=seventh&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>: 0
-      ),
+      render: (text, record: any) =>
+        record.sixteenToTwentyFour > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=seventh&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.sixteenToTwentyFour - b.sixteenToTwentyFour,
       width: 75,
       align: "center",
@@ -264,17 +353,20 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: "24_48",
       dataIndex: "twentyFourToFourtyEight",
       key: "twentyFourToFourtyEight",
-      render: (text, record: any) => (
-        record.twentyFourToFourtyEight > 0 ?<Link
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=eight&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link>: 0
-      ),
+      render: (text, record: any) =>
+        record.twentyFourToFourtyEight > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=eight&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.twentyFourToFourtyEight - b.twentyFourToFourtyEight,
       width: 75,
       align: "center",
@@ -283,45 +375,25 @@ const Report: React.FC<props> = ({ latencyList }) => {
       title: ">48",
       dataIndex: "fourtyEightAbove",
       key: "fourtyEightAbove",
-      render: (text, record: any) => (
-       record.fourtyEightAbove > 0 ? <Link  
-          to={{
-            pathname: "/reference/list",
-            search: `?carrier=${record.carrier}&refType=${record.refType}&type=ninth&report=${record.queue}`,
-          }}
-          target="_blank"
-        >
-          {text}
-        </Link> : 0
-      ),
+      render: (text, record: any) =>
+        record.fourtyEightAbove > 0 ? (
+          <Link
+            to={{
+              pathname: "/reference/list",
+              search: `?carrier=${record.carrier}&refType=${record.refType}&type=ninth&report=${record.queue}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
+        ) : (
+          0
+        ),
       sorter: (a, b) => a.fourtyEightAbove - b.fourtyEightAbove,
       width: 75,
       align: "center",
     },
   ];
 
-  
-  
-  const data2: DataType[] =
-    latencyList === null || mainList.length === 0
-      ? [
-          
-        ]
-      : mainList
-
-  
-          
-
-  return (
-    <div className="p-4 bg-gray-200 rounded-md">
-      <Table
-        columns={columns}
-        dataSource={data2}
-        pagination={{ pageSize: 24, disabled: true, hideOnSinglePage: true }}
-        scroll={{ x: "1100px", y: "675px" }}
-      />
-    </div>
-  );
+  return columns;
 };
-
-export default React.memo(Report);
