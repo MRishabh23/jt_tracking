@@ -1,62 +1,61 @@
-import { listCreation } from "../../routes/ocean/ocean";
 import {
   CARRIER_LIST,
-  DEFAULT_LIST,
   LATENCY_LIST,
+  REFERENCE_LIST,
 } from "../actions/ocean.action";
 
 const initialState = {
   carrierList: [],
-  hasError: false,
-  errorMsg: "",
-  defaultList: [],
-  latencyList: [],
+  cError: "",
+  lError: "",
+  rError: "",
 };
 
 const oceanReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case CARRIER_LIST:
-      const cList = action.carrierList;
-      const cError = action.hasError;
-      const cErrorMsg = action.errorMsg;
-      if (cList !== undefined && cList.length > 0) {
+      const cList = action.obj.carrList;
+      const cError = action.obj.error;
+      if (cError !== undefined && cError !== "") {
+        return {
+          ...state,
+          cError: cError,
+          carrierList: [],
+        };
+      } else if (cList !== undefined && cList.length > 0) {
         return {
           ...state,
           carrierList: cList,
-          hasError: cError,
-          errorMsg: cErrorMsg,
-        };
-      }
-      return state;
-    case DEFAULT_LIST:
-      const dList = action.defaultList;
-      const dError = action.hasError;
-      const dErrorMsg = action.errorMsg;
-      if (dList !== undefined && dList.length > 0) {
-        const getL = listCreation(dList);
-        return {
-          ...state,
-          defaultList: getL,
-          hasError: dError,
-          errorMsg: dErrorMsg,
+          cError: "",
         };
       }
       return state;
     case LATENCY_LIST:
-      const lList = action.latencyList;
-      const lError = action.hasError;
-      const lErrorMsg = action.errorMsg;
-      if (lList !== undefined && lList.length > 0) {
-        const getL = listCreation(lList);
+      const lError = action.obj.error;
+      if (lError !== undefined && lError !== "") {
         return {
           ...state,
-          latencyList: getL,
-          hasError: lError,
-          errorMsg: lErrorMsg,
+          lError: lError,
+        };
+      } else {
+        return {
+          ...state,
+          lError: "",
         };
       }
-      return state;
-
+    case REFERENCE_LIST:
+      const rError = action.obj.error;
+      if (rError !== undefined && rError !== "") {
+        return {
+          ...state,
+          rError: rError,
+        };
+      } else {
+        return {
+          ...state,
+          rError: "",
+        };
+      }
     default:
       return state;
   }

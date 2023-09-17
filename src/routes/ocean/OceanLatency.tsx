@@ -1,174 +1,92 @@
 import React, { useEffect, useState } from "react";
-import { Form, Select, Spin } from "antd";
-import Report from "../../components/report";
-import { useDispatch, useSelector } from "react-redux";
+import { Form, Select, Spin, Table } from "antd";
 import {
-  carrierListAction,
-  defaultListAction,
-  latencyListAction,
-} from "../../store/actions/ocean.action";
-import { oceanCalls } from "../../api/oceanApi";
+  DataType,
+  getLatencyColumns,
+  latencyCreation,
+} from "../../components/report";
+import { OceanProp, useCarrierList, useLatencyList } from "../../api/oceanApi";
+import { useDispatch, useSelector } from "react-redux";
+import { latencyListAction } from "../../store/actions/ocean.action";
+import { useCheckAuth } from "../../api/auth";
 
 interface props {}
 
 const OceanLatency: React.FC<props> = () => {
+  useCheckAuth();
   // const [selectState, setSelectState] = useState<String[]>([]);
   const [isBulk, setIsBulk] = useState("false");
-  const [msgErr, setMsgErr] = useState("");
-  const [load, setLoad] = useState(false);
-  const cList = useSelector((state: any) => state.ocean.carrierList);
-  // const hasError = useSelector((state: any) => state.ocean.hasError);
-  // const errorMsg = useSelector((state: any) => state.ocean.errorMsg);
+  const gError = useSelector((state: any) => state.ocean.lError);
+  const [carrData, setCarrData] = useState<OceanProp>({
+    type: "LATENCY",
+    mode: "OCEAN",
+    report: "NORMAL",
+    carriers: [],
+    referenceType: "",
+  });
+  const { carrierList } = useCarrierList();
+  const { list, loading } = useLatencyList(carrData);
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const [list, setList] = useState([]);
 
-  const reload = () => {
-    window.location.reload();
-  };
+  const bulkCarriers = ["hapag", "cma-cgm", "maersk", "msc", "evergreen"];
 
-  const carrierFunction = async () => {
-    const sendData = {
-      list: "carrierList",
-    };
-
-    const data = {
-      carrierList: [],
-      hasError: false,
-      errorMsg: "",
-    };
-
-    await oceanCalls(sendData)
-      .then((res) => {
-        const result = res.data;
-        if (result.statusCode === "200") {
-          data.carrierList = result.response.sort();
-          dispatch(carrierListAction(data));
-        } else {
-          throw { message: result.response };
-        }
-      })
-      .catch((err) => {
-        data.hasError = true;
-        data.errorMsg = err.message;
-        dispatch(carrierListAction(data));
-      });
-  };
-
-  const onFinish = async (values: any) => {
-    setMsgErr("");
-    // const carrArr = values.carrier.length > 0 ? values.carrier : [];
+  const onFinish = (values: any) => {
+    dispatch(latencyListAction({ error: "" }));
     const carrArr = [values.carrier];
     const queStr =
-      values.queue === undefined
-        ? "normal"
-        : values.queue !== undefined && values.queue !== ""
+      values.queue !== undefined && values.queue !== null && values.queue !== ""
         ? values.queue
-        : "normal";
+        : "NORMAL";
     const refStr =
-      values.refType === "booking"
-        ? "BOOKING_NUMBER"
-        : values.refType === "container"
-        ? "CONTAINER_NUMBER"
-        : values.refType === "bol"
-        ? "BILL_OF_LADING"
+      values.refType !== undefined &&
+      values.refType !== null &&
+      values.refType !== ""
+        ? values.refType
         : "";
 
     const sendData = {
-      type: "latency",
-      mode: "ocean",
+      type: "LATENCY",
+      mode: "OCEAN",
       report: queStr,
       carriers: carrArr,
       referenceType: refStr,
     };
-
-    let data = {
-      latencyList: [],
-      hasError: false,
-      errorMsg: "",
-    };
-
-    setLoad(false);
-    await oceanCalls(sendData)
-      .then((res) => {
-        const result = res.data;
-        if (res.status === 200 && result.statusCode === "200") {
-          data.latencyList = result.response;
-          dispatch(latencyListAction(data));
-          setList(result.response);
-          setLoad(true);
-        } else {
-          throw { message: res.message };
-        }
-      })
-      .catch((err) => {
-        setMsgErr(err.message);
-        data.hasError = true;
-        data.errorMsg = err.message;
-        dispatch(latencyListAction(data));
-        setList([]);
-        setLoad(true);
-      });
+    setCarrData(sendData);
   };
 
-  const getList = async () => {
-    const sendData = {
-      type: "latency",
-      mode: "ocean",
-      report: "normal",
-      carriers: [],
-      referenceType: "",
-    };
+  const mainList = latencyCreation(list);
+  const getLatCol = getLatencyColumns(mainList);
 
-    let data = {
-      defaultList: [],
-      hasError: false,
-      errorMsg: "",
-    };
-    setLoad(false);
-    await oceanCalls(sendData)
-      .then((res) => {
-        if (res.status === 200 && res.data.statusCode === "200") {
-          const result = res.data;
-          data.defaultList = result.response;
-          dispatch(defaultListAction(data));
-          setList(result.response);
-          setLoad(true);
-        } else {
-          throw { message: res.message };
-        }
-      })
-      .catch((err) => {
-        setMsgErr(err.message);
-        data.hasError = true;
-        data.errorMsg = err.message;
-        console.log(data);
-        dispatch(defaultListAction(data));
-        setList([]);
-        setLoad(true);
-      });
-  };
-
-  useEffect(() => {
-    const controller = new AbortController();
-    getList();
-    carrierFunction();
-    return () => controller.abort();
-  }, []);
+  const data2: DataType[] =
+    list === null || mainList.length === 0 ? [] : mainList;
 
   // const handleChange = (value: any) => {
   //   let newState = [];
-
   //   for (let x in value) {
   //     newState.push(value[x]);
   //   }
-
   //   setSelectState(newState);
   // };
+
+  useEffect(() => {
+    let ignore = false;
+    if (!ignore) {
+      if (gError !== "") {
+        setError(gError);
+      } else {
+        setError("");
+      }
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [gError]);
 
   return (
     <>
       <div className="w-full p-3">
-        <div className="flex items-center justify-center font-semibold pt-2">
+        <div className="flex items-center justify-center pt-2 font-semibold">
           <h3 className="text-3xl">Latency Report</h3>
         </div>
         <div className="p-3 mt-8 bg-gray-200 rounded-md lg:mt-12">
@@ -177,7 +95,7 @@ const OceanLatency: React.FC<props> = () => {
             onFinish={onFinish}
             size="middle"
             className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
-            initialValues={{ queue: "normal" }}
+            initialValues={{ queue: "NORMAL" }}
           >
             <Form.Item
               label={<p className="text-lg">Carrier</p>}
@@ -192,14 +110,7 @@ const OceanLatency: React.FC<props> = () => {
                 //   handleChange(value)
                 // }}
                 onChange={(value) => {
-                  console.log(value);
-                  if (
-                    value === "hapag" ||
-                    value === "cma-cgm" ||
-                    value === "msc" ||
-                    value === "evergreen" ||
-                    value === "maersk"
-                  ) {
+                  if (bulkCarriers.includes(value)) {
                     setIsBulk("true");
                   } else {
                     setIsBulk("false");
@@ -207,8 +118,8 @@ const OceanLatency: React.FC<props> = () => {
                 }}
                 placeholder="select carrier..."
               >
-                {cList.length > 0 ? (
-                  cList.map((item: any, index: any) => (
+                {carrierList.length > 0 ? (
+                  carrierList.map((item: any, index: any) => (
                     <Select.Option
                       // disabled={selectState.length === 5 && !selectState.includes(item.toLowerCase()) ? true : false}
                       key={index}
@@ -233,8 +144,8 @@ const OceanLatency: React.FC<props> = () => {
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
             >
               <Select placeholder="select a queue..." allowClear={true}>
-                <Select.Option value="normal">Normal</Select.Option>
-                <Select.Option value="adaptive">Adaptive</Select.Option>
+                <Select.Option value="NORMAL">Normal</Select.Option>
+                <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
                 {/* <Select.Option value="rnf">Reference Not Found</Select.Option> */}
               </Select>
             </Form.Item>
@@ -255,9 +166,13 @@ const OceanLatency: React.FC<props> = () => {
               }
             >
               <Select placeholder="select reference type..." allowClear={true}>
-                <Select.Option value="booking">Booking</Select.Option>
-                <Select.Option value="bol">BillOfLading</Select.Option>
-                <Select.Option value="container">Container</Select.Option>
+                <Select.Option value="BOOKING_NUMBER">Booking</Select.Option>
+                <Select.Option value="BILL_OF_LADING">
+                  BillOfLading
+                </Select.Option>
+                <Select.Option value="CONTAINER_NUMBER">
+                  Container
+                </Select.Option>
               </Select>
             </Form.Item>
 
@@ -271,7 +186,7 @@ const OceanLatency: React.FC<props> = () => {
             </Form.Item>
             <Form.Item>
               <button
-                onClick={() => reload()}
+                onClick={() => window.location.reload()}
                 className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
               >
                 Reset Default
@@ -279,25 +194,35 @@ const OceanLatency: React.FC<props> = () => {
             </Form.Item>
           </Form>
         </div>
-        {msgErr !== "" ? (
-          <div className="flex items-center justify-center h-full text-2xl font-medium bg-red-100 rounded-md mt-5 py-3">
-            {msgErr.includes("timeout") ? "Request Timeout" : msgErr}
+        {error !== "" ? (
+          <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
+            {error.includes("timeout") ? "Request Timeout" : error}
           </div>
         ) : (
           <div className="mt-7">
-            {load ? (
-              <Report latencyList={list} />
-            ) : (
-              <div className="flex items-center justify-center">
-                <Spin tip="Loading..." size="large">
-                  <div className="p-12 bg-stone-100 rounded-[4px]" />
-                </Spin>
-              </div>
-            )}
+            <div className="p-4 bg-gray-200 rounded-md">
+              {loading ? (
+                <Table
+                  columns={getLatCol}
+                  dataSource={data2}
+                  pagination={{
+                    pageSize: 24,
+                    disabled: true,
+                    hideOnSinglePage: true,
+                  }}
+                  scroll={{ x: "1100px", y: "675px" }}
+                />
+              ) : (
+                <div className="flex items-center justify-center">
+                  <Spin tip="Loading..." size="large">
+                    <div className="p-12 bg-stone-100 rounded-[4px]" />
+                  </Spin>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
-      {/* )} */}
     </>
   );
 };
