@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginAction } from "../store/actions/auth.action";
 import { message } from "antd";
+import { useNavigate } from "react-router-dom";
 
 interface LoginProp {
   username: string;
@@ -80,3 +81,19 @@ export const useLogin = (data: LoginProp) => {
 
   return {contextHolder, loading}
 };
+
+export const useCheckAuth = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    let ignore = false;
+    const user = localStorage.getItem("Username");
+    if (!ignore) {
+      if (user === undefined || user === null || user === "") {
+        navigate("/");
+      }
+    }
+    return () => {
+      ignore = true;
+    };
+  }, []);
+}

@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useCheckAuth } from "../../api/auth";
 
 const OceanDashboard: React.FC = () => {
+  useCheckAuth();
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full p-3">

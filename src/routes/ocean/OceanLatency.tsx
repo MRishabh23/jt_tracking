@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Form, Select, Spin, Table } from "antd";
-import { LatencyDataType, getLatencyColumns, listCreation } from "../../components/report";
+import {
+  DataType,
+  getLatencyColumns,
+  latencyCreation,
+} from "../../components/report";
 import { OceanProp, useCarrierList, useLatencyList } from "../../api/oceanApi";
 import { useDispatch, useSelector } from "react-redux";
 import { latencyListAction } from "../../store/actions/ocean.action";
+import { useCheckAuth } from "../../api/auth";
 
 interface props {}
 
 const OceanLatency: React.FC<props> = () => {
+  useCheckAuth();
   // const [selectState, setSelectState] = useState<String[]>([]);
   const [isBulk, setIsBulk] = useState("false");
-  const gError = useSelector((state: any) => state.ocean.error);
+  const gError = useSelector((state: any) => state.ocean.lError);
   const [carrData, setCarrData] = useState<OceanProp>({
     type: "LATENCY",
     mode: "OCEAN",
@@ -25,7 +31,7 @@ const OceanLatency: React.FC<props> = () => {
 
   const bulkCarriers = ["hapag", "cma-cgm", "maersk", "msc", "evergreen"];
 
-  const onFinish = async (values: any) => {
+  const onFinish = (values: any) => {
     dispatch(latencyListAction({ error: "" }));
     const carrArr = [values.carrier];
     const queStr =
@@ -49,10 +55,10 @@ const OceanLatency: React.FC<props> = () => {
     setCarrData(sendData);
   };
 
-  const mainList = listCreation(list);
+  const mainList = latencyCreation(list);
   const getLatCol = getLatencyColumns(mainList);
 
-  const data2: LatencyDataType[] =
+  const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
 
   // const handleChange = (value: any) => {
@@ -194,24 +200,26 @@ const OceanLatency: React.FC<props> = () => {
           </div>
         ) : (
           <div className="mt-7">
-            {loading ? (
-              <Table
-                columns={getLatCol}
-                dataSource={data2}
-                pagination={{
-                  pageSize: 24,
-                  disabled: true,
-                  hideOnSinglePage: true,
-                }}
-                scroll={{ x: "1100px", y: "675px" }}
-              />
-            ) : (
-              <div className="flex items-center justify-center">
-                <Spin tip="Loading..." size="large">
-                  <div className="p-12 bg-stone-100 rounded-[4px]" />
-                </Spin>
-              </div>
-            )}
+            <div className="p-4 bg-gray-200 rounded-md">
+              {loading ? (
+                <Table
+                  columns={getLatCol}
+                  dataSource={data2}
+                  pagination={{
+                    pageSize: 24,
+                    disabled: true,
+                    hideOnSinglePage: true,
+                  }}
+                  scroll={{ x: "1100px", y: "675px" }}
+                />
+              ) : (
+                <div className="flex items-center justify-center">
+                  <Spin tip="Loading..." size="large">
+                    <div className="p-12 bg-stone-100 rounded-[4px]" />
+                  </Spin>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

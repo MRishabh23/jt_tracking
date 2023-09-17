@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { carrierListAction, latencyListAction } from "../store/actions/ocean.action";
+import { carrierListAction, latencyListAction, referenceListAction } from "../store/actions/ocean.action";
 
 export interface OceanProp {
   type: string;
@@ -13,6 +13,8 @@ export interface OceanProp {
   searchQuery?: string | null;
   timeCategory?: string | null;
   active?: string | null;
+  limit?: number;
+  page?: number;
   totalRecordCount?: string | null;
 }
 
@@ -43,8 +45,6 @@ export async function oceanCalls(data: OceanProp) {
 }
 
 export const useCarrierList = () => {
-  //const [carrierList, setCarrierList] = useState<string[]>([]);
-  //const [carrError, setCarrError] = useState("");
   const carrierList = useSelector((state: any) => state.ocean.carrierList)
   const dispatch = useDispatch();
   const data = {type: "CARRIER_LIST", mode: "OCEAN"};
@@ -59,7 +59,6 @@ export const useCarrierList = () => {
         .then((res) => {
           const result = res.data;
           if (result.statusCode === "200") {
-            //setCarrierList(result.response.sort());
             carrActData.carrList = result.response.sort();
             dispatch(carrierListAction(carrActData));
           } else {
@@ -67,7 +66,6 @@ export const useCarrierList = () => {
           }
         })
         .catch((err) => {
-          //setCarrError(err.message);
           carrActData.error = err.message;
           dispatch(carrierListAction(carrActData));
         });
@@ -80,14 +78,12 @@ export const useCarrierList = () => {
       ignore = true;
     }
   },[]);
-  //return {carrierList, carrError};
   return {carrierList};
 };
 
 export const useLatencyList = (data: OceanProp) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
-  //const [latError, setLatError] = useState("");
   const dispatch = useDispatch();
   const latActData = {
     error: ""
@@ -107,7 +103,6 @@ export const useLatencyList = (data: OceanProp) => {
         }
       })
       .catch((err) => {
-        //setLatError(err.message);
         setLoading(true);
         latActData.error = err.message;
         dispatch(latencyListAction(latActData));
@@ -123,4 +118,89 @@ export const useLatencyList = (data: OceanProp) => {
   },[data])
 
   return {list, loading };
+}
+
+export const useReferenceListCount = (data: OceanProp, page: number) => {
+  const [count, setCount] = useState(0);
+  const dispatch = useDispatch();
+  const refActData = {
+    error: ""
+  }
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async() => {
+      await oceanCalls(data)
+      .then((res) => {
+        if (res.status === 200 && res.data.statusCode === "200") {
+          const result = res.data;
+          setCount(result.response[0].count);
+        } else {
+          throw { message: res.message };
+        }
+      })
+      .catch((err) => {
+        refActData.error = err.message;
+        dispatch(referenceListAction(refActData));
+      });
+    }
+    if(!ignore && data.type !== "" && data.totalRecordCount === "true" && page === 1) {
+      defaultCall();
+    }
+    console.log("inside count hook", count)
+    return () => {
+      ignore = true;
+    }
+  },[data])
+
+  return { count };
+}
+
+export const useReferenceList = (data: OceanProp, page: number) => {
+  const [list, setList] = useState([]);
+  const [frame, setFrame] = useState("default");
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const refActData = {
+    error: ""
+  }
+  let newData = data;
+  if(data.searchQuery === undefined || data.searchQuery === null || data.searchQuery === ""){
+    if(page > 1){
+      newData = {...newData, page: page};
+    }else{
+      newData = {...newData, page: 1};
+    }
+  }
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async() => {
+      setLoading(false);
+      await oceanCalls(newData)
+      .then((res) => {
+        if (res.status === 200 && res.data.statusCode === "200") {
+          const result = res.data;
+          setList(result.response);
+          setLoading(true);
+        } else {
+          throw { message: res.message };
+        }
+      })
+      .catch((err) => {
+        setLoading(true);
+        refActData.error = err.message;
+        dispatch(referenceListAction(refActData));
+      });
+    }
+    if(!ignore && data.type !== "") {
+      defaultCall();
+      if(data.searchQuery !== undefined && data.searchQuery !== null && data.searchQuery !== ""){
+        setFrame("search");
+      }
+    }
+    return () => {
+      ignore = true;
+    }
+  },[data, page])
+
+  return {list, loading, frame };
 }

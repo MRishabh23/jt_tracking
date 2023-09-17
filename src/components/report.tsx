@@ -3,24 +3,30 @@ import { Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
 
-export interface LatencyDataType {
+export interface DataType {
   key: React.Key;
   carrier: string;
-  queue: string;
-  refType: string;
-  total: number;
-  zeroToOne: number;
-  oneToTwo: number;
-  twoToFour: number;
-  fourToEight: number;
-  eightToTwelve: number;
-  twelveToSixteen: number;
-  sixteenToTwentyFour: number;
-  twentyFourToFourtyEight: number;
-  fourtyEightAbove: number;
+  referenceType: string;
+  queue?: string;
+  subscriptionId?: string;
+  status?: string;
+  referenceNumber?: string;
+  lastCrawledAt?: string;
+  updatedAt?: string;
+  createdAt?: string;
+  total?: number;
+  first?: number;
+  second?: number;
+  third?: number;
+  fourth?: number;
+  fifth?: number;
+  sixth?: number;
+  seventh?: number;
+  eight?: number;
+  ninth?: number;
 }
 
-export const listCreation = (latencyList: any) => {
+export const latencyCreation = (latencyList: any) => {
   const list = latencyList
     .sort(function (a: any, b: any) {
       const nameA = a.carrier.toUpperCase(); // ignore upper and lowercase
@@ -66,27 +72,27 @@ export const listCreation = (latencyList: any) => {
         key: index,
         carrier: item.carrier,
         queue: item.queue,
-        refType: item.refType,
+        referenceType: item.refType,
         total: totalCount,
-        zeroToOne:
+        first:
           item.first !== null && item.first !== undefined ? +item.first : 0,
-        oneToTwo:
+        second:
           item.second !== null && item.second !== undefined ? +item.second : 0,
-        twoToFour:
+        third:
           item.third !== null && item.third !== undefined ? +item.third : 0,
-        fourToEight:
+        fourth:
           item.fourth !== null && item.fourth !== undefined ? +item.fourth : 0,
-        eightToTwelve:
+        fifth:
           item.fifth !== null && item.fifth !== undefined ? +item.fifth : 0,
-        twelveToSixteen:
+        sixth:
           item.sixth !== null && item.sixth !== undefined ? +item.sixth : 0,
-        sixteenToTwentyFour:
+        seventh:
           item.seventh !== null && item.seventh !== undefined
             ? +item.seventh
             : 0,
-        twentyFourToFourtyEight:
+        eight:
           item.eight !== null && item.eight !== undefined ? +item.eight : 0,
-        fourtyEightAbove:
+        ninth:
           item.ninth !== null && item.ninth !== undefined ? +item.ninth : 0,
       };
     });
@@ -94,7 +100,32 @@ export const listCreation = (latencyList: any) => {
   return list;
 };
 
+export const referenceCreation = (referenceList: any) => {
+  const rList = referenceList.map((item: any, index: number) => {
+    return {
+      key: index,
+      carrier: item.carrier,
+      referenceType: item.referenceType,
+      queue:
+        item.queue === "1" && item.error === ""
+          ? "NORMAL"
+          : item.queue === "2"
+          ? "ADAPTIVE"
+          : "RNF",
+      subscriptionId: item.subscriptionId,
+      status: item.status,
+      referenceNumber: item.referenceNumber,
+      lastCrawledAt: item.lastCrawledAt,
+      updatedAt: item.updatedAt,
+      createdAt: item.createdAt,
+      error: item.error,
+    };
+  });
+  return rList;
+};
+
 const colors = ["geekblue", "green", "volcano"];
+const colorStatus = ["green", "red"];
 let color: any;
 
 export const getLatencyColumns = (mainList: any) => {
@@ -106,7 +137,7 @@ export const getLatencyColumns = (mainList: any) => {
   }
   carrierL = removeDuplicates(carrierL);
 
-  const columns: ColumnsType<LatencyDataType> = [
+  const columns: ColumnsType<DataType> = [
     {
       title: "Carrier",
       dataIndex: "carrier",
@@ -128,21 +159,21 @@ export const getLatencyColumns = (mainList: any) => {
       align: "center",
     },
     {
-      title: "RefType",
-      key: "refType",
-      dataIndex: "refType",
-      render: (refType) => (
+      title: "ReferenceType",
+      key: "referenceType",
+      dataIndex: "referenceType",
+      render: (referenceType) => (
         <Tag
           color={
-            refType.toLowerCase().includes("booking")
+            referenceType.toLowerCase().includes("booking")
               ? colors[0]
-              : refType.toLowerCase().includes("container")
+              : referenceType.toLowerCase().includes("container")
               ? colors[1]
               : colors[2]
           }
           key={color}
         >
-          {refType}
+          {referenceType}
         </Tag>
       ),
       filters: [
@@ -160,7 +191,7 @@ export const getLatencyColumns = (mainList: any) => {
         },
       ],
       filterSearch: true,
-      onFilter: (value: any, record) => record.refType.includes(value),
+      onFilter: (value: any, record) => record.referenceType.includes(value),
       fixed: true,
       width: 130,
       align: "center",
@@ -182,7 +213,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=total&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -191,20 +222,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.total - b.total,
+      sorter: (a: any, b: any) => a.total - b.total,
       width: 75,
       align: "center",
     },
     {
       title: "0_1",
-      dataIndex: "zeroToOne",
-      key: "zeroToOne",
+      dataIndex: "first",
+      key: "first",
       render: (text, record: any) =>
-        record.zeroToOne > 0 ? (
+        record.first > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=first&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=first&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -213,20 +244,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.zeroToOne - b.zeroToOne,
+      sorter: (a: any, b: any) => a.first - b.first,
       width: 75,
       align: "center",
     },
     {
       title: "1_2",
-      dataIndex: "oneToTwo",
-      key: "oneToTwo",
+      dataIndex: "second",
+      key: "second",
       render: (text, record: any) =>
-        record.oneToTwo > 0 ? (
+        record.second > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=second&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=second&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -235,20 +266,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.oneToTwo - b.oneToTwo,
+      sorter: (a: any, b: any) => a.second - b.second,
       width: 75,
       align: "center",
     },
     {
       title: "2_4",
-      dataIndex: "twoToFour",
-      key: "twoToFour",
+      dataIndex: "third",
+      key: "third",
       render: (text, record: any) =>
-        record.twoToFour > 0 ? (
+        record.third > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=third&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=third&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -257,20 +288,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.twoToFour - b.twoToFour,
+      sorter: (a: any, b: any) => a.third - b.third,
       width: 75,
       align: "center",
     },
     {
       title: "4_8",
-      dataIndex: "fourToEight",
-      key: "fourToEight",
+      dataIndex: "fourth",
+      key: "fourth",
       render: (text, record: any) =>
-        record.fourToEight > 0 ? (
+        record.fourth > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=fourth&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fourth&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -279,20 +310,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.fourToEight - b.fourToEight,
+      sorter: (a: any, b: any) => a.fourth - b.fourth,
       width: 75,
       align: "center",
     },
     {
       title: "8_12",
-      dataIndex: "eightToTwelve",
-      key: "eightToTwelve",
+      dataIndex: "fifth",
+      key: "fifth",
       render: (text, record: any) =>
-        record.eightToTwelve > 0 ? (
+        record.fifth > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=fifth&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fifth&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -301,20 +332,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.eightToTwelve - b.eightToTwelve,
+      sorter: (a: any, b: any) => a.fifth - b.fifth,
       width: 75,
       align: "center",
     },
     {
       title: "12_16",
-      dataIndex: "twelveToSixteen",
-      key: "twelveToSixteen",
+      dataIndex: "sixth",
+      key: "sixth",
       render: (text, record: any) =>
-        record.twelveToSixteen > 0 ? (
+        record.sixth > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=sixth&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=sixth&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -323,20 +354,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.twelveToSixteen - b.twelveToSixteen,
+      sorter: (a: any, b: any) => a.sixth - b.sixth,
       width: 75,
       align: "center",
     },
     {
       title: "16_24",
-      dataIndex: "sixteenToTwentyFour",
-      key: "sixteenToTwentyFour",
+      dataIndex: "seventh",
+      key: "seventh",
       render: (text, record: any) =>
-        record.sixteenToTwentyFour > 0 ? (
+        record.seventh > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=seventh&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=seventh&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -345,20 +376,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.sixteenToTwentyFour - b.sixteenToTwentyFour,
+      sorter: (a: any, b: any) => a.seventh - b.seventh,
       width: 75,
       align: "center",
     },
     {
       title: "24_48",
-      dataIndex: "twentyFourToFourtyEight",
-      key: "twentyFourToFourtyEight",
+      dataIndex: "eight",
+      key: "eight",
       render: (text, record: any) =>
-        record.twentyFourToFourtyEight > 0 ? (
+        record.eight > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=eight&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=eight&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -367,20 +398,20 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.twentyFourToFourtyEight - b.twentyFourToFourtyEight,
+      sorter: (a: any, b: any) => a.eight - b.eight,
       width: 75,
       align: "center",
     },
     {
       title: ">48",
-      dataIndex: "fourtyEightAbove",
-      key: "fourtyEightAbove",
+      dataIndex: "ninth",
+      key: "ninth",
       render: (text, record: any) =>
-        record.fourtyEightAbove > 0 ? (
+        record.ninth > 0 ? (
           <Link
             to={{
               pathname: "/reference/list",
-              search: `?carrier=${record.carrier}&refType=${record.refType}&type=ninth&report=${record.queue}`,
+              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=ninth&report=${record.queue}`,
             }}
             target="_blank"
           >
@@ -389,8 +420,92 @@ export const getLatencyColumns = (mainList: any) => {
         ) : (
           0
         ),
-      sorter: (a, b) => a.fourtyEightAbove - b.fourtyEightAbove,
+      sorter: (a: any, b: any) => a.ninth - b.ninth,
       width: 75,
+      align: "center",
+    },
+  ];
+
+  return columns;
+};
+
+export const getReferenceColumns = () => {
+  const columns: ColumnsType<DataType> = [
+    {
+      title: "Subscription Id",
+      dataIndex: "subscriptionId",
+      key: "subscriptionId",
+      fixed: true,
+      align: "center",
+    },
+    {
+      title: "Reference Number",
+      dataIndex: "referenceNumber",
+      key: "referenceNumber",
+      align: "center",
+    },
+    {
+      title: "Reference Type",
+      dataIndex: "referenceType",
+      key: "referenceType",
+      render: (referenceType) => (
+        <Tag
+          color={
+            referenceType.toLowerCase().includes("booking")
+              ? colors[0]
+              : referenceType.toLowerCase().includes("container")
+              ? colors[1]
+              : colors[2]
+          }
+          key={color}
+        >
+          {referenceType.toUpperCase()}
+        </Tag>
+      ),
+      align: "center",
+    },
+    {
+      title: "Carrier",
+      dataIndex: "carrier",
+      key: "carrier",
+      align: "center",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <Tag
+          color={status == "ACTIVE" ? colorStatus[0] : colorStatus[1]}
+          key={color}
+        >
+          {status.toUpperCase()}
+        </Tag>
+      ),
+      align: "center",
+    },
+    {
+      title: "Queue",
+      dataIndex: "queue",
+      key: "queue",
+      align: "center",
+    },
+    {
+      title: "Last Crawled At",
+      dataIndex: "lastCrawledAt",
+      key: "lastCrawledAt",
+      align: "center",
+    },
+    {
+      title: "Updated At",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      align: "center",
+    },
+    {
+      title: "Created On",
+      dataIndex: "createdAt",
+      key: "createdAt",
       align: "center",
     },
   ];
