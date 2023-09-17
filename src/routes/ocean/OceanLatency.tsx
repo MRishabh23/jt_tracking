@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Select, Spin, Table } from "antd";
+import { Form, Select, Table } from "antd";
 import {
   DataType,
   getLatencyColumns,
@@ -9,6 +9,7 @@ import { OceanProp, useCarrierList, useLatencyList } from "../../api/oceanApi";
 import { useDispatch, useSelector } from "react-redux";
 import { latencyListAction } from "../../store/actions/ocean.action";
 import { useCheckAuth } from "../../api/auth";
+import { FaSpinner } from "react-icons/fa";
 
 interface props {}
 
@@ -130,9 +131,7 @@ const OceanLatency: React.FC<props> = () => {
                   ))
                 ) : (
                   <Select.Option value="loading...">
-                    <Spin tip="Loading..." size="small">
-                      <div className="p-12 bg-stone-100 rounded-[4px]" />
-                    </Spin>
+                    <FaSpinner className="text-2xl text-blue-500 animate-spin" />
                   </Select.Option>
                 )}
               </Select>
@@ -214,9 +213,7 @@ const OceanLatency: React.FC<props> = () => {
                 />
               ) : (
                 <div className="flex items-center justify-center">
-                  <Spin tip="Loading..." size="large">
-                    <div className="p-12 bg-stone-100 rounded-[4px]" />
-                  </Spin>
+                  <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                 </div>
               )}
             </div>
