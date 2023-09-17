@@ -6,7 +6,6 @@ import {
   Drawer,
   Space,
   Select,
-  Spin,
   Pagination,
   Table,
 } from "antd";
@@ -27,6 +26,7 @@ import {
   referenceCreation,
 } from "../../components/report";
 import { useCheckAuth } from "../../api/auth";
+import { FaSpinner } from "react-icons/fa";
 
 const { Search } = Input;
 
@@ -288,9 +288,7 @@ const ReferenceList: React.FC = () => {
               </>
             ) : (
               <div className="flex items-center justify-center">
-                <Spin tip="Loading..." size="large">
-                  <div className="p-12 bg-gray-300 rounded-[4px]" />
-                </Spin>
+                <FaSpinner className="text-3xl text-blue-500 animate-spin" />
               </div>
             )}
           </div>
@@ -353,9 +351,7 @@ const ReferenceList: React.FC = () => {
                 ))
               ) : (
                 <Select.Option value="loading...">
-                  <Spin tip="Loading..." size="small">
-                    <div className="p-12 bg-stone-100 rounded-[4px]" />
-                  </Spin>
+                  <FaSpinner className="text-2xl text-blue-500 animate-spin" />
                 </Select.Option>
               )}
             </Select>
