@@ -18,7 +18,7 @@ export interface OceanProp {
   totalRecordCount?: string | null;
 }
 
-export async function oceanCalls(data: OceanProp) {
+async function oceanCalls(data: OceanProp) {
   const user = localStorage.getItem("Username");
   if (user !== null && user !== undefined && user !== "") {
     data.currentUser = user;
@@ -31,8 +31,8 @@ export async function oceanCalls(data: OceanProp) {
       "Content-Type": "application/json",
     },
     auth: {
-      username: import.meta.env.VITE_REST_DEV_USERNAME,
-      password: import.meta.env.VITE_REST_DEV_PASSWORD,
+      username: import.meta.env.VITE_REST_PROD_USERNAME,
+      password: import.meta.env.VITE_REST_PROD_PASSWORD,
     },
     data: data,
   })
