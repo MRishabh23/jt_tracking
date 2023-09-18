@@ -116,7 +116,7 @@ const ReferenceList: React.FC = () => {
     totalRecordCount: "true",
   });
   const { carrierList } = useCarrierList();
-  const { count } = useReferenceListCount(refCountData, page);
+  const { count, countLoad } = useReferenceListCount(refCountData, page, myParam);
   const { list, loading, frame } = useReferenceList(refData, page);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
@@ -272,7 +272,7 @@ const ReferenceList: React.FC = () => {
                 />
 
                 {frame !== "search" ? (
-                  <div className="mt-7">
+                  <div className="mt-7 flex items-center justify-start">
                     <Pagination
                       pageSize={25}
                       current={page}
@@ -281,6 +281,9 @@ const ReferenceList: React.FC = () => {
                       simple={false}
                       showSizeChanger={false}
                     />
+                    {countLoad ? <></> 
+                    :<FaSpinner className="ml-3 text-lg text-blue-500 animate-spin" />
+                    }
                   </div>
                 ) : (
                   <></>
