@@ -223,6 +223,9 @@ export const useReferenceList = (data: OceanProp, page: number) => {
       ) {
         setFrame("search");
       }
+      else{
+        setFrame("default");
+      }
     }
     return () => {
       ignore = true;
