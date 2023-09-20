@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Drawer,
-  Space,
-  Select,
-  Pagination,
-  Table,
-} from "antd";
+import { Button, Form, Input, Drawer, Space, Select, Table } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,8 +7,8 @@ import {
   useCarrierList,
   useReferenceList,
   useReferenceListCount,
-} from "../../api/oceanApi";
-import type { PaginationProps } from "antd";
+} from "../../api/ocean";
+import type { TablePaginationConfig } from "antd";
 import { referenceListAction } from "../../store/actions/ocean.action";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -43,7 +34,6 @@ const ReferenceList: React.FC = () => {
   const [form] = Form.useForm();
   const [isBulk, setIsBulk] = useState("false");
   const [form1] = Form.useForm();
-  const [page, setPage] = useState(1);
   const gError = useSelector((state: any) => state.ocean.rError);
   const [refData, setRefData] = useState<OceanProp>({
     mode: "OCEAN",
@@ -78,46 +68,15 @@ const ReferenceList: React.FC = () => {
       myParam.get("carrier") !== ""
         ? "yes"
         : "all",
-    limit: 25,
-  });
-  const [refCountData, setRefCountData] = useState<OceanProp>({
-    mode: "OCEAN",
-    type: "REFERENCE_LIST",
-    report:
-      myParam.get("report") !== undefined &&
-      myParam.get("report") !== null &&
-      myParam.get("report") !== ""
-        ? myParam.get("report").toUpperCase()
-        : "",
-    carriers:
-      myParam.get("carrier") !== undefined &&
-      myParam.get("carrier") !== null &&
-      myParam.get("carrier") !== ""
-        ? [myParam.get("carrier")]
-        : ["acl"],
-    referenceType:
-      myParam.get("refType") !== undefined &&
-      myParam.get("refType") !== null &&
-      myParam.get("refType") !== ""
-        ? myParam.get("refType")
-        : "",
-    timeCategory:
-      myParam.get("type") !== undefined &&
-      myParam.get("type") !== null &&
-      myParam.get("type") !== ""
-        ? myParam.get("type")
-        : "",
-    active:
-      myParam.get("carrier") !== undefined &&
-      myParam.get("carrier") !== null &&
-      myParam.get("carrier") !== ""
-        ? "yes"
-        : "all",
-    totalRecordCount: "true",
   });
   const { carrierList } = useCarrierList();
-  const { count, countLoad } = useReferenceListCount(refCountData, page, myParam);
-  const { list, loading, frame } = useReferenceList(refData, page);
+  const { list, loading, frame, tableParams, handleTableChange } =
+    useReferenceList(refData);
+  const { count } = useReferenceListCount(
+    refData,
+    tableParams.pagination?.current,
+    myParam
+  );
   const [error, setError] = useState("");
   const dispatch = useDispatch();
 
@@ -146,24 +105,13 @@ const ReferenceList: React.FC = () => {
       referenceType: refType,
       timeCategory: "",
       active: active,
-      limit: 25,
     };
     setRefData(sendData);
-
-    setPage(1);
-    if (page === 1) {
-      const sendDataCount = {
-        mode: "OCEAN",
-        type: "REFERENCE_LIST",
-        report: crawlQueue,
-        carriers: [carrier],
-        referenceType: refType,
-        timeCategory: "",
-        active: active,
-        totalRecordCount: "true",
-      };
-      setRefCountData(sendDataCount);
-    }
+    const pagination: TablePaginationConfig = {
+      current: 1,
+      pageSize: 25,
+    };
+    handleTableChange(pagination);
   };
 
   const onFinishSearch = async (value: any) => {
@@ -176,23 +124,15 @@ const ReferenceList: React.FC = () => {
       type: "REFERENCE_LIST",
       searchQuery: subId,
     };
-    setPage(1);
     setRefData(sendData);
   };
 
   const [open, setOpen] = useState(false);
 
-  const showDrawer = () => {
-    setOpen(true);
+  const handleDrawer = () => {
+    setOpen(!open);
   };
 
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  const onChange: PaginationProps["onChange"] = async (page) => {
-    setPage(page);
-  };
   useEffect(() => {
     let ignore = false;
     if (!ignore) {
@@ -235,7 +175,7 @@ const ReferenceList: React.FC = () => {
             </Form>
             <button
               type="button"
-              onClick={showDrawer}
+              onClick={handleDrawer}
               className="w-20 h-10 mt-5 xms:mt-0 flex items-center justify-center text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
             >
               Filter
@@ -261,39 +201,23 @@ const ReferenceList: React.FC = () => {
       ) : (
         <div className="mt-7">
           <div className="p-4 bg-gray-200 rounded-md">
-            {loading ? (
-              <>
-                <Table
-                  columns={getRefCol}
-                  dataSource={data2}
-                  // pagination={{ pageSize: 25, disabled: true, hideOnSinglePage: true }}
-                  pagination={false}
-                  scroll={{ x: "1100px", y: "675px" }}
-                />
-
-                {frame !== "search" ? (
-                  <div className="mt-7 flex items-center justify-start">
-                    <Pagination
-                      pageSize={25}
-                      current={page}
-                      onChange={onChange}
-                      total={count}
-                      simple={false}
-                      showSizeChanger={false}
-                    />
-                    {countLoad ? <></> 
-                    :<FaSpinner className="ml-3 text-lg text-blue-500 animate-spin" />
+            <Table
+              columns={getRefCol}
+              dataSource={data2}
+              pagination={
+                frame !== "search"
+                  ? {
+                      current: tableParams.pagination?.current,
+                      pageSize: tableParams.pagination?.pageSize,
+                      showSizeChanger: false,
+                      total: count,
                     }
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </>
-            ) : (
-              <div className="flex items-center justify-center">
-                <FaSpinner className="text-3xl text-blue-500 animate-spin" />
-              </div>
-            )}
+                  : false
+              }
+              loading={loading}
+              onChange={handleTableChange}
+              scroll={{ x: "1100px", y: "675px" }}
+            />
           </div>
         </div>
       )}
@@ -301,7 +225,7 @@ const ReferenceList: React.FC = () => {
         title="Filter"
         placement="right"
         closable={false}
-        onClose={onClose}
+        onClose={handleDrawer}
         open={open}
         getContainer={false}
         style={customDrawerStyle}
@@ -311,7 +235,7 @@ const ReferenceList: React.FC = () => {
               type="text"
               shape="circle"
               icon={<CloseOutlined />}
-              onClick={onClose}
+              onClick={handleDrawer}
               className="flex items-center justify-center"
             ></Button>
           </Space>
