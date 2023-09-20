@@ -5,7 +5,7 @@ import {
   getLatencyColumns,
   latencyCreation,
 } from "../../components/report";
-import { OceanProp, useCarrierList, useLatencyList } from "../../api/oceanApi";
+import { OceanProp, useCarrierList, useLatencyList } from "../../api/ocean";
 import { useDispatch, useSelector } from "react-redux";
 import { latencyListAction } from "../../store/actions/ocean.action";
 import { useCheckAuth } from "../../api/auth";
@@ -204,11 +204,7 @@ const OceanLatency: React.FC<props> = () => {
                 <Table
                   columns={getLatCol}
                   dataSource={data2}
-                  pagination={{
-                    pageSize: 24,
-                    disabled: true,
-                    hideOnSinglePage: true,
-                  }}
+                  pagination={false}
                   scroll={{ x: "1100px", y: "675px" }}
                 />
               ) : (
