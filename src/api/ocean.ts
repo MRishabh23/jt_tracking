@@ -6,6 +6,7 @@ import {
   latencyListAction,
   referenceListAction,
 } from "../store/actions/ocean.action";
+import type { TablePaginationConfig } from 'antd/es/table';
 
 export interface OceanProp {
   type: string;
@@ -20,6 +21,10 @@ export interface OceanProp {
   limit?: number;
   page?: number;
   totalRecordCount?: string | null;
+}
+
+export interface TableParams {
+  pagination?: TablePaginationConfig;
 }
 
 async function oceanCalls(data: OceanProp) {
@@ -126,58 +131,10 @@ export const useLatencyList = (data: OceanProp) => {
 
 export const useReferenceListCount = (
   data: OceanProp,
-  page: number,
+  page: any,
   myParam: any
 ) => {
   const [count, setCount] = useState(0);
-  const [countLoad, setCountLoad] = useState(false);
-  const dispatch = useDispatch();
-  const refActData = {
-    error: "",
-  };
-  useEffect(() => {
-    let ignore = false;
-    const defaultCall = async () => {
-      setCountLoad(false);
-      await oceanCalls(data)
-        .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
-            const result = res.data;
-            setCount(result.response[0].count);
-            setCountLoad(true);
-          } else {
-            throw { message: res.message };
-          }
-        })
-        .catch((err) => {
-          refActData.error = err.message;
-          dispatch(referenceListAction(refActData));
-          setCountLoad(true);
-        });
-    };
-    if (!ignore && myParam.size !== 0) {
-      setCount(myParam.get("count"));
-      setCountLoad(true);
-    } else if (
-      !ignore &&
-      data.type !== "" &&
-      data.totalRecordCount === "true" &&
-      page === 1
-    ) {
-      defaultCall();
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [data]);
-
-  return { count, countLoad };
-};
-
-export const useReferenceList = (data: OceanProp, page: number) => {
-  const [list, setList] = useState([]);
-  const [frame, setFrame] = useState("default");
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const refActData = {
     error: "",
@@ -188,32 +145,100 @@ export const useReferenceList = (data: OceanProp, page: number) => {
     data.searchQuery === null ||
     data.searchQuery === ""
   ) {
-    if (page > 1) {
-      newData = { ...newData, page: page };
-    } else {
-      newData = { ...newData, page: 1 };
-    }
+    newData = {...newData, totalRecordCount: "true"}
   }
+  
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
-      setLoading(false);
       await oceanCalls(newData)
         .then((res) => {
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
-            setList(result.response);
-            setLoading(true);
+            setCount(result.response[0].count);
           } else {
             throw { message: res.message };
           }
         })
         .catch((err) => {
-          setLoading(true);
           refActData.error = err.message;
           dispatch(referenceListAction(refActData));
         });
     };
+    if (!ignore && myParam.size !== 0) {
+      setCount(myParam.get("count"));
+    } else if (
+      !ignore &&
+      newData.type !== "" &&
+      newData.totalRecordCount === "true" && page !== undefined && page === 1
+    ) {
+      defaultCall();
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [data]);
+
+  return { count };
+};
+
+export const useReferenceList = (data: OceanProp) => {
+  const [list, setList] = useState([]);
+  const [frame, setFrame] = useState("default");
+  const [loading, setLoading] = useState(false);
+  const [tableParams, setTableParams] = useState<TableParams>({
+    pagination: {
+      current: 1,
+      pageSize: 25,
+      showSizeChanger: false,
+    },
+  });
+  const dispatch = useDispatch();
+  const refActData = {
+    error: "",
+  };
+  const handleTableChange = (
+    pagination: TablePaginationConfig
+  ) => {
+    setTableParams({
+      pagination
+    });
+
+    // `dataSource` is useless since `pageSize` changed
+    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+      setList([]);
+    }
+  };
+  
+  let newData = data;
+  if (
+    data.searchQuery === undefined ||
+    data.searchQuery === null ||
+    data.searchQuery === ""
+  ) {
+    newData = { ...newData, limit: tableParams.pagination?.pageSize, page: tableParams.pagination?.current};
+  }
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async () => {
+      setLoading(true);
+      await oceanCalls(newData)
+        .then((res) => {
+          if (res.status === 200 && res.data.statusCode === "200") {
+            const result = res.data;
+            setList(result.response);
+            setLoading(false);
+          } else {
+            throw { message: res.message };
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          refActData.error = err.message;
+          dispatch(referenceListAction(refActData));
+        });
+    };
+    
     if (!ignore && data.type !== "") {
       defaultCall();
       if (
@@ -230,7 +255,7 @@ export const useReferenceList = (data: OceanProp, page: number) => {
     return () => {
       ignore = true;
     };
-  }, [data, page]);
+  }, [data, JSON.stringify(tableParams)]);
 
-  return { list, loading, frame };
+  return { list, loading, frame, tableParams, handleTableChange };
 };
