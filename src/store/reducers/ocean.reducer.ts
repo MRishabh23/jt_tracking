@@ -2,6 +2,7 @@ import {
   CARRIER_LIST,
   LATENCY_LIST,
   REFERENCE_LIST,
+  HISTORY_LIST,
 } from "../actions/ocean.action";
 
 const initialState = {
@@ -9,6 +10,7 @@ const initialState = {
   cError: "",
   lError: "",
   rError: "",
+  hError: "",
 };
 
 const oceanReducer = (state = initialState, action: any) => {
@@ -54,6 +56,19 @@ const oceanReducer = (state = initialState, action: any) => {
         return {
           ...state,
           rError: "",
+        };
+      }
+    case HISTORY_LIST:
+      const hError = action.obj.error;
+      if (hError !== undefined && hError !== "") {
+        return {
+          ...state,
+          hError: rError,
+        };
+      } else {
+        return {
+          ...state,
+          hError: "",
         };
       }
     default:

@@ -24,6 +24,11 @@ export interface DataType {
   seventh?: number;
   eight?: number;
   ninth?: number;
+  insertionTime?: string;
+  crawlStatus?: string;
+  schedulerId?: string | number;
+  fkJson?: string;
+  crawlJson?: string;
 }
 
 export const latencyCreation = (latencyList: any) => {
@@ -122,6 +127,32 @@ export const referenceCreation = (referenceList: any) => {
     };
   });
   return rList;
+};
+
+export const HistoryCreation = (historyList: any, subId: string) => {
+  const hList = historyList.map((item: any, index: number) => {
+    return {
+      key: index,
+      insertionTime: item.v.insertion_time,
+      crawlStatus:
+        item.v.crawl_status === undefined ? "NA" : item.v.crawl_status,
+      subscriptionId: subId,
+      schedulerId: item.k,
+      fkJson:
+        item.v.fkMappedJsonResourceId === undefined ||
+        item.v.fkMappedJsonResourceId === null ||
+        item.v.fkMappedJsonResourceId === "null"
+          ? "NA"
+          : item.v.fkMappedJsonResourceId,
+      crawlJson:
+        item.v.crawledJsonResourceId === undefined ||
+        item.v.crawledJsonResourceId === null ||
+        item.v.crawledJsonResourceId === "null"
+          ? "NA"
+          : item.v.crawledJsonResourceId,
+    };
+  });
+  return hList;
 };
 
 const colors = ["geekblue", "green", "volcano"];
@@ -506,6 +537,86 @@ export const getReferenceColumns = () => {
       title: "Created On",
       dataIndex: "createdAt",
       key: "createdAt",
+      align: "center",
+    },
+  ];
+
+  return columns;
+};
+
+export const getHistoryColumns = () => {
+  const columns: ColumnsType<DataType> = [
+    {
+      title: "Subscription Id",
+      dataIndex: "subscriptionId",
+      key: "subscriptionId",
+      fixed: true,
+      align: "center",
+    },
+    {
+      title: "Insertion Time",
+      dataIndex: "insertionTime",
+      key: "insertionTime",
+      align: "center",
+    },
+    {
+      title: "Crawl Status",
+      dataIndex: "crawlStatus",
+      key: "crawlStatus",
+      render: (crawlStatus) => (
+        <Tag
+          color={crawlStatus == "SUCCESS" ? colorStatus[0] : colorStatus[1]}
+          key={color}
+        >
+          {crawlStatus.toUpperCase()}
+        </Tag>
+      ),
+      align: "center",
+    },
+    {
+      title: "Scheduler Id",
+      dataIndex: "schedulerId",
+      key: "schedulerId",
+      align: "center",
+    },
+    {
+      title: "FK Json",
+      dataIndex: "fkJson",
+      key: "fkJson",
+      render: (fkJson) =>
+        fkJson !== "NA" && fkJson !== "SAME_PAYLOAD" ? (
+          <Link
+            to={{
+              pathname: "/reference",
+              // search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}&count=${record.total}`,
+            }}
+            target="_blank"
+          >
+            Click here
+          </Link>
+        ) : (
+          fkJson
+        ),
+      align: "center",
+    },
+    {
+      title: "Crawl Json",
+      dataIndex: "crawlJson",
+      key: "crawlJson",
+      render: (crawlJson) =>
+        crawlJson !== "NA" && crawlJson !== "SAME_PAYLOAD" ? (
+          <Link
+            to={{
+              pathname: "/reference",
+              // search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}&count=${record.total}`,
+            }}
+            target="_blank"
+          >
+            Click here
+          </Link>
+        ) : (
+          crawlJson
+        ),
       align: "center",
     },
   ];
