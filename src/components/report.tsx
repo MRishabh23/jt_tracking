@@ -29,6 +29,7 @@ export interface DataType {
   schedulerId?: string | number;
   fkJson?: string;
   crawlJson?: string;
+  fkLatestJson?: string;
 }
 
 export const latencyCreation = (latencyList: any) => {
@@ -135,21 +136,27 @@ export const HistoryCreation = (historyList: any, subId: string) => {
       key: index,
       insertionTime: item.v.insertion_time,
       crawlStatus:
-        item.v.crawl_status === undefined ? "NA" : item.v.crawl_status,
+        item.v.crawl_status === undefined ? "No Data" : item.v.crawl_status,
       subscriptionId: subId,
       schedulerId: item.k,
       fkJson:
         item.v.fkMappedJsonResourceId === undefined ||
         item.v.fkMappedJsonResourceId === null ||
         item.v.fkMappedJsonResourceId === "null"
-          ? "NA"
+          ? "No Data"
           : item.v.fkMappedJsonResourceId,
       crawlJson:
         item.v.crawledJsonResourceId === undefined ||
         item.v.crawledJsonResourceId === null ||
         item.v.crawledJsonResourceId === "null"
-          ? "NA"
+          ? "No Data"
           : item.v.crawledJsonResourceId,
+      fkLatestJson:
+        item.v.latestFKMappedJsonResourceId == undefined ||
+        item.v.latestFKMappedJsonResourceId === null ||
+        item.v.latestFKMappedJsonResourceId === "null"
+          ? "No Data"
+          : item.v.latestFKMappedJsonResourceId,
     };
   });
   return hList;
@@ -466,6 +473,20 @@ export const getReferenceColumns = () => {
       title: "Subscription Id",
       dataIndex: "subscriptionId",
       key: "subscriptionId",
+      render: (subscriptionId, record: any) =>
+        record.subscriptionId !== "" ? (
+          <Link
+            to={{
+              pathname: "/reference/history",
+              search: `?subsId=${record.subscriptionId}&history=ALL_HISTORY`,
+            }}
+            target="_blank"
+          >
+            {subscriptionId}
+          </Link>
+        ) : (
+          subscriptionId
+        ),
       fixed: true,
       align: "center",
     },
@@ -544,7 +565,7 @@ export const getReferenceColumns = () => {
   return columns;
 };
 
-export const getHistoryColumns = () => {
+export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
   const columns: ColumnsType<DataType> = [
     {
       title: "Subscription Id",
@@ -577,23 +598,78 @@ export const getHistoryColumns = () => {
       title: "Scheduler Id",
       dataIndex: "schedulerId",
       key: "schedulerId",
+      render: (schedulerId, record) =>
+        record.crawlJson !== "No Data" ? (
+          <button
+            key={schedulerId}
+            onClick={() =>
+              setIsModalOpen({
+                ...isModalOpen,
+                open: true,
+                data: {
+                  type: "FETCH_HISTORY",
+                  mode: "OCEAN",
+                  subscriptionId: record.subscriptionId,
+                  schId: record.schedulerId,
+                },
+              })
+            }
+            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
+          >
+            {schedulerId}
+          </button>
+        ) : (
+          schedulerId
+        ),
       align: "center",
     },
     {
       title: "FK Json",
       dataIndex: "fkJson",
       key: "fkJson",
-      render: (fkJson) =>
-        fkJson !== "NA" && fkJson !== "SAME_PAYLOAD" ? (
-          <Link
-            to={{
-              pathname: "/reference",
-              // search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}&count=${record.total}`,
-            }}
-            target="_blank"
+      render: (fkJson, record, index) =>
+        record.fkJson !== "No Data" &&
+        record.fkJson === "SAME_PAYLOAD" &&
+        record.fkLatestJson !== "No Data" ? (
+          <button
+            key={`${index} + ${record.schedulerId}`}
+            onClick={() =>
+              setIsModalOpen({
+                ...isModalOpen,
+                open: true,
+                data: {
+                  type: "FETCH_HISTORY",
+                  mode: "OCEAN",
+                  resourceId: record.fkLatestJson,
+                  jsonType: "FK",
+                  schId: record.schedulerId,
+                },
+              })
+            }
+            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
           >
-            Click here
-          </Link>
+            SAME_PAYLOAD
+          </button>
+        ) : record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
+          <button
+            key={fkJson + record.schedulerId}
+            onClick={() =>
+              setIsModalOpen({
+                ...isModalOpen,
+                open: true,
+                data: {
+                  type: "FETCH_HISTORY",
+                  mode: "OCEAN",
+                  resourceId: record.fkJson,
+                  jsonType: "FK",
+                  schId: record.schedulerId,
+                },
+              })
+            }
+            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
+          >
+            Click Here
+          </button>
         ) : (
           fkJson
         ),
@@ -603,17 +679,27 @@ export const getHistoryColumns = () => {
       title: "Crawl Json",
       dataIndex: "crawlJson",
       key: "crawlJson",
-      render: (crawlJson) =>
-        crawlJson !== "NA" && crawlJson !== "SAME_PAYLOAD" ? (
-          <Link
-            to={{
-              pathname: "/reference",
-              // search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}&count=${record.total}`,
-            }}
-            target="_blank"
+      render: (crawlJson, record) =>
+        record.crawlJson !== "No Data" ? (
+          <button
+            key={crawlJson + record.schedulerId}
+            onClick={() =>
+              setIsModalOpen({
+                ...isModalOpen,
+                open: true,
+                data: {
+                  type: "FETCH_HISTORY",
+                  mode: "OCEAN",
+                  resourceId: record.crawlJson,
+                  jsonType: "Crawl",
+                  schId: record.schedulerId,
+                },
+              })
+            }
+            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
           >
-            Click here
-          </Link>
+            Click Here
+          </button>
         ) : (
           crawlJson
         ),

@@ -8,6 +8,8 @@ import {
   historyListAction,
 } from "../store/actions/ocean.action";
 import type { TablePaginationConfig } from "antd/es/table";
+import { notification } from "antd";
+//import type { NotificationPlacement } from 'antd/es/notification/interface';
 
 export interface OceanProp {
   type: string;
@@ -24,6 +26,9 @@ export interface OceanProp {
   totalRecordCount?: string | null;
   subscriptionId?: string;
   history?: string;
+  schId?: string | number;
+  resourceId?: string;
+  jsonType?: string;
 }
 
 export interface TableParams {
@@ -268,7 +273,6 @@ export const useReferenceList = (data: OceanProp) => {
 
 export const useHistoryList = (data: OceanProp) => {
   const [list, setList] = useState([]);
-  // const [frame, setFrame] = useState("default");
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
@@ -321,7 +325,7 @@ export const useHistoryList = (data: OceanProp) => {
         });
     };
 
-    if (!ignore && data.type !== "") {
+    if (!ignore && data.type !== "" && data.subscriptionId !== "") {
       defaultCall();
     }
     return () => {
@@ -344,7 +348,9 @@ export const useHistoryListCount = (
   };
   let newData = data;
 
-  newData = { ...newData, totalRecordCount: "true" };
+  if (data.subscriptionId !== null && data.subscriptionId !== "") {
+    newData = { ...newData, totalRecordCount: "true" };
+  }
 
   useEffect(() => {
     let ignore = false;
@@ -380,4 +386,65 @@ export const useHistoryListCount = (
   }, [data]);
 
   return { count };
+};
+
+export const useFetchHistoryData = (data: OceanProp) => {
+  const [obj, setObj] = useState([]);
+  const [objLoad, setObjLoad] = useState(false);
+  type NotificationType = "success" | "info" | "warning" | "error";
+  type NotificationPlacement = "top" | "topRight";
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (
+    type: NotificationType,
+    placement: NotificationPlacement,
+    objError: any
+  ) => {
+    api[type]({
+      message: "Something Went Wrong!!",
+      description: objError,
+      placement,
+    });
+  };
+
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async () => {
+      setObjLoad(true);
+      await oceanCalls(data)
+        .then((res) => {
+          if (res.status === 200 && res.data.statusCode === "200") {
+            const result = res.data;
+            setObj(result.response);
+            setObjLoad(false);
+          } else {
+            throw { message: res.response.data.response };
+          }
+        })
+        .catch((err) => {
+          setObjLoad(false);
+          openNotificationWithIcon("error", "top", err.message);
+        });
+    };
+
+    if (!ignore && data.type !== "") {
+      if (
+        data.subscriptionId !== undefined &&
+        data.subscriptionId !== null &&
+        data.subscriptionId !== ""
+      ) {
+        defaultCall();
+      } else if (
+        data.resourceId !== undefined &&
+        data.resourceId !== null &&
+        data.resourceId !== ""
+      ) {
+        defaultCall();
+      }
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [data]);
+
+  return { obj, objLoad, contextHolder };
 };
