@@ -38,12 +38,7 @@ const ReferenceHistory: React.FC = () => {
       myParam.get("subsId") !== ""
         ? myParam.get("subsId").toUpperCase()
         : "",
-    history:
-      myParam.get("history") !== undefined &&
-      myParam.get("history") !== null &&
-      myParam.get("history") !== ""
-        ? myParam.get("history").toUpperCase()
-        : "ALL_HISTORY",
+    history: "DIFF_HISTORY",
   });
   const { list, loading, tableParams, handleTableChange } =
     useHistoryList(historyData);
@@ -176,7 +171,7 @@ const ReferenceHistory: React.FC = () => {
               onFinish={onFinish}
               size="middle"
               className="flex flex-col gap-4 pt-3 lg:flex-row lg:justify-center lg:gap-6"
-              initialValues={{ status: "ALL_HISTORY" }}
+              initialValues={{ status: "DIFF_HISTORY" }}
             >
               <Form.Item
                 label={<p className="text-lg">SubscriptionId</p>}
@@ -212,17 +207,25 @@ const ReferenceHistory: React.FC = () => {
               </Form.Item>
             </Form>
           ) : (
-            <div className="flex items-center justify-center">
+            <div className="flex flex-col gap-3 items-center justify-center">
               <button
                 type="button"
                 onClick={() => {
                   navigate("/reference/history");
-                  window.location.reload();
+                  setHistoryData({
+                    type: "REFERENCE_HISTORY",
+                    mode: "OCEAN",
+                    subscriptionId: "",
+                    history: "DIFF_HISTORY"
+                  })
                 }}
                 className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
               >
                 More Queries
               </button>
+              <div> 
+                <p className="text-lg font-semibold">Showing DIFF_HISTORY for {myParam.get("subsId")}</p>
+              </div>
             </div>
           )}
         </div>

@@ -327,6 +327,8 @@ export const useHistoryList = (data: OceanProp) => {
 
     if (!ignore && data.type !== "" && data.subscriptionId !== "") {
       defaultCall();
+    } else {
+      setList([]);
     }
     return () => {
       ignore = true;
