@@ -478,7 +478,7 @@ export const getReferenceColumns = () => {
           <Link
             to={{
               pathname: "/reference/history",
-              search: `?subsId=${record.subscriptionId}&history=ALL_HISTORY`,
+              search: `?subsId=${record.subscriptionId}`,
             }}
             target="_blank"
           >
@@ -646,9 +646,9 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
                 },
               })
             }
-            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
+            className="px-3 py-1 text-blue bg-amber-300 border border-amber-400 rounded-md hover:bg-amber-200"
           >
-            SAME_PAYLOAD
+            SAME_AS_BEFORE
           </button>
         ) : record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
           <button
@@ -666,12 +666,12 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
                 },
               })
             }
-            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
+            className="px-3 py-1 text-white bg-green-500 border border-green-600 rounded-md hover:bg-green-400"
           >
-            Click Here
+            NEW_EVENTS_FOUND
           </button>
         ) : (
-          fkJson
+         fkJson
         ),
       align: "center",
     },
@@ -680,7 +680,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "crawlJson",
       key: "crawlJson",
       render: (crawlJson, record) =>
-        record.crawlJson !== "No Data" ? (
+        record.crawlJson !== "No Data" && record.fkJson === "SAME_PAYLOAD" ? (
           <button
             key={crawlJson + record.schedulerId}
             onClick={() =>
@@ -696,11 +696,32 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
                 },
               })
             }
-            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
+            className="px-3 py-1 text-blue bg-amber-300 border border-amber-400 rounded-md hover:bg-amber-200"
           >
-            Click Here
+            SAME_AS_BEFORE
           </button>
-        ) : (
+        ) : record.crawlJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
+          <button
+            key={crawlJson + record.schedulerId}
+            onClick={() =>
+              setIsModalOpen({
+                ...isModalOpen,
+                open: true,
+                data: {
+                  type: "FETCH_HISTORY",
+                  mode: "OCEAN",
+                  resourceId: record.crawlJson,
+                  jsonType: "Crawl",
+                  schId: record.schedulerId,
+                },
+              })
+            }
+            className="px-3 py-1 text-white bg-green-500 border border-green-600 rounded-md hover:bg-green-400"
+          >
+            NEW_EVENTS_FOUND
+          </button>
+        ) : 
+         (
           crawlJson
         ),
       align: "center",
