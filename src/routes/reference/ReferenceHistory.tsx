@@ -148,17 +148,12 @@ const ReferenceHistory: React.FC = () => {
         <div className="flex w-full h-full">
           <div className="flex-1 p-1 overflow-auto">
             <div className="flex gap-2 text-lg">
-              {obj.map((item: any, index: number) => (
-                <>
-                  {item !== undefined &&
-                  item !== null &&
-                  Object.keys(item).length > 0 ? (
-                    <JsonView key={index} src={item} />
-                  ) : (
-                    <></>
-                  )}
-                </>
-              ))}
+              {
+                Object.keys(obj[0]).length > 0 ? (
+                  <JsonView src={obj[0]} />
+                ) : (
+                  <></>
+                )}
             </div>
           </div>
         </div>
