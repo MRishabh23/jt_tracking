@@ -5,8 +5,11 @@ import {
   carrierListAction,
   latencyListAction,
   referenceListAction,
+  historyListAction,
 } from "../store/actions/ocean.action";
-import type { TablePaginationConfig } from 'antd/es/table';
+import type { TablePaginationConfig } from "antd/es/table";
+import { notification } from "antd";
+//import type { NotificationPlacement } from 'antd/es/notification/interface';
 
 export interface OceanProp {
   type: string;
@@ -21,6 +24,11 @@ export interface OceanProp {
   limit?: number;
   page?: number;
   totalRecordCount?: string | null;
+  subscriptionId?: string;
+  history?: string;
+  schId?: string | number;
+  resourceId?: string;
+  jsonType?: string;
 }
 
 export interface TableParams {
@@ -145,9 +153,9 @@ export const useReferenceListCount = (
     data.searchQuery === null ||
     data.searchQuery === ""
   ) {
-    newData = {...newData, totalRecordCount: "true"}
+    newData = { ...newData, totalRecordCount: "true" };
   }
-  
+
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
@@ -170,7 +178,9 @@ export const useReferenceListCount = (
     } else if (
       !ignore &&
       newData.type !== "" &&
-      newData.totalRecordCount === "true" && page !== undefined && page === 1
+      newData.totalRecordCount === "true" &&
+      page !== undefined &&
+      page === 1
     ) {
       defaultCall();
     }
@@ -197,11 +207,9 @@ export const useReferenceList = (data: OceanProp) => {
   const refActData = {
     error: "",
   };
-  const handleTableChange = (
-    pagination: TablePaginationConfig
-  ) => {
+  const handleTableChange = (pagination: TablePaginationConfig) => {
     setTableParams({
-      pagination
+      pagination,
     });
 
     // `dataSource` is useless since `pageSize` changed
@@ -209,14 +217,18 @@ export const useReferenceList = (data: OceanProp) => {
       setList([]);
     }
   };
-  
+
   let newData = data;
   if (
     data.searchQuery === undefined ||
     data.searchQuery === null ||
     data.searchQuery === ""
   ) {
-    newData = { ...newData, limit: tableParams.pagination?.pageSize, page: tableParams.pagination?.current};
+    newData = {
+      ...newData,
+      limit: tableParams.pagination?.pageSize,
+      page: tableParams.pagination?.current,
+    };
   }
   useEffect(() => {
     let ignore = false;
@@ -238,7 +250,7 @@ export const useReferenceList = (data: OceanProp) => {
           dispatch(referenceListAction(refActData));
         });
     };
-    
+
     if (!ignore && data.type !== "") {
       defaultCall();
       if (
@@ -247,8 +259,7 @@ export const useReferenceList = (data: OceanProp) => {
         data.searchQuery !== ""
       ) {
         setFrame("search");
-      }
-      else{
+      } else {
         setFrame("default");
       }
     }
@@ -258,4 +269,182 @@ export const useReferenceList = (data: OceanProp) => {
   }, [data, JSON.stringify(tableParams)]);
 
   return { list, loading, frame, tableParams, handleTableChange };
+};
+
+export const useHistoryList = (data: OceanProp) => {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [tableParams, setTableParams] = useState<TableParams>({
+    pagination: {
+      current: 1,
+      pageSize: 25,
+      showSizeChanger: false,
+    },
+  });
+  const dispatch = useDispatch();
+  const hisActData = {
+    error: "",
+  };
+  const handleTableChange = (pagination: TablePaginationConfig) => {
+    setTableParams({
+      pagination,
+    });
+
+    // `dataSource` is useless since `pageSize` changed
+    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+      setList([]);
+    }
+  };
+
+  let newData = data;
+
+  newData = {
+    ...newData,
+    limit: tableParams.pagination?.pageSize,
+    page: tableParams.pagination?.current,
+  };
+
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async () => {
+      setLoading(true);
+      await oceanCalls(newData)
+        .then((res) => {
+          if (res.status === 200 && res.data.statusCode === "200") {
+            const result = res.data;
+            setList(result.response);
+            setLoading(false);
+          } else {
+            throw { message: res.message };
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          hisActData.error = err.message;
+          dispatch(historyListAction(hisActData));
+        });
+    };
+
+    if (!ignore && data.type !== "" && data.subscriptionId !== "") {
+      defaultCall();
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [data, JSON.stringify(tableParams)]);
+
+  return { list, loading, tableParams, handleTableChange };
+};
+
+export const useHistoryListCount = (
+  data: OceanProp,
+  page: any,
+  myParam: any
+) => {
+  const [count, setCount] = useState(0);
+  const dispatch = useDispatch();
+  const hisActData = {
+    error: "",
+  };
+  let newData = data;
+
+  if (data.subscriptionId !== null && data.subscriptionId !== "") {
+    newData = { ...newData, totalRecordCount: "true" };
+  }
+
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async () => {
+      await oceanCalls(newData)
+        .then((res) => {
+          if (res.status === 200 && res.data.statusCode === "200") {
+            const result = res.data;
+            setCount(result.response[0].count);
+          } else {
+            throw { message: res.message };
+          }
+        })
+        .catch((err) => {
+          hisActData.error = err.message;
+          dispatch(historyListAction(hisActData));
+        });
+    };
+    if (!ignore && myParam.size !== 0) {
+      setCount(myParam.get("count"));
+    } else if (
+      !ignore &&
+      newData.type !== "" &&
+      newData.totalRecordCount === "true" &&
+      page !== undefined &&
+      page === 1
+    ) {
+      defaultCall();
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [data]);
+
+  return { count };
+};
+
+export const useFetchHistoryData = (data: OceanProp) => {
+  const [obj, setObj] = useState([]);
+  const [objLoad, setObjLoad] = useState(false);
+  type NotificationType = "success" | "info" | "warning" | "error";
+  type NotificationPlacement = "top" | "topRight";
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (
+    type: NotificationType,
+    placement: NotificationPlacement,
+    objError: any
+  ) => {
+    api[type]({
+      message: "Something Went Wrong!!",
+      description: objError,
+      placement,
+    });
+  };
+
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async () => {
+      setObjLoad(true);
+      await oceanCalls(data)
+        .then((res) => {
+          if (res.status === 200 && res.data.statusCode === "200") {
+            const result = res.data;
+            setObj(result.response);
+            setObjLoad(false);
+          } else {
+            throw { message: res.response.data.response };
+          }
+        })
+        .catch((err) => {
+          setObjLoad(false);
+          openNotificationWithIcon("error", "top", err.message);
+        });
+    };
+
+    if (!ignore && data.type !== "") {
+      if (
+        data.subscriptionId !== undefined &&
+        data.subscriptionId !== null &&
+        data.subscriptionId !== ""
+      ) {
+        defaultCall();
+      } else if (
+        data.resourceId !== undefined &&
+        data.resourceId !== null &&
+        data.resourceId !== ""
+      ) {
+        defaultCall();
+      }
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [data]);
+
+  return { obj, objLoad, contextHolder };
 };
