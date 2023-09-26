@@ -421,6 +421,7 @@ export const useFetchHistoryData = (data: OceanProp) => {
         })
         .catch((err) => {
           setObjLoad(false);
+          setObj([]);
           openNotificationWithIcon("error", "top", err.message);
         });
     };
@@ -438,6 +439,9 @@ export const useFetchHistoryData = (data: OceanProp) => {
         data.resourceId !== ""
       ) {
         defaultCall();
+      }
+      else {
+        setObj([]);
       }
     }
     return () => {

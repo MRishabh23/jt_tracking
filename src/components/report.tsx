@@ -30,6 +30,20 @@ export interface DataType {
   fkJson?: string;
   crawlJson?: string;
   fkLatestJson?: string;
+  activeCount?: number;
+  successCount?: number;
+  failedCount?: number;
+  duration?: number;
+  rnfCount?: number;
+  diffCount?: number;
+  skipped?: number;
+  fkTimeout?: number;
+  startToEnd?: string;
+  avgCrawlDuration?: number;
+  zeroToOne?: number;
+  oneToFour?: number;
+  moreThanFour?: number;
+  hitRate?: number;
 }
 
 export const latencyCreation = (latencyList: any) => {
@@ -745,6 +759,133 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           crawlJson
         ),
       align: "center",
+    },
+  ];
+
+  return columns;
+};
+
+export const getSummaryColumns = () => {
+  const columns: ColumnsType<DataType> = [
+    {
+      title: "Carrier",
+      dataIndex: "carrier",
+      key: "carrier",
+      fixed: true,
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Active",
+      dataIndex: "activeCount",
+      key: "activeCount",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Success",
+      dataIndex: "successCount",
+      key: "successCount",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Fail",
+      dataIndex: "failedCount",
+      key: "failedCount",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "RNF (404)",
+      dataIndex: "rnfCount",
+      key: "rnfCount",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Diff",
+      dataIndex: "diffCount",
+      key: "diffCount",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Skipped (404)",
+      dataIndex: "skipped",
+      key: "skipped",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "FK Timeout",
+      dataIndex: "fkTimeout",
+      key: "fkTimeout",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "StartTime to EndTime",
+      dataIndex: "startToEnd",
+      key: "startToEnd",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Scheduler Id",
+      dataIndex: "schedulerId",
+      key: "schedulerId",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Average crawl duration",
+      dataIndex: "avgCrawlDuration",
+      key: "avgCrawlDuration",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Queue",
+      dataIndex: "queue",
+      key: "queue",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "0_1",
+      dataIndex: "zeroToOne",
+      key: "zeroToOne",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "1_4",
+      dataIndex: "oneToFour",
+      key: "oneToFour",
+      align: "center",
+      width: 120
+    },
+    {
+      title: ">4",
+      dataIndex: "moreThanFour",
+      key: "moreThanFour",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Hit Rate",
+      dataIndex: "hitRate",
+      key: "hitRate",
+      align: "center",
+      width: 120
     },
   ];
 
