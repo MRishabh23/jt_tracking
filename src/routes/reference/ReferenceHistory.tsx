@@ -29,6 +29,7 @@ const ReferenceHistory: React.FC = () => {
   const gError = useSelector((state: any) => state.ocean.hError);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
+  const [diff, setDiff] = useState(false);
   const [historyData, setHistoryData] = useState<OceanProp>({
     mode: "OCEAN",
     type: "REFERENCE_HISTORY",
@@ -44,8 +45,7 @@ const ReferenceHistory: React.FC = () => {
     useHistoryList(historyData);
   const { count } = useHistoryListCount(
     historyData,
-    tableParams.pagination?.current,
-    myParam
+    tableParams.pagination?.current
   );
   const [isModalOpen, setIsModalOpen] = useState({
     open: false,
@@ -181,7 +181,7 @@ const ReferenceHistory: React.FC = () => {
                   { required: true, message: "Please input SubscriptionId" },
                 ]}
               >
-                <Input placeholder="Enter SubscriptionId" />
+                <Input allowClear placeholder="Enter SubscriptionId" />
               </Form.Item>
 
               <Form.Item
@@ -208,6 +208,7 @@ const ReferenceHistory: React.FC = () => {
             </Form>
           ) : (
             <div className="flex flex-col gap-3 items-center justify-center">
+              <div className="flex flex-col gap-6 lg:flex-row">
               <button
                 type="button"
                 onClick={() => {
@@ -223,8 +224,32 @@ const ReferenceHistory: React.FC = () => {
               >
                 More Queries
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  // navigate("/reference/history");
+                  
+                  let history = diff? "DIFF_HISTORY" : "ALL_HISTORY";
+                  setDiff(!diff);
+                  setHistoryData({
+                    type: "REFERENCE_HISTORY",
+                    mode: "OCEAN",
+                    subscriptionId: subId,
+                    history: history,
+                  });
+                  const pagination: TablePaginationConfig = {
+                    current: 1,
+                    pageSize: 25,
+                  };
+                  handleTableChange(pagination);
+                }}
+                className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
+              >
+                {diff? "GET_DIFF_HISTORY" : "GET_ALL_HISTORY"}
+              </button>
+              </div>
               <div> 
-                <p className="text-lg font-semibold">Showing DIFF_HISTORY for {myParam.get("subsId")}</p>
+                <p className="text-lg font-semibold">Showing {diff? "ALL_HISTORY": "DIFF_HISTORY"} for {myParam.get("subsId")}</p>
               </div>
             </div>
           )}
