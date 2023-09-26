@@ -11,6 +11,7 @@ import Login from "./routes/auth/login";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { useSelector } from "react-redux";
+import OceanSummary from "./routes/ocean/OceanSummary";
 
 interface props {}
 
@@ -54,6 +55,7 @@ const App: React.FC<props> = () => {
               <Route path="latency" element={<OceanLatency />} />
               <Route path="reference" element={<OceanList />} />
               <Route path="history" element={<OceanHistory />} />
+              <Route path="summary" element={<OceanSummary />} />
             </Route>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
