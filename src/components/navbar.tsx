@@ -40,7 +40,6 @@ const Navbar: React.FC<props> = () => {
   const SampleDrawer = () => {
     const [air, setAir] = useState(false);
     const [ocean, setOcean] = useState(false);
-    const [ref, setRef] = useState(false);
 
     return (
       <Drawer
@@ -73,17 +72,9 @@ const Navbar: React.FC<props> = () => {
           />
           <CustomMenu
             name="Ocean"
-            child={["Latency"]}
+            child={["Latency", "Reference", "History"]}
             open={ocean}
             setOpen={setOcean}
-            drawer={open}
-            setDrawer={setOpen}
-          />
-          <CustomMenu
-            name="Reference"
-            child={["List", "History"]}
-            open={ref}
-            setOpen={setRef}
             drawer={open}
             setDrawer={setOpen}
           />

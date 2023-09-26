@@ -341,7 +341,6 @@ export const useHistoryList = (data: OceanProp) => {
 export const useHistoryListCount = (
   data: OceanProp,
   page: any,
-  myParam: any
 ) => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
@@ -349,7 +348,7 @@ export const useHistoryListCount = (
     error: "",
   };
   let newData = data;
-
+  
   if (data.subscriptionId !== null && data.subscriptionId !== "") {
     newData = { ...newData, totalRecordCount: "true" };
   }
@@ -371,9 +370,7 @@ export const useHistoryListCount = (
           dispatch(historyListAction(hisActData));
         });
     };
-    if (!ignore && myParam.size !== 0) {
-      setCount(myParam.get("count"));
-    } else if (
+   if (
       !ignore &&
       newData.type !== "" &&
       newData.totalRecordCount === "true" &&
