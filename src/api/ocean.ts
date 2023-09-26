@@ -310,7 +310,6 @@ export const useHistoryList = (data: OceanProp) => {
       setLoading(true);
       await oceanCalls(newData)
         .then((res) => {
-          console.log("from res call", res);
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
             setList(result.response);
@@ -354,14 +353,11 @@ export const useHistoryListCount = (
     newData = { ...newData, totalRecordCount: "true" };
   }
 
-  console.log("check count log", newData);
-
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
       await oceanCalls(newData)
         .then((res) => {
-          console.log("from count call", res);
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
             setCount(result.response[0].count);

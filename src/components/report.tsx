@@ -250,7 +250,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.total > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}&count=${record.total}`,
             }}
             target="_blank"
@@ -272,7 +272,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.first > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=first&report=${record.queue}&count=${record.first}`,
             }}
             target="_blank"
@@ -294,7 +294,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.second > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=second&report=${record.queue}&count=${record.second}`,
             }}
             target="_blank"
@@ -316,7 +316,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.third > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=third&report=${record.queue}&count=${record.third}`,
             }}
             target="_blank"
@@ -338,7 +338,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.fourth > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fourth&report=${record.fourth}`,
             }}
             target="_blank"
@@ -360,7 +360,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.fifth > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fifth&report=${record.queue}&count=${record.fifth}`,
             }}
             target="_blank"
@@ -382,7 +382,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.sixth > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=sixth&report=${record.queue}&count=${record.sixth}`,
             }}
             target="_blank"
@@ -404,7 +404,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.seventh > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=seventh&report=${record.queue}&count=${record.seventh}`,
             }}
             target="_blank"
@@ -426,7 +426,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.eight > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=eight&report=${record.queue}&count=${record.eight}`,
             }}
             target="_blank"
@@ -448,7 +448,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.ninth > 0 ? (
           <Link
             to={{
-              pathname: "/reference/list",
+              pathname: "/ocean/list",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=ninth&report=${record.queue}&count=${record.ninth}`,
             }}
             target="_blank"
@@ -477,7 +477,7 @@ export const getReferenceColumns = () => {
         record.subscriptionId !== "" ? (
           <Link
             to={{
-              pathname: "/reference/history",
+              pathname: "/ocean/history",
               search: `?subsId=${record.subscriptionId}`,
             }}
             target="_blank"
@@ -646,7 +646,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
                 },
               })
             }
-            className="px-3 py-1 text-blue bg-amber-300 border border-amber-400 rounded-md hover:bg-amber-200"
+            className="px-3 py-1 border rounded-md text-blue bg-amber-300 border-amber-400 hover:bg-amber-200"
           >
             SAME_AS_BEFORE
           </button>
@@ -696,7 +696,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
                 },
               })
             }
-            className="px-3 py-1 text-blue bg-amber-300 border border-amber-400 rounded-md hover:bg-amber-200"
+            className="px-3 py-1 border rounded-md text-blue bg-amber-300 border-amber-400 hover:bg-amber-200"
           >
             SAME_AS_BEFORE
           </button>

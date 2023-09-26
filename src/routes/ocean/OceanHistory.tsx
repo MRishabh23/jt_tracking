@@ -207,7 +207,7 @@ const ReferenceHistory: React.FC = () => {
               </Form.Item>
             </Form>
           ) : (
-            <div className="flex flex-col gap-3 items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-3">
               <div className="flex flex-col gap-6 lg:flex-row">
               <button
                 type="button"
@@ -243,13 +243,13 @@ const ReferenceHistory: React.FC = () => {
                   };
                   handleTableChange(pagination);
                 }}
-                className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
+                className="px-4 py-1  text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
               >
-                {diff? "GET_DIFF_HISTORY" : "GET_ALL_HISTORY"}
+                {diff ? "Diff History" : "All History"}
               </button>
               </div>
               <div> 
-                <p className="text-lg font-semibold">Showing {diff? "ALL_HISTORY": "DIFF_HISTORY"} for {myParam.get("subsId")}</p>
+                <p className="text-lg font-semibold">Showing {diff ? "ALL_HISTORY" : "DIFF_HISTORY"}</p>
               </div>
             </div>
           )}
