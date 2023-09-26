@@ -700,7 +700,27 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           >
             SAME_AS_BEFORE
           </button>
-        ) : record.crawlJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
+        ) : record.crawlJson !== "No Data" && record.fkJson === "No Data" ? (
+          <button
+            key={crawlJson + record.schedulerId}
+            onClick={() =>
+              setIsModalOpen({
+                ...isModalOpen,
+                open: true,
+                data: {
+                  type: "FETCH_HISTORY",
+                  mode: "OCEAN",
+                  resourceId: record.crawlJson,
+                  jsonType: "Crawl",
+                  schId: record.schedulerId,
+                },
+              })
+            }
+            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
+          >
+            CRAWL_JSON
+          </button>
+        ) : record.crawlJson !== "No Data" && record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
           <button
             key={crawlJson + record.schedulerId}
             onClick={() =>
@@ -720,7 +740,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           >
             NEW_EVENTS_FOUND
           </button>
-        ) : 
+        ):
          (
           crawlJson
         ),

@@ -310,6 +310,7 @@ export const useHistoryList = (data: OceanProp) => {
       setLoading(true);
       await oceanCalls(newData)
         .then((res) => {
+          console.log("from res call", res);
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
             setList(result.response);
@@ -341,7 +342,6 @@ export const useHistoryList = (data: OceanProp) => {
 export const useHistoryListCount = (
   data: OceanProp,
   page: any,
-  myParam: any
 ) => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
@@ -349,16 +349,19 @@ export const useHistoryListCount = (
     error: "",
   };
   let newData = data;
-
+  
   if (data.subscriptionId !== null && data.subscriptionId !== "") {
     newData = { ...newData, totalRecordCount: "true" };
   }
+
+  console.log("check count log", newData);
 
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
       await oceanCalls(newData)
         .then((res) => {
+          console.log("from count call", res);
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
             setCount(result.response[0].count);
@@ -371,9 +374,7 @@ export const useHistoryListCount = (
           dispatch(historyListAction(hisActData));
         });
     };
-    if (!ignore && myParam.size !== 0) {
-      setCount(myParam.get("count"));
-    } else if (
+   if (
       !ignore &&
       newData.type !== "" &&
       newData.totalRecordCount === "true" &&
