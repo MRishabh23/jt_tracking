@@ -4,7 +4,7 @@ import { useCheckAuth } from "../../api/auth";
 
 const OceanDashboard: React.FC = () => {
   useCheckAuth();
-  const oceanDashMap = ["LATENCY", "REFERENCE", "HISTORY"]
+  const oceanDashMap = ["LATENCY", "REFERENCE", "HISTORY", "SUMMARY"]
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full p-3">
