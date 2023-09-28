@@ -141,10 +141,7 @@ export const useLatencyList = (data: OceanProp) => {
 export const useSummaryList = (data: OceanProp) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const dispatch = useDispatch();
-  // const latActData = {
-  //   error: "",
-  // };
+  const [summaryError, setSummaryError] = useState("");
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
@@ -155,22 +152,19 @@ export const useSummaryList = (data: OceanProp) => {
             const result = res.data;
             setList(result.response);
             setLoading(false);
+            setSummaryError("");
           } else {
             throw { message: res.message };
           }
         })
         .catch((err) => {
-          console.log(err);
           setLoading(false);
-          // latActData.error = err.message;
-          // dispatch(latencyListAction(latActData));
+          setSummaryError(err.message);
         });
     };
-    if (!ignore && data.type !== "" &&  data.carriers?.length !== 0) {
+    if (!ignore && data.type !== "" && data.carriers?.length !== 0) {
       defaultCall();
-    }
-    else
-    {
+    } else {
       setList([]);
     }
 
@@ -179,7 +173,7 @@ export const useSummaryList = (data: OceanProp) => {
     };
   }, [data]);
 
-  return { list, loading };
+  return { list, loading, summaryError };
 };
 
 export const useReferenceListCount = (
@@ -383,17 +377,14 @@ export const useHistoryList = (data: OceanProp) => {
   return { list, loading, tableParams, handleTableChange };
 };
 
-export const useHistoryListCount = (
-  data: OceanProp,
-  page: any,
-) => {
+export const useHistoryListCount = (data: OceanProp, page: any) => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
   const hisActData = {
     error: "",
   };
   let newData = data;
-  
+
   if (data.subscriptionId !== null && data.subscriptionId !== "") {
     newData = { ...newData, totalRecordCount: "true" };
   }
@@ -415,7 +406,7 @@ export const useHistoryListCount = (
           dispatch(historyListAction(hisActData));
         });
     };
-   if (
+    if (
       !ignore &&
       newData.type !== "" &&
       newData.totalRecordCount === "true" &&
@@ -484,8 +475,7 @@ export const useFetchHistoryData = (data: OceanProp) => {
         data.resourceId !== ""
       ) {
         defaultCall();
-      }
-      else {
+      } else {
         setObj([]);
       }
     }

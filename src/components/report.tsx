@@ -823,7 +823,7 @@ export const getSummaryColumns = () => {
       key: "failedCount",
       align: "center",
       render: (failedCount, record: any) => (
-        <p style={{ color: record.failedRatio>5 ? 'red' : 'inherit' }}>
+        <p style={{ color: record.failedRatio > 5 ? "red" : "inherit" }}>
           {failedCount} ({record.failedRatio}%)
         </p>
       ),
@@ -842,7 +842,7 @@ export const getSummaryColumns = () => {
       key: "rnfCount",
       align: "center",
       render: (rnfCount, record: any) => (
-        <p style={{ color: record.rnfRatio>20 ? 'red' : 'inherit' }}>
+        <p style={{ color: record.rnfRatio > 20 ? "red" : "inherit" }}>
           {rnfCount} ({record.rnfRatio}%)
         </p>
       ),

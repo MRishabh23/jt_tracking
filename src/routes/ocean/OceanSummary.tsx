@@ -13,9 +13,8 @@ import { OceanProp, useSummaryList } from "../../api/ocean";
 const OceanSummary: React.FC = () => {
   useCheckAuth();
   const [selectState, setSelectState] = useState<String[]>([]);
-  const [error, setError] = useState("");
   const [form] = Form.useForm();
-//   const [timeValue, setTimeValue] = useState("");
+  //   const [timeValue, setTimeValue] = useState("");
   const [summaryData, setSummaryData] = useState<OceanProp>({
     type: "CRAWL_SUMMARY",
     mode: "OCEAN",
@@ -23,7 +22,7 @@ const OceanSummary: React.FC = () => {
     timeDuration: "",
   });
 
-  const { list, loading } = useSummaryList(summaryData);
+  const { list, loading, summaryError } = useSummaryList(summaryData);
 
   const mainList = SummaryCreation(list);
 
@@ -34,7 +33,6 @@ const OceanSummary: React.FC = () => {
   const getSumCol = getSummaryColumns();
 
   const handleChange = (value: any) => {
-    setError(""); // for getting rid of warning
     let newState = [];
     for (let x in value) {
       newState.push(value[x]);
@@ -43,7 +41,6 @@ const OceanSummary: React.FC = () => {
   };
 
   const onFinish = async (values: any) => {
-    // dispatch(historyListAction({ error: "" }));
     // const carrArr =
     //   timeValue !== undefined && timeValue !== ""
     //     ? [values.carrier]
@@ -61,30 +58,10 @@ const OceanSummary: React.FC = () => {
     setSummaryData(sendData);
   };
 
-  //   useEffect(() => {
-  //   let ignore = false;
-  //   if (!ignore) {
-  //     if (gError !== "") {
-  //       setError(gError);
-  //     } else {
-  //       setError("");
-  //     }
-  //   }
-  //   return () => {
-  //     ignore = true;
-  //   };
-  // }, [gError]);
-  // paginationObj = isAvg
-  //   ? {
-  //       pageSize: 10,
-  //     }
-  //   : false;
-  // });
-
   return (
     <div className="relative w-full min-h-full p-3">
       <div className="flex items-center justify-center pt-2 font-semibold">
-        <h3 className="text-3xl">Crawl Summary (Coming soon....)</h3>
+        <h3 className="text-3xl">Crawl Summary</h3>
       </div>
       <div className="p-3 mt-8 bg-gray-200 rounded-md lg:mt-12">
         <Form
@@ -103,11 +80,11 @@ const OceanSummary: React.FC = () => {
           >
             <Select
               allowClear={true}
-            //   mode={
-            //     timeValue !== undefined && timeValue !== ""
-            //       ? undefined
-            //       : "multiple"
-            //   }
+              //   mode={
+              //     timeValue !== undefined && timeValue !== ""
+              //       ? undefined
+              //       : "multiple"
+              //   }
               mode="multiple"
               onChange={(value) => {
                 handleChange(value);
@@ -117,11 +94,16 @@ const OceanSummary: React.FC = () => {
               {carrierList.length > 0 ? (
                 carrierList.map((item: any, index: any) => (
                   <Select.Option
+                    // disabled={
+                    //   selectState.length === 5 &&
+                    //   !selectState.includes(item.toLowerCase()) &&
+                    //   (timeValue === undefined || timeValue === "")
+                    //     ? true
+                    //     : false
+                    // }
                     disabled={
                       selectState.length === 5 &&
-                      !selectState.includes(item.toLowerCase()) 
-                    //   &&
-                    //   (timeValue === undefined || timeValue === "")
+                      !selectState.includes(item.toLowerCase())
                         ? true
                         : false
                     }
@@ -171,9 +153,9 @@ const OceanSummary: React.FC = () => {
           </Form.Item>
         </Form>
       </div>
-      {error !== "" ? (
+      {summaryError !== "" ? (
         <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-          {error.includes("timeout") ? "Request Timeout" : error}
+          {summaryError.includes("timeout") ? "Request Timeout" : summaryError}
         </div>
       ) : (
         <div className="mt-7">
@@ -189,7 +171,11 @@ const OceanSummary: React.FC = () => {
                 //     ? { pageSize: 10, hideOnSinglePage: true }
                 //     : false
                 // }
-                pagination={{pageSize: 10, hideOnSinglePage: true}}
+                pagination={{
+                  pageSize: 10,
+                  hideOnSinglePage: true,
+                  showSizeChanger: false,
+                }}
                 scroll={{ x: "1100px", y: "675px" }}
               />
             ) : (
