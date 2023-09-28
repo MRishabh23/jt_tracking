@@ -29,6 +29,7 @@ export interface OceanProp {
   schId?: string | number;
   resourceId?: string;
   jsonType?: string;
+  timeDuration?: string;
 }
 
 export interface TableParams {
@@ -127,6 +128,50 @@ export const useLatencyList = (data: OceanProp) => {
     };
     if (!ignore && data.type !== "") {
       defaultCall();
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [data]);
+
+  return { list, loading };
+};
+
+export const useSummaryList = (data: OceanProp) => {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  // const dispatch = useDispatch();
+  // const latActData = {
+  //   error: "",
+  // };
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async () => {
+      setLoading(true);
+      await oceanCalls(data)
+        .then((res) => {
+          if (res.status === 200 && res.data.statusCode === "200") {
+            const result = res.data;
+            setList(result.response);
+            setLoading(false);
+          } else {
+            throw { message: res.message };
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+          // latActData.error = err.message;
+          // dispatch(latencyListAction(latActData));
+        });
+    };
+    if (!ignore && data.type !== "" &&  data.carriers?.length !== 0) {
+      defaultCall();
+    }
+    else
+    {
+      setList([]);
     }
 
     return () => {
