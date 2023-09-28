@@ -32,18 +32,15 @@ export interface DataType {
   fkLatestJson?: string;
   activeCount?: number;
   successCount?: number;
+  successRatio?: number;
   failedCount?: number;
   duration?: number;
   rnfCount?: number;
   diffCount?: number;
   skipped?: number;
   fkTimeout?: number;
-  startToEnd?: string;
-  avgCrawlDuration?: number;
-  zeroToOne?: number;
-  oneToFour?: number;
-  moreThanFour?: number;
-  hitRate?: number;
+  start?: string;
+  end?: string;
 }
 
 export const latencyCreation = (latencyList: any) => {
@@ -174,6 +171,31 @@ export const HistoryCreation = (historyList: any, subId: string) => {
     };
   });
   return hList;
+};
+
+export const SummaryCreation = (summaryList: any) => {
+  const sList = summaryList.map((item: any, index: number) => {
+    return {
+      key: index,
+      carrier: item.jtCarrierCode,
+      activeCount: item.jtCrawledTotal,
+      successCount: item.successCount,
+      successRatio: item.successRatio,
+      failedCount: item.failCount,
+      failedRatio: item.failureRatio,
+      duration: item.timeDiffMinutes,
+      rnfCount: item.getReferenceNotFound,
+      rnfRatio: item.getReferenceNotFoundPercentage,
+      diffCount: item.getTotalDiffFound,
+      skipped: item.skipped404,
+      fkTimeout: item.toFKFailed,
+      start: item.start_time,
+      end: item.end_time,
+      schedulerId: item.schedulerId,
+      queue: item.queueType,
+    };
+  });
+  return sList;
 };
 
 const colors = ["geekblue", "green", "volcano"];
@@ -685,7 +707,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             NEW_EVENTS_FOUND
           </button>
         ) : (
-         fkJson
+          fkJson
         ),
       align: "center",
     },
@@ -734,7 +756,9 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           >
             CRAWL_JSON
           </button>
-        ) : record.crawlJson !== "No Data" && record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
+        ) : record.crawlJson !== "No Data" &&
+          record.fkJson !== "No Data" &&
+          record.fkJson !== "SAME_PAYLOAD" ? (
           <button
             key={crawlJson + record.schedulerId}
             onClick={() =>
@@ -754,8 +778,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           >
             NEW_EVENTS_FOUND
           </button>
-        ):
-         (
+        ) : (
           crawlJson
         ),
       align: "center",
@@ -773,119 +796,106 @@ export const getSummaryColumns = () => {
       key: "carrier",
       fixed: true,
       align: "center",
-      width: 120
+      width: 120,
     },
     {
       title: "Active",
       dataIndex: "activeCount",
       key: "activeCount",
       align: "center",
-      width: 120
+      width: 120,
     },
     {
       title: "Success",
       dataIndex: "successCount",
       key: "successCount",
       align: "center",
-      width: 120
+      render: (successCount, record: any) => (
+        <p>
+          {successCount} ({record.successRatio}%)
+        </p>
+      ),
+      width: 120,
     },
     {
       title: "Fail",
       dataIndex: "failedCount",
       key: "failedCount",
       align: "center",
-      width: 120
+      render: (failedCount, record: any) => (
+        <p style={{ color: record.failedRatio>5 ? 'red' : 'inherit' }}>
+          {failedCount} ({record.failedRatio}%)
+        </p>
+      ),
+      width: 120,
     },
     {
-      title: "Duration",
+      title: "Duration (mins)",
       dataIndex: "duration",
       key: "duration",
       align: "center",
-      width: 120
+      width: 120,
     },
     {
       title: "RNF (404)",
       dataIndex: "rnfCount",
       key: "rnfCount",
       align: "center",
-      width: 120
+      render: (rnfCount, record: any) => (
+        <p style={{ color: record.rnfRatio>20 ? 'red' : 'inherit' }}>
+          {rnfCount} ({record.rnfRatio}%)
+        </p>
+      ),
+      width: 120,
     },
     {
       title: "Diff",
       dataIndex: "diffCount",
       key: "diffCount",
       align: "center",
-      width: 120
+      width: 120,
     },
     {
       title: "Skipped (404)",
       dataIndex: "skipped",
       key: "skipped",
       align: "center",
-      width: 120
+      width: 120,
     },
     {
       title: "FK Timeout",
       dataIndex: "fkTimeout",
       key: "fkTimeout",
       align: "center",
-      width: 120
+      width: 120,
     },
     {
-      title: "StartTime to EndTime",
-      dataIndex: "startToEnd",
-      key: "startToEnd",
+      title: "Start-Time",
+      dataIndex: "start",
+      key: "start",
       align: "center",
-      width: 120
+      width: 120,
+    },
+    {
+      title: "End-Time",
+      dataIndex: "end",
+      key: "end",
+      align: "center",
+      width: 120,
     },
     {
       title: "Scheduler Id",
       dataIndex: "schedulerId",
       key: "schedulerId",
       align: "center",
-      width: 120
-    },
-    {
-      title: "Average crawl duration",
-      dataIndex: "avgCrawlDuration",
-      key: "avgCrawlDuration",
-      align: "center",
-      width: 120
+      width: 120,
     },
     {
       title: "Queue",
       dataIndex: "queue",
       key: "queue",
       align: "center",
-      width: 120
-    },
-    {
-      title: "0_1",
-      dataIndex: "zeroToOne",
-      key: "zeroToOne",
-      align: "center",
-      width: 120
-    },
-    {
-      title: "1_4",
-      dataIndex: "oneToFour",
-      key: "oneToFour",
-      align: "center",
-      width: 120
-    },
-    {
-      title: ">4",
-      dataIndex: "moreThanFour",
-      key: "moreThanFour",
-      align: "center",
-      width: 120
-    },
-    {
-      title: "Hit Rate",
-      dataIndex: "hitRate",
-      key: "hitRate",
-      align: "center",
-      width: 120
+      width: 120,
     },
   ];
 
