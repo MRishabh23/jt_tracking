@@ -34,7 +34,7 @@ export interface DataType {
   successCount?: number;
   successRatio?: number;
   failedCount?: number;
-  duration?: number;
+  duration?: string;
   rnfCount?: number;
   diffCount?: number;
   skipped?: number;
@@ -183,7 +183,7 @@ export const SummaryCreation = (summaryList: any) => {
       successRatio: item.successRatio,
       failedCount: item.failCount,
       failedRatio: item.failureRatio,
-      duration: item.timeDiffMinutes,
+      duration: item.timeDiffInFk,
       rnfCount: item.getReferenceNotFound,
       rnfRatio: item.getReferenceNotFoundPercentage,
       diffCount: item.getTotalDiffFound,
@@ -831,7 +831,7 @@ export const getSummaryColumns = () => {
       width: 120,
     },
     {
-      title: "Duration (mins)",
+      title: "Duration",
       dataIndex: "duration",
       key: "duration",
       align: "center",
