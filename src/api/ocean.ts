@@ -162,7 +162,8 @@ export const useSummaryList = (data: OceanProp) => {
           setSummaryError(err.message);
         });
     };
-    if (!ignore && data.type !== "" && data.carriers?.length !== 0) {
+    //if (!ignore && data.type !== "" && data.carriers?.length !== 0) {
+    if (!ignore && data.type !== "") {
       defaultCall();
     } else {
       setList([]);

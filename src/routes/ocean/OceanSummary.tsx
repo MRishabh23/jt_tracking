@@ -144,12 +144,30 @@ const OceanSummary: React.FC = () => {
             </Select>
           </Form.Item> */}
           <Form.Item>
-            <button
-              type="submit"
-              className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-            >
-              Refresh
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
+              >
+                Refresh
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSummaryData({
+                    type: "CRAWL_SUMMARY",
+                    mode: "OCEAN",
+                    carriers: [],
+                    timeDuration: "",
+                  });
+                  form.setFieldValue("carrier", []);
+                  setSelectState([]);
+                }}
+                className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
+              >
+                Default
+              </button>
+            </div>
           </Form.Item>
         </Form>
       </div>
@@ -172,7 +190,7 @@ const OceanSummary: React.FC = () => {
                 //     : false
                 // }
                 pagination={{
-                  pageSize: 10,
+                  pageSize: 5,
                   hideOnSinglePage: true,
                   showSizeChanger: false,
                 }}

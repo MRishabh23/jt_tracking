@@ -174,28 +174,34 @@ export const HistoryCreation = (historyList: any, subId: string) => {
 };
 
 export const SummaryCreation = (summaryList: any) => {
-  const sList = summaryList.map((item: any, index: number) => {
-    return {
-      key: index,
-      carrier: item.jtCarrierCode,
-      activeCount: item.jtCrawledTotal,
-      successCount: item.successCount,
-      successRatio: item.successRatio,
-      failedCount: item.failCount,
-      failedRatio: item.failureRatio,
-      duration: item.timeDiffInFk,
-      rnfCount: item.getReferenceNotFound,
-      rnfRatio: item.getReferenceNotFoundPercentage,
-      diffCount: item.getTotalDiffFound,
-      diffRatio: item.diffRatio,
-      skipped: item.skipped404,
-      fkTimeout: item.toFKFailed,
-      start: item.start_time,
-      end: item.end_time,
-      schedulerId: item.schedulerId,
-      queue: item.queueType,
-    };
-  });
+  const sList = summaryList
+    .sort(function (a: any, b: any) {
+      const nameA = +a.jtCrawledTotal;
+      const nameB = +b.jtCrawledTotal;
+      return nameB - nameA;
+    })
+    .map((item: any, index: number) => {
+      return {
+        key: index,
+        carrier: item.jtCarrierCode,
+        activeCount: item.jtCrawledTotal,
+        successCount: item.successCount,
+        successRatio: item.successRatio,
+        failedCount: item.failCount,
+        failedRatio: item.failureRatio,
+        duration: item.timeDiffInFk,
+        rnfCount: item.getReferenceNotFound,
+        rnfRatio: item.getReferenceNotFoundPercentage,
+        diffCount: item.getTotalDiffFound,
+        diffRatio: item.diffRatio,
+        skipped: +item.skipped404,
+        fkTimeout: item.toFKFailed,
+        start: item.start_time,
+        end: item.end_time,
+        schedulerId: item.schedulerId,
+        queue: item.queueType,
+      };
+    });
   return sList;
 };
 
@@ -867,6 +873,7 @@ export const getSummaryColumns = () => {
       key: "skipped",
       align: "center",
       width: 120,
+      sorter: (a: any, b: any) => a.skipped - b.skipped,
     },
     {
       title: "FK Timeout",
