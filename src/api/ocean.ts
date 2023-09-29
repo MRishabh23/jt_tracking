@@ -29,6 +29,7 @@ export interface OceanProp {
   schId?: string | number;
   resourceId?: string;
   jsonType?: string;
+  timeDuration?: string;
 }
 
 export interface TableParams {
@@ -135,6 +136,45 @@ export const useLatencyList = (data: OceanProp) => {
   }, [data]);
 
   return { list, loading };
+};
+
+export const useSummaryList = (data: OceanProp) => {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState("");
+  useEffect(() => {
+    let ignore = false;
+    const defaultCall = async () => {
+      setLoading(true);
+      await oceanCalls(data)
+        .then((res) => {
+          if (res.status === 200 && res.data.statusCode === "200") {
+            const result = res.data;
+            setList(result.response);
+            setLoading(false);
+            setSummaryError("");
+          } else {
+            throw { message: res.message };
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          setSummaryError(err.message);
+        });
+    };
+    //if (!ignore && data.type !== "" && data.carriers?.length !== 0) {
+    if (!ignore && data.type !== "") {
+      defaultCall();
+    } else {
+      setList([]);
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [data]);
+
+  return { list, loading, summaryError };
 };
 
 export const useReferenceListCount = (
@@ -338,17 +378,14 @@ export const useHistoryList = (data: OceanProp) => {
   return { list, loading, tableParams, handleTableChange };
 };
 
-export const useHistoryListCount = (
-  data: OceanProp,
-  page: any,
-) => {
+export const useHistoryListCount = (data: OceanProp, page: any) => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
   const hisActData = {
     error: "",
   };
   let newData = data;
-  
+
   if (data.subscriptionId !== null && data.subscriptionId !== "") {
     newData = { ...newData, totalRecordCount: "true" };
   }
@@ -370,7 +407,7 @@ export const useHistoryListCount = (
           dispatch(historyListAction(hisActData));
         });
     };
-   if (
+    if (
       !ignore &&
       newData.type !== "" &&
       newData.totalRecordCount === "true" &&
@@ -439,8 +476,7 @@ export const useFetchHistoryData = (data: OceanProp) => {
         data.resourceId !== ""
       ) {
         defaultCall();
-      }
-      else {
+      } else {
         setObj([]);
       }
     }
