@@ -171,7 +171,7 @@ const OceanSummary: React.FC = () => {
           </Form.Item>
         </Form>
       </div>
-      {summaryError !== "" ? (
+      {summaryError !== undefined && summaryError !== "" ? (
         <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
           {summaryError.includes("timeout") ? "Request Timeout" : summaryError}
         </div>
