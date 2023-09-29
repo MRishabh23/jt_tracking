@@ -187,6 +187,7 @@ export const SummaryCreation = (summaryList: any) => {
       rnfCount: item.getReferenceNotFound,
       rnfRatio: item.getReferenceNotFoundPercentage,
       diffCount: item.getTotalDiffFound,
+      diffRatio: item.diffRatio,
       skipped: item.skipped404,
       fkTimeout: item.toFKFailed,
       start: item.start_time,
@@ -852,6 +853,11 @@ export const getSummaryColumns = () => {
       title: "Diff",
       dataIndex: "diffCount",
       key: "diffCount",
+      render: (diffCount, record: any) => (
+        <p>
+          {diffCount} ({record.diffRatio}%)
+        </p>
+      ),
       align: "center",
       width: 120,
     },
