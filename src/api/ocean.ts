@@ -177,85 +177,162 @@ export const useSummaryList = (data: OceanProp) => {
   return { list, loading, summaryError };
 };
 
-export const useReferenceListCount = (
-  data: OceanProp,
-  page: any,
-  myParam: any
-) => {
-  const [count, setCount] = useState(0);
-  const dispatch = useDispatch();
-  const refActData = {
-    error: "",
-  };
-  let newData = data;
-  if (
-    data.searchQuery === undefined ||
-    data.searchQuery === null ||
-    data.searchQuery === ""
-  ) {
-    newData = { ...newData, totalRecordCount: "true" };
-  }
+// export const useReferenceListCount = (
+//   data: OceanProp,
+//   page: any,
+//   myParam: any
+// ) => {
+//   const [count, setCount] = useState(0);
+//   const dispatch = useDispatch();
+//   const refActData = {
+//     error: "",
+//   };
+//   let newData = data;
+//   if (
+//     data.searchQuery === undefined ||
+//     data.searchQuery === null ||
+//     data.searchQuery === ""
+//   ) {
+//     newData = { ...newData, totalRecordCount: "true" };
+//   }
 
-  useEffect(() => {
-    let ignore = false;
-    const defaultCall = async () => {
-      await oceanCalls(newData)
-        .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
-            const result = res.data;
-            setCount(result.response[0].count);
-          } else {
-            throw { message: res.message };
-          }
-        })
-        .catch((err) => {
-          refActData.error = err.message;
-          dispatch(referenceListAction(refActData));
-        });
-    };
-    if (!ignore && myParam.size !== 0) {
-      setCount(myParam.get("count"));
-    } else if (
-      !ignore &&
-      newData.type !== "" &&
-      newData.totalRecordCount === "true" &&
-      page !== undefined &&
-      page === 1
-    ) {
-      defaultCall();
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [data]);
+//   useEffect(() => {
+//     let ignore = false;
+//     const defaultCall = async () => {
+//       await oceanCalls(newData)
+//         .then((res) => {
+//           if (res.status === 200 && res.data.statusCode === "200") {
+//             const result = res.data;
+//             setCount(result.response[0].count);
+//           } else {
+//             throw { message: res.message };
+//           }
+//         })
+//         .catch((err) => {
+//           refActData.error = err.message;
+//           dispatch(referenceListAction(refActData));
+//         });
+//     };
+//     if (!ignore && myParam.size !== 0) {
+//       setCount(myParam.get("count"));
+//     } else if (
+//       !ignore &&
+//       newData.type !== "" &&
+//       newData.totalRecordCount === "true" &&
+//       page !== undefined &&
+//       page === 1
+//     ) {
+//       defaultCall();
+//     }
+//     return () => {
+//       ignore = true;
+//     };
+//   }, [data]);
 
-  return { count };
-};
+//   return { count };
+// };
+
+// export const useReferenceList = (data: OceanProp) => {
+//   const [list, setList] = useState([]);
+//   const [frame, setFrame] = useState("default");
+//   const [loading, setLoading] = useState(false);
+//   const [tableParams, setTableParams] = useState<TableParams>({
+//     pagination: {
+//       current: 1,
+//       pageSize: 25,
+//       showSizeChanger: false,
+//     },
+//   });
+//   const dispatch = useDispatch();
+//   const refActData = {
+//     error: "",
+//   };
+//   const handleTableChange = (pagination: TablePaginationConfig) => {
+//     setTableParams({
+//       pagination,
+//     });
+
+//     // `dataSource` is useless since `pageSize` changed
+//     if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+//       setList([]);
+//     }
+//   };
+
+//   let newData = data;
+//   if (
+//     data.searchQuery === undefined ||
+//     data.searchQuery === null ||
+//     data.searchQuery === ""
+//   ) {
+//     newData = {
+//       ...newData,
+//       limit: tableParams.pagination?.pageSize,
+//       page: tableParams.pagination?.current,
+//     };
+//   }
+//   useEffect(() => {
+//     let ignore = false;
+//     const defaultCall = async () => {
+//       setLoading(true);
+//       await oceanCalls(newData)
+//         .then((res) => {
+//           if (res.status === 200 && res.data.statusCode === "200") {
+//             const result = res.data;
+//             setList(result.response);
+//             setLoading(false);
+//           } else {
+//             throw { message: res.message };
+//           }
+//         })
+//         .catch((err) => {
+//           setLoading(false);
+//           refActData.error = err.message;
+//           dispatch(referenceListAction(refActData));
+//         });
+//     };
+
+//     if (!ignore && data.type !== "") {
+//       defaultCall();
+//       if (
+//         data.searchQuery !== undefined &&
+//         data.searchQuery !== null &&
+//         data.searchQuery !== ""
+//       ) {
+//         setFrame("search");
+//       } else {
+//         setFrame("default");
+//       }
+//     }
+//     return () => {
+//       ignore = true;
+//     };
+//   }, [data, JSON.stringify(tableParams)]);
+
+//   return { list, loading, frame, tableParams, handleTableChange };
+// };
 
 export const useReferenceList = (data: OceanProp) => {
   const [list, setList] = useState([]);
   const [frame, setFrame] = useState("default");
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [tableParams, setTableParams] = useState<TableParams>({
-    pagination: {
-      current: 1,
-      pageSize: 25,
-      showSizeChanger: false,
-    },
-  });
   const dispatch = useDispatch();
   const refActData = {
     error: "",
   };
-  const handleTableChange = (pagination: TablePaginationConfig) => {
-    setTableParams({
-      pagination,
-    });
 
-    // `dataSource` is useless since `pageSize` changed
-    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-      setList([]);
-    }
+  const handlePageReset = ()  => {
+    setPage(1);
+  }
+  const handlePageChange = (change: string) => {
+      if(change==="prev" && page>1)
+      {
+        setPage(page-1);
+      }
+      else if(change==="next")
+      {
+        setPage(page+1);
+      }
   };
 
   let newData = data;
@@ -266,8 +343,8 @@ export const useReferenceList = (data: OceanProp) => {
   ) {
     newData = {
       ...newData,
-      limit: tableParams.pagination?.pageSize,
-      page: tableParams.pagination?.current,
+      limit: 10,
+      page: page,
     };
   }
   useEffect(() => {
@@ -306,9 +383,9 @@ export const useReferenceList = (data: OceanProp) => {
     return () => {
       ignore = true;
     };
-  }, [data, JSON.stringify(tableParams)]);
+  }, [data, page]);
 
-  return { list, loading, frame, tableParams, handleTableChange };
+  return { list, loading, frame, page, handlePageChange, handlePageReset };
 };
 
 export const useHistoryList = (data: OceanProp) => {
