@@ -2,13 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Form, Input, Drawer, Space, Select, Table } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  OceanProp,
-  useCarrierList,
-  useReferenceList,
-  useReferenceListCount,
-} from "../../api/ocean";
-import type { TablePaginationConfig } from "antd";
+import { OceanProp, useCarrierList, useReferenceList } from "../../api/ocean";
 import { referenceListAction } from "../../store/actions/ocean.action";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -32,7 +26,6 @@ const ReferenceList: React.FC = () => {
 
   const myParam: any = new URLSearchParams(location.search);
   const [form] = Form.useForm();
-  const [isBulk, setIsBulk] = useState("false");
   const [form1] = Form.useForm();
   const gError = useSelector((state: any) => state.ocean.rError);
   const [refData, setRefData] = useState<OceanProp>({
@@ -67,20 +60,14 @@ const ReferenceList: React.FC = () => {
       myParam.get("carrier") !== null &&
       myParam.get("carrier") !== ""
         ? "yes"
-        : "all",
+        : "yes",
   });
   const { carrierList } = useCarrierList();
-  const { list, loading, frame, tableParams, handleTableChange } =
+  const { list, loading, frame, page, handlePageChange, handlePageReset } =
     useReferenceList(refData);
-  const { count } = useReferenceListCount(
-    refData,
-    tableParams.pagination?.current,
-    myParam
-  );
+
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-
-  const bulkCarriers = ["hapag", "cma-cgm", "maersk", "msc", "evergreen"];
 
   const mainList = referenceCreation(list);
   const getRefCol = getReferenceColumns();
@@ -107,11 +94,7 @@ const ReferenceList: React.FC = () => {
       active: active,
     };
     setRefData(sendData);
-    const pagination: TablePaginationConfig = {
-      current: 1,
-      pageSize: 25,
-    };
-    handleTableChange(pagination);
+    handlePageReset();
   };
 
   const onFinishSearch = async (value: any) => {
@@ -125,6 +108,7 @@ const ReferenceList: React.FC = () => {
       searchQuery: subId,
     };
     setRefData(sendData);
+    handlePageReset();
   };
 
   const [open, setOpen] = useState(false);
@@ -200,23 +184,42 @@ const ReferenceList: React.FC = () => {
         </div>
       ) : (
         <div className="mt-7">
-          <div className="p-4 bg-gray-200 rounded-md">
+          <div className=" p-4 bg-gray-200 rounded-md">
             <Table
               columns={getRefCol}
               dataSource={data2}
-              pagination={
-                frame !== "search"
-                  ? {
-                      current: tableParams.pagination?.current,
-                      pageSize: tableParams.pagination?.pageSize,
-                      showSizeChanger: false,
-                      total: count,
-                    }
-                  : false
-              }
               loading={loading}
-              onChange={handleTableChange}
+              pagination={false}
               scroll={{ x: "1100px", y: "675px" }}
+              footer={() =>
+                frame !== "search" ? (
+                  <div className="mt-2 flex justify-end items-center">
+                    <button
+                     type="button"
+                      disabled={page === 1 ? true : false}
+                      onClick={() => handlePageChange("prev")}
+                      className={`px-4 py-1 w-auto rounded-md text-white border-[1px] ${page === 1 ? 'bg-blue-500/70 cursor-not-allowed' : 'bg-blue-500 hover:bg-white hover:border-blue-500 hover:text-blue-500'}`}
+                    >
+                      Prev
+                    </button>
+                    <span
+                    className="mx-2 px-2 font-semibold text-lg"
+                    >
+                    {page}
+                    </span>
+                    <button
+                    type="button"
+                      disabled={data2.length < 10 ? true : false}
+                      onClick={() => handlePageChange("next")}
+                      className={`px-4 py-1 w-auto rounded-md text-white border-[1px] ${data2.length < 10 ? 'bg-blue-500/70 cursor-not-allowed' : 'bg-blue-500 hover:bg-white hover:border-blue-500 hover:text-blue-500'}`}
+                    >
+                      Next
+                    </button>
+                  </div>
+                ) : (
+                  <></>
+                )
+              }
             />
           </div>
         </div>
@@ -248,7 +251,7 @@ const ReferenceList: React.FC = () => {
           initialValues={{
             carrier: "",
             refType: "",
-            active: "all",
+            active: "yes",
             crawlQueue: "",
           }}
           form={form1}
@@ -262,13 +265,7 @@ const ReferenceList: React.FC = () => {
             <Select
               allowClear={true}
               placeholder="select carrier..."
-              onChange={(value) => {
-                if (bulkCarriers.includes(value)) {
-                  setIsBulk("true");
-                } else {
-                  setIsBulk("false");
-                }
-              }}
+             
             >
               {carrierList.length > 0 ? (
                 carrierList.map((item: any, index: any) => (
@@ -287,11 +284,7 @@ const ReferenceList: React.FC = () => {
             label={<p className="text-lg">Reference</p>}
             name="refType"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-            rules={
-              isBulk === "true"
-                ? [{ required: true, message: "Please input reference type!" }]
-                : []
-            }
+           
           >
             <Select placeholder="select reference type..." allowClear={true}>
               <Select.Option value="BOOKING_NUMBER">Booking</Select.Option>
