@@ -839,21 +839,21 @@ export const getSummaryColumns = () => {
       width: 120,
       sorter: (a: any, b: any) => a.skipped - b.skipped,
     },
-    {
-      title: "Last Run",
-      dataIndex: "lastRun",
-      key: "lastRun",
-      render: (lastRun, record: any) =>
-        record.lastRun !== null &&
-        record.lastRun !== undefined &&
-        record.lastRun !== "" ? (
-          <p>{lastRun} ago</p>
-        ) : (
-          <></>
-        ),
-      align: "center",
-      width: 120,
-    },
+    // {
+    //   title: "Last Run",
+    //   dataIndex: "lastRun",
+    //   key: "lastRun",
+    //   render: (lastRun, record: any) =>
+    //     record.lastRun !== null &&
+    //     record.lastRun !== undefined &&
+    //     record.lastRun !== "" ? (
+    //       <p>{lastRun} ago</p>
+    //     ) : (
+    //       <></>
+    //     ),
+    //   align: "center",
+    //   width: 120,
+    // },
     {
       title: "Duration",
       dataIndex: "duration",
