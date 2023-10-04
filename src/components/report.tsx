@@ -1,7 +1,8 @@
 import React from "react";
-import { Tag } from "antd";
+import { Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
+import formatDate from "../DateFormat/dateFormat";
 
 export interface DataType {
   key: React.Key;
@@ -37,10 +38,13 @@ export interface DataType {
   duration?: string;
   rnfCount?: number;
   diffCount?: number;
+  diffRatio?: string;
   skipped?: number;
   fkTimeout?: number;
   start?: string;
   end?: string;
+  lastRun?: string;
+  failCategories?: {};
 }
 
 export const latencyCreation = (latencyList: any) => {
@@ -190,16 +194,24 @@ export const SummaryCreation = (summaryList: any) => {
         failedCount: item.failCount,
         failedRatio: item.failureRatio,
         duration: item.timeDiffInFk,
+        durationMin: item.timeDiffMinutes,
         rnfCount: item.getReferenceNotFound,
         rnfRatio: item.getReferenceNotFoundPercentage,
         diffCount: item.getTotalDiffFound,
         diffRatio: item.diffRatio,
         skipped: +item.skipped404,
         fkTimeout: item.toFKFailed,
-        start: item.start_time,
-        end: item.end_time,
+        start: formatDate(item.start_time),
+        end: formatDate(item.end_time),
         schedulerId: item.schedulerId,
         queue: item.queueType,
+        lastRun: item.lastRunStartAt,
+        failCategories: {
+          "Sending Failure": item.toFKFailed,
+          "Scraping Failure": item.toFKFailedScraping,
+          "Mapping Failure": item.toFKFailedMapping,
+          "Validation Failure": item.toFKFailedValidation,
+        },
       };
     });
   return sList;
@@ -806,10 +818,52 @@ export const getSummaryColumns = () => {
       width: 120,
     },
     {
+      title: "Queue",
+      dataIndex: "queue",
+      key: "queue",
+      align: "center",
+      width: 120,
+    },
+    {
       title: "Active",
       dataIndex: "activeCount",
       key: "activeCount",
       align: "center",
+      width: 120,
+    },
+    {
+      title: "Skipped (404)",
+      dataIndex: "skipped",
+      key: "skipped",
+      align: "center",
+      width: 120,
+      sorter: (a: any, b: any) => a.skipped - b.skipped,
+    },
+    {
+      title: "Last Run",
+      dataIndex: "lastRun",
+      key: "lastRun",
+      render: (lastRun, record: any) =>
+        record.lastRun !== null &&
+        record.lastRun !== undefined &&
+        record.lastRun !== "" ? (
+          <p>{lastRun} ago</p>
+        ) : (
+          <></>
+        ),
+      align: "center",
+      width: 120,
+    },
+    {
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
+      align: "center",
+      render: (duration, record: any) => (
+        <p style={{ color: record.durationMin >= 120 ? "red" : "inherit" }}>
+          {duration}
+        </p>
+      ),
       width: 120,
     },
     {
@@ -825,25 +879,6 @@ export const getSummaryColumns = () => {
       width: 120,
     },
     {
-      title: "Fail",
-      dataIndex: "failedCount",
-      key: "failedCount",
-      align: "center",
-      render: (failedCount, record: any) => (
-        <p style={{ color: record.failedRatio > 5 ? "red" : "inherit" }}>
-          {failedCount} ({record.failedRatio}%)
-        </p>
-      ),
-      width: 120,
-    },
-    {
-      title: "Duration",
-      dataIndex: "duration",
-      key: "duration",
-      align: "center",
-      width: 120,
-    },
-    {
       title: "RNF (404)",
       dataIndex: "rnfCount",
       key: "rnfCount",
@@ -856,6 +891,29 @@ export const getSummaryColumns = () => {
       width: 120,
     },
     {
+      title: "Fail",
+      dataIndex: "failedCount",
+      key: "failedCount",
+      align: "center",
+      render: (failedCount, record: any) => (
+        <Tooltip
+          title={Object.keys(record.failCategories).map((key) => (
+            <p key={key}>
+              {key}: {record.failCategories[key]}
+            </p>
+          ))}
+        >
+          <span
+            style={{ color: record.failedRatio >= 2.0 ? "red" : "inherit" }}
+          >
+            {failedCount} ({record.failedRatio}%)
+          </span>
+        </Tooltip>
+      ),
+      width: 120,
+    },
+
+    {
       title: "Diff",
       dataIndex: "diffCount",
       key: "diffCount",
@@ -867,18 +925,26 @@ export const getSummaryColumns = () => {
       align: "center",
       width: 120,
     },
-    {
-      title: "Skipped (404)",
-      dataIndex: "skipped",
-      key: "skipped",
-      align: "center",
-      width: 120,
-      sorter: (a: any, b: any) => a.skipped - b.skipped,
-    },
+
     {
       title: "FK Timeout",
       dataIndex: "fkTimeout",
       key: "fkTimeout",
+      align: "center",
+      width: 120,
+    },
+    {
+      title: "Diff HitRate",
+      dataIndex: "diffRatio",
+      key: "diffRatio",
+      align: "center",
+      render: (diffRatio) => <p>{diffRatio}%</p>,
+      width: 120,
+    },
+    {
+      title: "Scheduler Id",
+      dataIndex: "schedulerId",
+      key: "schedulerId",
       align: "center",
       width: 120,
     },
@@ -893,20 +959,6 @@ export const getSummaryColumns = () => {
       title: "End-Time",
       dataIndex: "end",
       key: "end",
-      align: "center",
-      width: 120,
-    },
-    {
-      title: "Scheduler Id",
-      dataIndex: "schedulerId",
-      key: "schedulerId",
-      align: "center",
-      width: 120,
-    },
-    {
-      title: "Queue",
-      dataIndex: "queue",
-      key: "queue",
       align: "center",
       width: 120,
     },
