@@ -86,7 +86,7 @@ const ReferenceHistory: React.FC = () => {
 
     const pagination: TablePaginationConfig = {
       current: 1,
-      pageSize: 25,
+      pageSize: 8,
     };
     handleTableChange(pagination);
   };
@@ -136,7 +136,7 @@ const ReferenceHistory: React.FC = () => {
             Close
           </button>
         }
-        bodyStyle={{ height: "50rem" }}
+        bodyStyle={{ height: "40rem" }}
         width={"60rem"}
         centered={true}
       >

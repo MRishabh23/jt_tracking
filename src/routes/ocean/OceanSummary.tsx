@@ -18,6 +18,7 @@ const OceanSummary: React.FC = () => {
   const [summaryData, setSummaryData] = useState<OceanProp>({
     type: "CRAWL_SUMMARY",
     mode: "OCEAN",
+    report: "NORMAL",
     carriers: [],
     timeDuration: "",
   });
@@ -45,12 +46,17 @@ const OceanSummary: React.FC = () => {
     //   timeValue !== undefined && timeValue !== ""
     //     ? [values.carrier]
     //     : values.carrier;
-    const carrArr = values.carrier;
+    const carrArr = values.carrier.length > 0 ? values.carrier : [];
     const time = values.timeDuration;
+    const queStr =
+      values.queue !== undefined && values.queue !== null && values.queue !== ""
+        ? values.queue
+        : "NORMAL";
 
     const sendData = {
       mode: "OCEAN",
       type: "CRAWL_SUMMARY",
+      report: queStr,
       carriers: carrArr,
       timeDuration: time,
     };
@@ -70,13 +76,13 @@ const OceanSummary: React.FC = () => {
           form={form}
           size="middle"
           className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
-          initialValues={{ queue: "NORMAL" }}
+          initialValues={{ carrier: [], queue: "NORMAL" }}
         >
           <Form.Item
             label={<p className="text-lg">Carrier</p>}
             name="carrier"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-            rules={[{ required: true, message: "Please input carrier!" }]}
+            // rules={[{ required: true, message: "Please input carrier!" }]}
           >
             <Select
               allowClear={true}
@@ -120,6 +126,17 @@ const OceanSummary: React.FC = () => {
               )}
             </Select>
           </Form.Item>
+          <Form.Item
+              label={<p className="text-lg">Queue</p>}
+              name="queue"
+              className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
+            >
+              <Select placeholder="select a queue..." allowClear={true}>
+                <Select.Option value="NORMAL">Normal</Select.Option>
+                <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
+                {/* <Select.Option value="rnf">Reference Not Found</Select.Option> */}
+              </Select>
+            </Form.Item>
           {/* <Form.Item
             label={<p className="text-lg">Time Duration</p>}
             name="timeDuration"
@@ -158,9 +175,11 @@ const OceanSummary: React.FC = () => {
                     type: "CRAWL_SUMMARY",
                     mode: "OCEAN",
                     carriers: [],
+                    report: "NORMAL",
                     timeDuration: "",
                   });
                   form.setFieldValue("carrier", []);
+                  form.setFieldValue("queue", "NORMAL");
                   setSelectState([]);
                 }}
                 className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
