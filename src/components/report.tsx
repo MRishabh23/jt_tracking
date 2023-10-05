@@ -305,7 +305,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.total > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}&count=${record.total}`,
             }}
             target="_blank"
@@ -327,7 +327,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.first > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=first&report=${record.queue}&count=${record.first}`,
             }}
             target="_blank"
@@ -349,7 +349,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.second > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=second&report=${record.queue}&count=${record.second}`,
             }}
             target="_blank"
@@ -371,7 +371,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.third > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=third&report=${record.queue}&count=${record.third}`,
             }}
             target="_blank"
@@ -393,7 +393,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.fourth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fourth&report=${record.fourth}`,
             }}
             target="_blank"
@@ -415,7 +415,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.fifth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fifth&report=${record.queue}&count=${record.fifth}`,
             }}
             target="_blank"
@@ -437,7 +437,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.sixth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=sixth&report=${record.queue}&count=${record.sixth}`,
             }}
             target="_blank"
@@ -459,7 +459,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.seventh > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=seventh&report=${record.queue}&count=${record.seventh}`,
             }}
             target="_blank"
@@ -481,7 +481,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.eight > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=eight&report=${record.queue}&count=${record.eight}`,
             }}
             target="_blank"
@@ -503,7 +503,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.ninth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=ninth&report=${record.queue}&count=${record.ninth}`,
             }}
             target="_blank"
