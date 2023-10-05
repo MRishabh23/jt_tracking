@@ -321,18 +321,15 @@ export const useReferenceList = (data: OceanProp) => {
     error: "",
   };
 
-  const handlePageReset = ()  => {
+  const handlePageReset = () => {
     setPage(1);
-  }
+  };
   const handlePageChange = (change: string) => {
-      if(change==="prev" && page>1)
-      {
-        setPage(page-1);
-      }
-      else if(change==="next")
-      {
-        setPage(page+1);
-      }
+    if (change === "prev" && page > 1) {
+      setPage(page - 1);
+    } else if (change === "next") {
+      setPage(page + 1);
+    }
   };
 
   let newData = data;
@@ -429,6 +426,13 @@ export const useHistoryList = (data: OceanProp) => {
         .then((res) => {
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
+            if (
+              result.response.error !== undefined &&
+              result.response.error !== null &&
+              result.response.error !== ""
+            ) {
+              throw { message: result.response.error };
+            }
             setList(result.response);
             setLoading(false);
           } else {
@@ -474,6 +478,13 @@ export const useHistoryListCount = (data: OceanProp, page: any) => {
         .then((res) => {
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
+            if (
+              result.response.error !== undefined &&
+              result.response.error !== null &&
+              result.response.error !== ""
+            ) {
+              throw { message: result.response.error };
+            }
             setCount(result.response[0].count);
           } else {
             throw { message: res.message };
