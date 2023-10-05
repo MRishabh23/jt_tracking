@@ -63,7 +63,7 @@ const oceanReducer = (state = initialState, action: any) => {
       if (hError !== undefined && hError !== "") {
         return {
           ...state,
-          hError: rError,
+          hError: hError,
         };
       } else {
         return {
