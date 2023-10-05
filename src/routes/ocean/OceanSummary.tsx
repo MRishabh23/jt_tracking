@@ -30,6 +30,7 @@ const OceanSummary: React.FC = () => {
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
 
+
   const { carrierList } = useCarrierList();
   const getSumCol = getSummaryColumns();
 
@@ -203,11 +204,6 @@ const OceanSummary: React.FC = () => {
                 bordered={true}
                 dataSource={data2}
                 loading={loading}
-                // pagination={
-                //   timeValue !== undefined && timeValue !== ""
-                //     ? { pageSize: 10, hideOnSinglePage: true }
-                //     : false
-                // }
                 pagination={{
                   pageSize: 5,
                   hideOnSinglePage: true,
@@ -221,7 +217,12 @@ const OceanSummary: React.FC = () => {
                   <div className="flex items-center justify-center">
                     <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                   </div>
-                ) : (
+                ) : list.length === 0 && summaryData.carriers?.length!==0 ?(
+                  <p className="flex justify-center text-lg font-semibold text-black">
+                    No records found for the searched filter
+                  </p>
+                ):
+                 (
                   <p className="flex justify-center text-lg font-semibold text-black">
                     Select carriers to see their crawl summary...
                   </p>
