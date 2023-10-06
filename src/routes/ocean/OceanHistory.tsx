@@ -86,7 +86,7 @@ const ReferenceHistory: React.FC = () => {
 
     const pagination: TablePaginationConfig = {
       current: 1,
-      pageSize: 8,
+      pageSize: 5,
     };
     handleTableChange(pagination);
   };
@@ -211,7 +211,7 @@ const ReferenceHistory: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    navigate("/reference/history");
+                    navigate("/ocean/history");
                     setHistoryData({
                       type: "REFERENCE_HISTORY",
                       mode: "OCEAN",
@@ -249,7 +249,7 @@ const ReferenceHistory: React.FC = () => {
               </div>
               <div>
                 <p className="text-lg font-semibold">
-                  Showing {diff ? "ALL_HISTORY" : "DIFF_HISTORY"}
+                  Showing - {diff ? "All History" : "Difference History"}
                 </p>
               </div>
             </div>

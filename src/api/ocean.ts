@@ -340,7 +340,7 @@ export const useReferenceList = (data: OceanProp) => {
   ) {
     newData = {
       ...newData,
-      limit: 10,
+      limit: 5,
       page: page,
     };
   }
@@ -391,7 +391,7 @@ export const useHistoryList = (data: OceanProp) => {
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
-      pageSize: 25,
+      pageSize: 5,
       showSizeChanger: false,
     },
   });

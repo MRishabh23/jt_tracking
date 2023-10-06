@@ -169,7 +169,7 @@ const ReferenceList: React.FC = () => {
           <button
             type="button"
             onClick={() => {
-              navigate("/reference/list");
+              navigate("/ocean/reference");
               window.location.reload();
             }}
             className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
@@ -209,9 +209,9 @@ const ReferenceList: React.FC = () => {
                     </span>
                     <button
                     type="button"
-                      disabled={data2.length < 10 ? true : false}
+                      disabled={data2.length < 5 ? true : false}
                       onClick={() => handlePageChange("next")}
-                      className={`px-4 py-1 w-auto rounded-md text-white border-[1px] ${data2.length < 10 ? 'bg-blue-500/70 cursor-not-allowed' : 'bg-blue-500 hover:bg-white hover:border-blue-500 hover:text-blue-500'}`}
+                      className={`px-4 py-1 w-auto rounded-md text-white border-[1px] ${data2.length < 5 ? 'bg-blue-500/70 cursor-not-allowed' : 'bg-blue-500 hover:bg-white hover:border-blue-500 hover:text-blue-500'}`}
                     >
                       Next
                     </button>
