@@ -185,7 +185,7 @@ const ReferenceList: React.FC = () => {
           <button
             type="button"
             onClick={() => {
-              navigate("/reference/list");
+              navigate("/ocean/reference");
               window.location.reload();
             }}
             className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"

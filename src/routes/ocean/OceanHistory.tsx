@@ -212,7 +212,7 @@ const ReferenceHistory: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  navigate("/reference/history");
+                  navigate("/ocean/history");
                   setHistoryData({
                     type: "REFERENCE_HISTORY",
                     mode: "OCEAN",
@@ -227,7 +227,7 @@ const ReferenceHistory: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  // navigate("/reference/history");
+                  // navigate("/ocean/history");
                   
                   let history = diff? "DIFF_HISTORY" : "ALL_HISTORY";
                   setDiff(!diff);
