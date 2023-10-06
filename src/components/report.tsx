@@ -2,7 +2,8 @@ import React from "react";
 import { Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
-import formatDate from "../DateFormat/dateFormat";
+import formatDate from "../Usables/dateFormat";
+import convertToTitleCase from "../Usables/titleCase";
 
 export interface DataType {
   key: React.Key;
@@ -136,9 +137,9 @@ export const referenceCreation = (referenceList: any) => {
       subscriptionId: item.subscriptionId,
       status: item.status,
       referenceNumber: item.referenceNumber,
-      lastCrawledAt: item.lastCrawledAt,
-      updatedAt: item.updatedAt,
-      createdAt: item.createdAt,
+      lastCrawledAt: formatDate(item.lastCrawledAt),
+      updatedAt: formatDate(item.updatedAt),
+      createdAt: formatDate(item.createdAt),
       error: item.error,
     };
   });
@@ -149,7 +150,7 @@ export const HistoryCreation = (historyList: any, subId: string) => {
   const hList = historyList.map((item: any, index: number) => {
     return {
       key: index,
-      insertionTime: item.v.insertion_time,
+      insertionTime: formatDate(item.v.insertion_time),
       crawlStatus:
         item.v.crawl_status === undefined ? "No Data" : item.v.crawl_status,
       subscriptionId: subId,
@@ -219,6 +220,7 @@ export const SummaryCreation = (summaryList: any) => {
 
 const colors = ["geekblue", "green", "volcano"];
 const colorStatus = ["green", "red"];
+const colorQueue = ["geekblue", "green"];
 let color: any;
 
 export const getLatencyColumns = (mainList: any) => {
@@ -305,7 +307,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.total > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}&count=${record.total}`,
             }}
             target="_blank"
@@ -327,7 +329,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.first > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=first&report=${record.queue}&count=${record.first}`,
             }}
             target="_blank"
@@ -349,7 +351,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.second > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=second&report=${record.queue}&count=${record.second}`,
             }}
             target="_blank"
@@ -371,7 +373,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.third > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=third&report=${record.queue}&count=${record.third}`,
             }}
             target="_blank"
@@ -393,7 +395,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.fourth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fourth&report=${record.fourth}`,
             }}
             target="_blank"
@@ -415,7 +417,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.fifth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fifth&report=${record.queue}&count=${record.fifth}`,
             }}
             target="_blank"
@@ -437,7 +439,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.sixth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=sixth&report=${record.queue}&count=${record.sixth}`,
             }}
             target="_blank"
@@ -459,7 +461,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.seventh > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=seventh&report=${record.queue}&count=${record.seventh}`,
             }}
             target="_blank"
@@ -481,7 +483,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.eight > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=eight&report=${record.queue}&count=${record.eight}`,
             }}
             target="_blank"
@@ -503,7 +505,7 @@ export const getLatencyColumns = (mainList: any) => {
         record.ninth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/list",
+              pathname: "/ocean/reference",
               search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=ninth&report=${record.queue}&count=${record.ninth}`,
             }}
             target="_blank"
@@ -630,7 +632,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       align: "center",
     },
     {
-      title: "Insertion Time",
+      title: "Created At",
       dataIndex: "insertionTime",
       key: "insertionTime",
       align: "center",
@@ -653,33 +655,10 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       title: "Scheduler Id",
       dataIndex: "schedulerId",
       key: "schedulerId",
-      render: (schedulerId, record) =>
-        record.crawlJson !== "No Data" ? (
-          <button
-            key={schedulerId}
-            onClick={() =>
-              setIsModalOpen({
-                ...isModalOpen,
-                open: true,
-                data: {
-                  type: "FETCH_HISTORY",
-                  mode: "OCEAN",
-                  subscriptionId: record.subscriptionId,
-                  schId: record.schedulerId,
-                },
-              })
-            }
-            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
-          >
-            {schedulerId}
-          </button>
-        ) : (
-          schedulerId
-        ),
       align: "center",
     },
     {
-      title: "FK Json",
+      title: "Response Sent",
       dataIndex: "fkJson",
       key: "fkJson",
       render: (fkJson, record, index) =>
@@ -703,7 +682,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 border rounded-md text-blue bg-amber-300 border-amber-400 hover:bg-amber-200"
           >
-            SAME_AS_BEFORE
+            Same as before
           </button>
         ) : record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
           <button
@@ -723,15 +702,15 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 text-white bg-green-500 border border-green-600 rounded-md hover:bg-green-400"
           >
-            NEW_EVENTS_FOUND
+            New events found
           </button>
         ) : (
-          fkJson
+          convertToTitleCase(fkJson)
         ),
       align: "center",
     },
     {
-      title: "Crawl Json",
+      title: "Crawled Output",
       dataIndex: "crawlJson",
       key: "crawlJson",
       render: (crawlJson, record) =>
@@ -753,7 +732,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 border rounded-md text-blue bg-amber-300 border-amber-400 hover:bg-amber-200"
           >
-            SAME_AS_BEFORE
+            Same as before
           </button>
         ) : record.crawlJson !== "No Data" && record.fkJson === "No Data" ? (
           <button
@@ -773,7 +752,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
           >
-            CRAWL_JSON
+            Crawled JSON
           </button>
         ) : record.crawlJson !== "No Data" &&
           record.fkJson !== "No Data" &&
@@ -795,10 +774,10 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 text-white bg-green-500 border border-green-600 rounded-md hover:bg-green-400"
           >
-            NEW_EVENTS_FOUND
+            New events found
           </button>
         ) : (
-          crawlJson
+          convertToTitleCase(crawlJson)
         ),
       align: "center",
     },
@@ -822,6 +801,18 @@ export const getSummaryColumns = () => {
       dataIndex: "queue",
       key: "queue",
       align: "center",
+      render: (queue) => (
+        <Tag
+          color={queue == "NORMAL_CRAWL" ? colorQueue[0] : colorQueue[1]}
+          key={color}
+        >
+          {queue === "NORMAL_CRAWL"
+            ? "NORMAL"
+            : queue === "ADAPTIVE_CRAWL"
+            ? "ADAPTIVE"
+            : ""}
+        </Tag>
+      ),
       width: 120,
     },
     {
@@ -934,7 +925,7 @@ export const getSummaryColumns = () => {
       width: 120,
     },
     {
-      title: "Diff HitRate",
+      title: "HitRate",
       dataIndex: "diffRatio",
       key: "diffRatio",
       align: "center",
