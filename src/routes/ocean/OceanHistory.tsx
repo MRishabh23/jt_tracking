@@ -162,7 +162,7 @@ const ReferenceHistory: React.FC = () => {
         <div className="flex items-center justify-center pt-2 font-semibold">
           <h3 className="text-3xl">Crawl History</h3>
         </div>
-        <div className="p-3 mt-8 bg-gray-200 rounded-md lg:mt-12">
+        <div className="p-3 mt-4 bg-gray-200 rounded-md lg:mt-12">
           {myParam.size === 0 ? (
             <Form
               name="basic"
@@ -271,6 +271,9 @@ const ReferenceHistory: React.FC = () => {
                     pageSize: tableParams.pagination?.pageSize,
                     showSizeChanger: false,
                     total: count,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} items`,
+                    position: ["topRight", "bottomRight"],
                   }}
                   loading={loading}
                   onChange={handleTableChange}
