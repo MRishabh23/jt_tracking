@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Button, Form, Input, Drawer, Space, Select, Table } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { OceanProp, useCarrierList, useReferenceList } from "../../api/ocean";
+import {
+  OceanProp,
+  useCarrierList,
+  useReferenceList,
+  useReferenceListCount,
+} from "../../api/ocean";
+import type { TablePaginationConfig } from "antd";
 import { referenceListAction } from "../../store/actions/ocean.action";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -63,9 +69,13 @@ const ReferenceList: React.FC = () => {
         : "yes",
   });
   const { carrierList } = useCarrierList();
-  const { list, loading, frame, page, handlePageChange, handlePageReset } =
+  const { list, loading, frame, tableParams, handleTableChange } =
     useReferenceList(refData);
-
+  const { count, loadingCount } = useReferenceListCount(
+    refData,
+    tableParams.pagination?.current,
+    myParam
+  );
   const [error, setError] = useState("");
   const dispatch = useDispatch();
 
@@ -94,7 +104,11 @@ const ReferenceList: React.FC = () => {
       active: active,
     };
     setRefData(sendData);
-    handlePageReset();
+    const pagination: TablePaginationConfig = {
+      current: 1,
+      pageSize: 5,
+    };
+    handleTableChange(pagination);
   };
 
   const onFinishSearch = async (value: any) => {
@@ -108,7 +122,6 @@ const ReferenceList: React.FC = () => {
       searchQuery: subId,
     };
     setRefData(sendData);
-    handlePageReset();
   };
 
   const [open, setOpen] = useState(false);
@@ -188,38 +201,22 @@ const ReferenceList: React.FC = () => {
             <Table
               columns={getRefCol}
               dataSource={data2}
-              loading={loading}
-              pagination={false}
-              scroll={{ x: "1100px", y: "675px" }}
-              footer={() =>
-                frame !== "search" ? (
-                  <div className="mt-2 flex justify-end items-center">
-                    <button
-                     type="button"
-                      disabled={page === 1 ? true : false}
-                      onClick={() => handlePageChange("prev")}
-                      className={`px-4 py-1 w-auto rounded-md text-white border-[1px] ${page === 1 ? 'bg-blue-500/70 cursor-not-allowed' : 'bg-blue-500 hover:bg-white hover:border-blue-500 hover:text-blue-500'}`}
-                    >
-                      Prev
-                    </button>
-                    <span
-                    className="mx-2 px-2 font-semibold text-lg"
-                    >
-                    {page}
-                    </span>
-                    <button
-                    type="button"
-                      disabled={data2.length < 5 ? true : false}
-                      onClick={() => handlePageChange("next")}
-                      className={`px-4 py-1 w-auto rounded-md text-white border-[1px] ${data2.length < 5 ? 'bg-blue-500/70 cursor-not-allowed' : 'bg-blue-500 hover:bg-white hover:border-blue-500 hover:text-blue-500'}`}
-                    >
-                      Next
-                    </button>
-                  </div>
-                ) : (
-                  <></>
-                )
+              loading={loading || loadingCount}
+              pagination={
+                frame !== "search"
+                  ? {
+                      current: tableParams.pagination?.current,
+                      pageSize: tableParams.pagination?.pageSize,
+                      showSizeChanger: false,
+                      total: count,
+                      position: ["topRight", "bottomRight"],
+                      showTotal: (total, range) =>
+                        `Showing ${range[0]}-${range[1]} of ${total} items`,
+                    }
+                  : false
               }
+              onChange={handleTableChange}
+              scroll={{ x: "1100px", y: "675px" }}
             />
           </div>
         </div>
@@ -262,11 +259,7 @@ const ReferenceList: React.FC = () => {
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
             rules={[{ required: true, message: "Please input carrier!" }]}
           >
-            <Select
-              allowClear={true}
-              placeholder="select carrier..."
-             
-            >
+            <Select allowClear={true} placeholder="select carrier...">
               {carrierList.length > 0 ? (
                 carrierList.map((item: any, index: any) => (
                   <Select.Option key={index} value={`${item.toLowerCase()}`}>
@@ -284,7 +277,6 @@ const ReferenceList: React.FC = () => {
             label={<p className="text-lg">Reference</p>}
             name="refType"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-           
           >
             <Select placeholder="select reference type..." allowClear={true}>
               <Select.Option value="BOOKING_NUMBER">Booking</Select.Option>

@@ -93,7 +93,7 @@ export const latencyCreation = (latencyList: any) => {
       return {
         key: index,
         carrier: item.carrier,
-        queue: item.queue,
+        queue: convertToTitleCase(item.queue),
         referenceType: item.refType,
         total: totalCount,
         first:
@@ -130,15 +130,18 @@ export const referenceCreation = (referenceList: any) => {
       referenceType: item.referenceType,
       queue:
         item.queue === "1" && item.error === ""
-          ? "NORMAL"
+          ? "Normal"
           : item.queue === "2"
-          ? "ADAPTIVE"
-          : "RNF",
+          ? "Adaptive"
+          : "Reference Not Found",
       subscriptionId: item.subscriptionId,
       status: item.status,
       referenceNumber: item.referenceNumber,
+      unformattedLastCrawledAt: item.lastCrawledAt,
       lastCrawledAt: formatDate(item.lastCrawledAt),
+      unformattedUpdatedAt: item.updatedAt,
       updatedAt: formatDate(item.updatedAt),
+      unformattedCreatedAt: item.createdAt,
       createdAt: formatDate(item.createdAt),
       error: item.error,
     };
@@ -220,7 +223,6 @@ export const SummaryCreation = (summaryList: any) => {
 
 const colors = ["geekblue", "green", "volcano"];
 const colorStatus = ["green", "red"];
-const colorQueue = ["geekblue", "green"];
 let color: any;
 
 export const getLatencyColumns = (mainList: any) => {
@@ -548,9 +550,9 @@ export const getReferenceColumns = () => {
       align: "center",
     },
     {
-      title: "Reference Number",
-      dataIndex: "referenceNumber",
-      key: "referenceNumber",
+      title: "Carrier",
+      dataIndex: "carrier",
+      key: "carrier",
       align: "center",
     },
     {
@@ -568,17 +570,18 @@ export const getReferenceColumns = () => {
           }
           key={color}
         >
-          {referenceType.toUpperCase()}
+          {convertToTitleCase(referenceType)}
         </Tag>
       ),
       align: "center",
     },
     {
-      title: "Carrier",
-      dataIndex: "carrier",
-      key: "carrier",
+      title: "Reference Number",
+      dataIndex: "referenceNumber",
+      key: "referenceNumber",
       align: "center",
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -600,22 +603,33 @@ export const getReferenceColumns = () => {
       align: "center",
     },
     {
+      title: "Created On",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      align: "center",
+      sorter: (a: any, b: any) => {
+        return a.unformattedCreatedAt.localeCompare(b.unformattedCreatedAt);
+      },
+    },
+    {
       title: "Last Crawled At",
       dataIndex: "lastCrawledAt",
       key: "lastCrawledAt",
       align: "center",
+      sorter: (a: any, b: any) => {
+        return a.unformattedLastCrawledAt.localeCompare(
+          b.unformattedLastCrawledAt
+        );
+      },
     },
     {
       title: "Updated At",
       dataIndex: "updatedAt",
       key: "updatedAt",
       align: "center",
-    },
-    {
-      title: "Created On",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      align: "center",
+      sorter: (a: any, b: any) => {
+        return a.unformattedUpdatedAt.localeCompare(b.unformattedUpdatedAt);
+      },
     },
   ];
 
@@ -801,18 +815,12 @@ export const getSummaryColumns = () => {
       dataIndex: "queue",
       key: "queue",
       align: "center",
-      render: (queue) => (
-        <Tag
-          color={queue == "NORMAL_CRAWL" ? colorQueue[0] : colorQueue[1]}
-          key={color}
-        >
-          {queue === "NORMAL_CRAWL"
-            ? "NORMAL"
-            : queue === "ADAPTIVE_CRAWL"
-            ? "ADAPTIVE"
-            : ""}
-        </Tag>
-      ),
+      render: (queue) =>
+        queue === "NORMAL_CRAWL"
+          ? "Normal"
+          : queue === "ADAPTIVE_CRAWL"
+          ? "Adaptive"
+          : "",
       width: 120,
     },
     {
