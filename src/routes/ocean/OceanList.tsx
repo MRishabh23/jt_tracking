@@ -10,7 +10,7 @@ import {
 } from "../../api/ocean";
 import type { TablePaginationConfig } from "antd";
 import { referenceListAction } from "../../store/actions/ocean.action";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   DataType,
   getReferenceColumns,
@@ -27,46 +27,26 @@ const customDrawerStyle = {
 
 const ReferenceList: React.FC = () => {
   useCheckAuth();
-  const location = useLocation();
   const navigate = useNavigate();
 
-  const myParam: any = new URLSearchParams(location.search);
+  // const myParam: any = new URLSearchParams(location.search);
+  const [myParam] = useSearchParams();
+  const report = (myParam.get("report") || "").toUpperCase();
+  const carrier = (myParam.get("carrier") || "acl");
+  const refType = (myParam.get("refType") || "");
+  const timeCat = (myParam.get("type") || "");
+  
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
   const gError = useSelector((state: any) => state.ocean.rError);
   const [refData, setRefData] = useState<OceanProp>({
     mode: "OCEAN",
     type: "REFERENCE_LIST",
-    report:
-      myParam.get("report") !== undefined &&
-      myParam.get("report") !== null &&
-      myParam.get("report") !== ""
-        ? myParam.get("report").toUpperCase()
-        : "",
-    carriers:
-      myParam.get("carrier") !== undefined &&
-      myParam.get("carrier") !== null &&
-      myParam.get("carrier") !== ""
-        ? [myParam.get("carrier")]
-        : ["acl"],
-    referenceType:
-      myParam.get("refType") !== undefined &&
-      myParam.get("refType") !== null &&
-      myParam.get("refType") !== ""
-        ? myParam.get("refType")
-        : "",
-    timeCategory:
-      myParam.get("type") !== undefined &&
-      myParam.get("type") !== null &&
-      myParam.get("type") !== ""
-        ? myParam.get("type")
-        : "",
-    active:
-      myParam.get("carrier") !== undefined &&
-      myParam.get("carrier") !== null &&
-      myParam.get("carrier") !== ""
-        ? "yes"
-        : "yes",
+    report: report,
+    carriers: [carrier],
+    referenceType: refType,
+    timeCategory: timeCat,
+    active: "yes"
   });
   const { carrierList } = useCarrierList();
   const { list, loading, frame, tableParams, handleTableChange } =
