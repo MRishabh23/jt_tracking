@@ -138,10 +138,17 @@ export const useLatencyList = (data: OceanProp) => {
   return { list, loading };
 };
 
-export const useSummaryList = (data: OceanProp) => {
+export const useSummaryList = (params: any) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [summaryError, setSummaryError] = useState("");
+  const data = {
+    type: "CRAWL_SUMMARY",
+    mode: "OCEAN",
+    report: params.get("report").toUpperCase(),
+    carriers: params.getAll("carriers") || [] ,
+    timeDuration: ""
+  }
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
@@ -162,7 +169,6 @@ export const useSummaryList = (data: OceanProp) => {
           setSummaryError(err.message);
         });
     };
-    //if (!ignore && data.type !== "" && data.carriers?.length !== 0) {
     if (!ignore && data.type !== "") {
       defaultCall();
     } else {
@@ -172,7 +178,7 @@ export const useSummaryList = (data: OceanProp) => {
     return () => {
       ignore = true;
     };
-  }, [data]);
+  }, [params]);
 
   return { list, loading, summaryError };
 };
