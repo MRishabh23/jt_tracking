@@ -238,7 +238,7 @@ const ReferenceHistory: React.FC = () => {
                     });
                     const pagination: TablePaginationConfig = {
                       current: 1,
-                      pageSize: 25,
+                      pageSize: 5,
                     };
                     handleTableChange(pagination);
                   }}
