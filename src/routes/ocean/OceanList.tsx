@@ -32,7 +32,6 @@ const ReferenceList: React.FC = () => {
 
   const myParam: any = new URLSearchParams(location.search);
   const [form] = Form.useForm();
-  const [isBulk, setIsBulk] = useState("false");
   const [form1] = Form.useForm();
   const gError = useSelector((state: any) => state.ocean.rError);
   const [refData, setRefData] = useState<OceanProp>({
@@ -67,20 +66,18 @@ const ReferenceList: React.FC = () => {
       myParam.get("carrier") !== null &&
       myParam.get("carrier") !== ""
         ? "yes"
-        : "all",
+        : "yes",
   });
   const { carrierList } = useCarrierList();
   const { list, loading, frame, tableParams, handleTableChange } =
     useReferenceList(refData);
-  const { count } = useReferenceListCount(
+  const { count, loadingCount } = useReferenceListCount(
     refData,
     tableParams.pagination?.current,
     myParam
   );
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-
-  const bulkCarriers = ["hapag", "cma-cgm", "maersk", "msc", "evergreen"];
 
   const mainList = referenceCreation(list);
   const getRefCol = getReferenceColumns();
@@ -109,7 +106,7 @@ const ReferenceList: React.FC = () => {
     setRefData(sendData);
     const pagination: TablePaginationConfig = {
       current: 1,
-      pageSize: 25,
+      pageSize: 5,
     };
     handleTableChange(pagination);
   };
@@ -200,10 +197,11 @@ const ReferenceList: React.FC = () => {
         </div>
       ) : (
         <div className="mt-7">
-          <div className="p-4 bg-gray-200 rounded-md">
+          <div className=" p-4 bg-gray-200 rounded-md">
             <Table
               columns={getRefCol}
               dataSource={data2}
+              loading={loading || loadingCount}
               pagination={
                 frame !== "search"
                   ? {
@@ -211,10 +209,12 @@ const ReferenceList: React.FC = () => {
                       pageSize: tableParams.pagination?.pageSize,
                       showSizeChanger: false,
                       total: count,
+                      position: ["topRight", "bottomRight"],
+                      showTotal: (total, range) =>
+                        `Showing ${range[0]}-${range[1]} of ${total} items`,
                     }
                   : false
               }
-              loading={loading}
               onChange={handleTableChange}
               scroll={{ x: "1100px", y: "675px" }}
             />
@@ -248,7 +248,7 @@ const ReferenceList: React.FC = () => {
           initialValues={{
             carrier: "",
             refType: "",
-            active: "all",
+            active: "yes",
             crawlQueue: "",
           }}
           form={form1}
@@ -259,17 +259,7 @@ const ReferenceList: React.FC = () => {
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
             rules={[{ required: true, message: "Please input carrier!" }]}
           >
-            <Select
-              allowClear={true}
-              placeholder="select carrier..."
-              onChange={(value) => {
-                if (bulkCarriers.includes(value)) {
-                  setIsBulk("true");
-                } else {
-                  setIsBulk("false");
-                }
-              }}
-            >
+            <Select allowClear={true} placeholder="select carrier...">
               {carrierList.length > 0 ? (
                 carrierList.map((item: any, index: any) => (
                   <Select.Option key={index} value={`${item.toLowerCase()}`}>
@@ -287,11 +277,6 @@ const ReferenceList: React.FC = () => {
             label={<p className="text-lg">Reference</p>}
             name="refType"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-            rules={
-              isBulk === "true"
-                ? [{ required: true, message: "Please input reference type!" }]
-                : []
-            }
           >
             <Select placeholder="select reference type..." allowClear={true}>
               <Select.Option value="BOOKING_NUMBER">Booking</Select.Option>

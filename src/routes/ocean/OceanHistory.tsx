@@ -86,7 +86,7 @@ const ReferenceHistory: React.FC = () => {
 
     const pagination: TablePaginationConfig = {
       current: 1,
-      pageSize: 8,
+      pageSize: 5,
     };
     handleTableChange(pagination);
   };
@@ -143,12 +143,11 @@ const ReferenceHistory: React.FC = () => {
         <div className="flex w-full h-full">
           <div className="flex-1 p-1 overflow-auto">
             <div className="flex gap-2 text-lg">
-              {
-                Object.keys(obj[0]).length > 0 ? (
-                  <JsonView src={obj[0]} />
-                ) : (
-                  <></>
-                )}
+              {Object.keys(obj[0]).length > 0 ? (
+                <JsonView src={obj[0]} />
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>
@@ -163,7 +162,7 @@ const ReferenceHistory: React.FC = () => {
         <div className="flex items-center justify-center pt-2 font-semibold">
           <h3 className="text-3xl">Crawl History</h3>
         </div>
-        <div className="p-3 mt-8 bg-gray-200 rounded-md lg:mt-12">
+        <div className="p-3 mt-4 bg-gray-200 rounded-md lg:mt-12">
           {myParam.size === 0 ? (
             <Form
               name="basic"
@@ -209,47 +208,49 @@ const ReferenceHistory: React.FC = () => {
           ) : (
             <div className="flex flex-col items-center justify-center gap-3">
               <div className="flex flex-col gap-6 lg:flex-row">
-              <button
-                type="button"
-                onClick={() => {
-                  navigate("/ocean/history");
-                  setHistoryData({
-                    type: "REFERENCE_HISTORY",
-                    mode: "OCEAN",
-                    subscriptionId: "",
-                    history: "DIFF_HISTORY"
-                  })
-                }}
-                className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-              >
-                More Queries
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  // navigate("/ocean/history");
-                  
-                  let history = diff? "DIFF_HISTORY" : "ALL_HISTORY";
-                  setDiff(!diff);
-                  setHistoryData({
-                    type: "REFERENCE_HISTORY",
-                    mode: "OCEAN",
-                    subscriptionId: subId,
-                    history: history,
-                  });
-                  const pagination: TablePaginationConfig = {
-                    current: 1,
-                    pageSize: 25,
-                  };
-                  handleTableChange(pagination);
-                }}
-                className="px-4 py-1  text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-              >
-                {diff ? "Diff History" : "All History"}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigate("/ocean/history");
+                    setHistoryData({
+                      type: "REFERENCE_HISTORY",
+                      mode: "OCEAN",
+                      subscriptionId: "",
+                      history: "DIFF_HISTORY",
+                    });
+                  }}
+                  className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
+                >
+                  More Queries
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // navigate("/reference/history");
+
+                    let history = diff ? "DIFF_HISTORY" : "ALL_HISTORY";
+                    setDiff(!diff);
+                    setHistoryData({
+                      type: "REFERENCE_HISTORY",
+                      mode: "OCEAN",
+                      subscriptionId: subId,
+                      history: history,
+                    });
+                    const pagination: TablePaginationConfig = {
+                      current: 1,
+                      pageSize: 5,
+                    };
+                    handleTableChange(pagination);
+                  }}
+                  className="px-4 py-1  text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
+                >
+                  {diff ? "Diff History" : "All History"}
+                </button>
               </div>
-              <div> 
-                <p className="text-lg font-semibold">Showing {diff ? "ALL_HISTORY" : "DIFF_HISTORY"}</p>
+              <div>
+                <p className="text-lg font-semibold">
+                  Showing - {diff ? "All History" : "Difference History"}
+                </p>
               </div>
             </div>
           )}
@@ -270,6 +271,9 @@ const ReferenceHistory: React.FC = () => {
                     pageSize: tableParams.pagination?.pageSize,
                     showSizeChanger: false,
                     total: count,
+                    showTotal: (total, range) =>
+                      `${range[0]}-${range[1]} of ${total} items`,
+                    position: ["topRight", "bottomRight"],
                   }}
                   loading={loading}
                   onChange={handleTableChange}

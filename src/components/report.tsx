@@ -2,7 +2,8 @@ import React from "react";
 import { Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
-import formatDate from "../DateFormat/dateFormat";
+import formatDate from "../Usables/dateFormat";
+import convertToTitleCase from "../Usables/titleCase";
 
 export interface DataType {
   key: React.Key;
@@ -92,7 +93,7 @@ export const latencyCreation = (latencyList: any) => {
       return {
         key: index,
         carrier: item.carrier,
-        queue: item.queue,
+        queue: convertToTitleCase(item.queue),
         referenceType: item.refType,
         total: totalCount,
         first:
@@ -129,16 +130,19 @@ export const referenceCreation = (referenceList: any) => {
       referenceType: item.referenceType,
       queue:
         item.queue === "1" && item.error === ""
-          ? "NORMAL"
+          ? "Normal"
           : item.queue === "2"
-          ? "ADAPTIVE"
-          : "RNF",
+          ? "Adaptive"
+          : "Reference Not Found",
       subscriptionId: item.subscriptionId,
       status: item.status,
       referenceNumber: item.referenceNumber,
-      lastCrawledAt: item.lastCrawledAt,
-      updatedAt: item.updatedAt,
-      createdAt: item.createdAt,
+      unformattedLastCrawledAt: item.lastCrawledAt,
+      lastCrawledAt: formatDate(item.lastCrawledAt),
+      unformattedUpdatedAt: item.updatedAt,
+      updatedAt: formatDate(item.updatedAt),
+      unformattedCreatedAt: item.createdAt,
+      createdAt: formatDate(item.createdAt),
       error: item.error,
     };
   });
@@ -149,7 +153,7 @@ export const HistoryCreation = (historyList: any, subId: string) => {
   const hList = historyList.map((item: any, index: number) => {
     return {
       key: index,
-      insertionTime: item.v.insertion_time,
+      insertionTime: formatDate(item.v.insertion_time),
       crawlStatus:
         item.v.crawl_status === undefined ? "No Data" : item.v.crawl_status,
       subscriptionId: subId,
@@ -199,13 +203,15 @@ export const SummaryCreation = (summaryList: any) => {
         rnfRatio: item.getReferenceNotFoundPercentage,
         diffCount: item.getTotalDiffFound,
         diffRatio: item.diffRatio,
-        skipped: +item.skipped404,
+        skipped: item.skipped404,
         fkTimeout: item.toFKFailed,
         start: formatDate(item.start_time),
         end: formatDate(item.end_time),
         schedulerId: item.schedulerId,
         queue: item.queueType,
         lastRun: item.lastRunStartAt,
+        hitRateCount: item.hitRateCount,
+        hitRatePer: item.hitRatePer,
         failCategories: {
           "Sending Failure": item.toFKFailed,
           "Scraping Failure": item.toFKFailedScraping,
@@ -546,9 +552,9 @@ export const getReferenceColumns = () => {
       align: "center",
     },
     {
-      title: "Reference Number",
-      dataIndex: "referenceNumber",
-      key: "referenceNumber",
+      title: "Carrier",
+      dataIndex: "carrier",
+      key: "carrier",
       align: "center",
     },
     {
@@ -566,17 +572,18 @@ export const getReferenceColumns = () => {
           }
           key={color}
         >
-          {referenceType.toUpperCase()}
+          {convertToTitleCase(referenceType)}
         </Tag>
       ),
       align: "center",
     },
     {
-      title: "Carrier",
-      dataIndex: "carrier",
-      key: "carrier",
+      title: "Reference Number",
+      dataIndex: "referenceNumber",
+      key: "referenceNumber",
       align: "center",
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -598,22 +605,33 @@ export const getReferenceColumns = () => {
       align: "center",
     },
     {
+      title: "Created On",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      align: "center",
+      sorter: (a: any, b: any) => {
+        return a.unformattedCreatedAt.localeCompare(b.unformattedCreatedAt);
+      },
+    },
+    {
       title: "Last Crawled At",
       dataIndex: "lastCrawledAt",
       key: "lastCrawledAt",
       align: "center",
+      sorter: (a: any, b: any) => {
+        return a.unformattedLastCrawledAt.localeCompare(
+          b.unformattedLastCrawledAt
+        );
+      },
     },
     {
       title: "Updated At",
       dataIndex: "updatedAt",
       key: "updatedAt",
       align: "center",
-    },
-    {
-      title: "Created On",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      align: "center",
+      sorter: (a: any, b: any) => {
+        return a.unformattedUpdatedAt.localeCompare(b.unformattedUpdatedAt);
+      },
     },
   ];
 
@@ -630,7 +648,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       align: "center",
     },
     {
-      title: "Insertion Time",
+      title: "Created At",
       dataIndex: "insertionTime",
       key: "insertionTime",
       align: "center",
@@ -653,33 +671,10 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       title: "Scheduler Id",
       dataIndex: "schedulerId",
       key: "schedulerId",
-      render: (schedulerId, record) =>
-        record.crawlJson !== "No Data" ? (
-          <button
-            key={schedulerId}
-            onClick={() =>
-              setIsModalOpen({
-                ...isModalOpen,
-                open: true,
-                data: {
-                  type: "FETCH_HISTORY",
-                  mode: "OCEAN",
-                  subscriptionId: record.subscriptionId,
-                  schId: record.schedulerId,
-                },
-              })
-            }
-            className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
-          >
-            {schedulerId}
-          </button>
-        ) : (
-          schedulerId
-        ),
       align: "center",
     },
     {
-      title: "FK Json",
+      title: "Response Sent",
       dataIndex: "fkJson",
       key: "fkJson",
       render: (fkJson, record, index) =>
@@ -703,7 +698,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 border rounded-md text-blue bg-amber-300 border-amber-400 hover:bg-amber-200"
           >
-            SAME_AS_BEFORE
+            Same as before
           </button>
         ) : record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
           <button
@@ -723,15 +718,15 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 text-white bg-green-500 border border-green-600 rounded-md hover:bg-green-400"
           >
-            NEW_EVENTS_FOUND
+            New events found
           </button>
         ) : (
-          fkJson
+          convertToTitleCase(fkJson)
         ),
       align: "center",
     },
     {
-      title: "Crawl Json",
+      title: "Crawled Output",
       dataIndex: "crawlJson",
       key: "crawlJson",
       render: (crawlJson, record) =>
@@ -753,7 +748,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 border rounded-md text-blue bg-amber-300 border-amber-400 hover:bg-amber-200"
           >
-            SAME_AS_BEFORE
+            Same as before
           </button>
         ) : record.crawlJson !== "No Data" && record.fkJson === "No Data" ? (
           <button
@@ -773,7 +768,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 text-white bg-blue-500 border border-blue-600 rounded-md hover:bg-blue-400"
           >
-            CRAWL_JSON
+            Crawled JSON
           </button>
         ) : record.crawlJson !== "No Data" &&
           record.fkJson !== "No Data" &&
@@ -795,10 +790,10 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
             }
             className="px-3 py-1 text-white bg-green-500 border border-green-600 rounded-md hover:bg-green-400"
           >
-            NEW_EVENTS_FOUND
+            New events found
           </button>
         ) : (
-          crawlJson
+          convertToTitleCase(crawlJson)
         ),
       align: "center",
     },
@@ -822,6 +817,12 @@ export const getSummaryColumns = () => {
       dataIndex: "queue",
       key: "queue",
       align: "center",
+      render: (queue) =>
+        queue === "NORMAL_CRAWL"
+          ? "Normal"
+          : queue === "ADAPTIVE_CRAWL"
+          ? "Adaptive"
+          : "",
       width: 120,
     },
     {
@@ -860,7 +861,7 @@ export const getSummaryColumns = () => {
       key: "duration",
       align: "center",
       render: (duration, record: any) => (
-        <p style={{ color: record.durationMin >= 120 ? "red" : "inherit" }}>
+        <p style={{ color: record.durationMin >= 90 ? "red" : "inherit" }}>
           {duration}
         </p>
       ),
@@ -904,7 +905,7 @@ export const getSummaryColumns = () => {
           ))}
         >
           <span
-            style={{ color: record.failedRatio >= 2.0 ? "red" : "inherit" }}
+            style={{ color: record.failedRatio >= 3.0 ? "red" : "inherit" }}
           >
             {failedCount} ({record.failedRatio}%)
           </span>
@@ -914,11 +915,11 @@ export const getSummaryColumns = () => {
     },
 
     {
-      title: "Diff",
+      title: "DiffRate",
       dataIndex: "diffCount",
       key: "diffCount",
       render: (diffCount, record: any) => (
-        <p>
+        <p style={{ color: record.diffRatio >= 10.0 ? "red" : "inherit" }}>
           {diffCount} ({record.diffRatio}%)
         </p>
       ),
@@ -934,11 +935,17 @@ export const getSummaryColumns = () => {
       width: 120,
     },
     {
-      title: "Diff HitRate",
-      dataIndex: "diffRatio",
-      key: "diffRatio",
+      title: "HitRate",
+      dataIndex: "hitRateCount",
+      key: "hitRateCount",
       align: "center",
-      render: (diffRatio) => <p>{diffRatio}%</p>,
+      render: (hitRateCount, record: any) => (
+        <p style={{ color: record.hitRatePer >= 1.0 ? "red" : "inherit" }}>
+          {record.queue === "ADAPTIVE_CRAWL"
+            ? `${hitRateCount} (${record.hitRatePer}%)`
+            : "NA"}
+        </p>
+      ),
       width: 120,
     },
     {

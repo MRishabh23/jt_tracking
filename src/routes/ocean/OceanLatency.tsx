@@ -15,8 +15,7 @@ interface props {}
 
 const OceanLatency: React.FC<props> = () => {
   useCheckAuth();
-  // const [selectState, setSelectState] = useState<String[]>([]);
-  const [isBulk, setIsBulk] = useState("false");
+
   const gError = useSelector((state: any) => state.ocean.lError);
   const [carrData, setCarrData] = useState<OceanProp>({
     type: "LATENCY",
@@ -29,8 +28,6 @@ const OceanLatency: React.FC<props> = () => {
   const { list, loading } = useLatencyList(carrData);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-
-  const bulkCarriers = ["hapag", "cma-cgm", "maersk", "msc", "evergreen"];
 
   const onFinish = (values: any) => {
     dispatch(latencyListAction({ error: "" }));
@@ -104,21 +101,7 @@ const OceanLatency: React.FC<props> = () => {
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
               rules={[{ required: true, message: "Please input carrier!" }]}
             >
-              <Select
-                allowClear={true}
-                // mode="multiple"
-                // onChange={(value) => {
-                //   handleChange(value)
-                // }}
-                onChange={(value) => {
-                  if (bulkCarriers.includes(value)) {
-                    setIsBulk("true");
-                  } else {
-                    setIsBulk("false");
-                  }
-                }}
-                placeholder="select carrier..."
-              >
+              <Select allowClear={true} placeholder="select carrier...">
                 {carrierList.length > 0 ? (
                   carrierList.map((item: any, index: any) => (
                     <Select.Option
@@ -153,16 +136,6 @@ const OceanLatency: React.FC<props> = () => {
               label={<p className="text-lg">Reference</p>}
               name="refType"
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-              rules={
-                isBulk === "true"
-                  ? [
-                      {
-                        required: true,
-                        message: "Please input reference type!",
-                      },
-                    ]
-                  : []
-              }
             >
               <Select placeholder="select reference type..." allowClear={true}>
                 <Select.Option value="BOOKING_NUMBER">Booking</Select.Option>

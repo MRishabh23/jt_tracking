@@ -183,6 +183,7 @@ export const useReferenceListCount = (
   myParam: any
 ) => {
   const [count, setCount] = useState(0);
+  const [loadingCount, setLoadingCount] = useState(false);
   const dispatch = useDispatch();
   const refActData = {
     error: "",
@@ -199,11 +200,13 @@ export const useReferenceListCount = (
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
+      setLoadingCount(true);
       await oceanCalls(newData)
         .then((res) => {
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
             setCount(result.response[0].count);
+            setLoadingCount(false);
           } else {
             throw { message: res.message };
           }
@@ -229,7 +232,7 @@ export const useReferenceListCount = (
     };
   }, [data]);
 
-  return { count };
+  return { count, loadingCount };
 };
 
 export const useReferenceList = (data: OceanProp) => {
@@ -239,7 +242,7 @@ export const useReferenceList = (data: OceanProp) => {
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
-      pageSize: 25,
+      pageSize: 5,
       showSizeChanger: false,
     },
   });
@@ -311,13 +314,87 @@ export const useReferenceList = (data: OceanProp) => {
   return { list, loading, frame, tableParams, handleTableChange };
 };
 
+// export const useReferenceList = (data: OceanProp) => {
+//   const [list, setList] = useState([]);
+//   const [frame, setFrame] = useState("default");
+//   const [page, setPage] = useState(1);
+//   const [loading, setLoading] = useState(false);
+//   const dispatch = useDispatch();
+//   const refActData = {
+//     error: "",
+//   };
+
+//   const handlePageReset = () => {
+//     setPage(1);
+//   };
+//   const handlePageChange = (change: string) => {
+//     if (change === "prev" && page > 1) {
+//       setPage(page - 1);
+//     } else if (change === "next") {
+//       setPage(page + 1);
+//     }
+//   };
+
+//   let newData = data;
+//   if (
+//     data.searchQuery === undefined ||
+//     data.searchQuery === null ||
+//     data.searchQuery === ""
+//   ) {
+//     newData = {
+//       ...newData,
+//       limit: 5,
+//       page: page,
+//     };
+//   }
+//   useEffect(() => {
+//     let ignore = false;
+//     const defaultCall = async () => {
+//       setLoading(true);
+//       await oceanCalls(newData)
+//         .then((res) => {
+//           if (res.status === 200 && res.data.statusCode === "200") {
+//             const result = res.data;
+//             setList(result.response);
+//             setLoading(false);
+//           } else {
+//             throw { message: res.message };
+//           }
+//         })
+//         .catch((err) => {
+//           setLoading(false);
+//           refActData.error = err.message;
+//           dispatch(referenceListAction(refActData));
+//         });
+//     };
+
+//     if (!ignore && data.type !== "") {
+//       defaultCall();
+//       if (
+//         data.searchQuery !== undefined &&
+//         data.searchQuery !== null &&
+//         data.searchQuery !== ""
+//       ) {
+//         setFrame("search");
+//       } else {
+//         setFrame("default");
+//       }
+//     }
+//     return () => {
+//       ignore = true;
+//     };
+//   }, [data, page]);
+
+//   return { list, loading, frame, page, handlePageChange, handlePageReset };
+// };
+
 export const useHistoryList = (data: OceanProp) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
-      pageSize: 25,
+      pageSize: 5,
       showSizeChanger: false,
     },
   });

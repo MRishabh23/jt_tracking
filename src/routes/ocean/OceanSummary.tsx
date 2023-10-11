@@ -127,16 +127,16 @@ const OceanSummary: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item
-              label={<p className="text-lg">Queue</p>}
-              name="queue"
-              className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-            >
-              <Select placeholder="select a queue..." allowClear={true}>
-                <Select.Option value="NORMAL">Normal</Select.Option>
-                <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
-                {/* <Select.Option value="rnf">Reference Not Found</Select.Option> */}
-              </Select>
-            </Form.Item>
+            label={<p className="text-lg">Queue</p>}
+            name="queue"
+            className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
+          >
+            <Select placeholder="select a queue..." allowClear={true}>
+              <Select.Option value="NORMAL">Normal</Select.Option>
+              <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
+              {/* <Select.Option value="rnf">Reference Not Found</Select.Option> */}
+            </Select>
+          </Form.Item>
           {/* <Form.Item
             label={<p className="text-lg">Time Duration</p>}
             name="timeDuration"
@@ -196,22 +196,20 @@ const OceanSummary: React.FC = () => {
         </div>
       ) : (
         <div className="mt-7">
-          <div className="p-4 bg-gray-200 rounded-md">
+          <div className="py-1 px-4 bg-gray-200 rounded-md">
             {list.length > 0 ? (
               <Table
                 columns={getSumCol}
                 bordered={true}
                 dataSource={data2}
                 loading={loading}
-                // pagination={
-                //   timeValue !== undefined && timeValue !== ""
-                //     ? { pageSize: 10, hideOnSinglePage: true }
-                //     : false
-                // }
                 pagination={{
                   pageSize: 5,
+                  total: data2.length,
+                  showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                   hideOnSinglePage: true,
                   showSizeChanger: false,
+                  position: ["topRight", "bottomRight"],
                 }}
                 scroll={{ x: "1100px", y: "675px" }}
               />
@@ -221,6 +219,10 @@ const OceanSummary: React.FC = () => {
                   <div className="flex items-center justify-center">
                     <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                   </div>
+                ) : list.length === 0 && summaryData.carriers?.length !== 0 ? (
+                  <p className="flex justify-center text-lg font-semibold text-black">
+                    No records found for the searched filter
+                  </p>
                 ) : (
                   <p className="flex justify-center text-lg font-semibold text-black">
                     Select carriers to see their crawl summary...
