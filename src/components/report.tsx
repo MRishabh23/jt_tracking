@@ -861,7 +861,7 @@ export const getSummaryColumns = () => {
       key: "duration",
       align: "center",
       render: (duration, record: any) => (
-        <p style={{ color: record.durationMin >= 120 ? "red" : "inherit" }}>
+        <p style={{ color: record.durationMin >= 90 ? "red" : "inherit" }}>
           {duration}
         </p>
       ),
@@ -905,7 +905,7 @@ export const getSummaryColumns = () => {
           ))}
         >
           <span
-            style={{ color: record.failedRatio >= 2.0 ? "red" : "inherit" }}
+            style={{ color: record.failedRatio >= 3.0 ? "red" : "inherit" }}
           >
             {failedCount} ({record.failedRatio}%)
           </span>
@@ -915,11 +915,11 @@ export const getSummaryColumns = () => {
     },
 
     {
-      title: "Diff",
+      title: "DiffRate",
       dataIndex: "diffCount",
       key: "diffCount",
       render: (diffCount, record: any) => (
-        <p>
+        <p style={{ color: record.diffRatio >= 10.0 ? "red" : "inherit" }}>
           {diffCount} ({record.diffRatio}%)
         </p>
       ),
@@ -940,7 +940,7 @@ export const getSummaryColumns = () => {
       key: "hitRateCount",
       align: "center",
       render: (hitRateCount, record: any) => (
-        <p>
+        <p style={{ color: record.hitRatePer >= 1.0 ? "red" : "inherit" }}>
           {record.queue === "ADAPTIVE_CRAWL"
             ? `${hitRateCount} (${record.hitRatePer}%)`
             : "NA"}
