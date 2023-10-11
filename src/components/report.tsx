@@ -203,7 +203,7 @@ export const SummaryCreation = (summaryList: any) => {
         rnfRatio: item.getReferenceNotFoundPercentage,
         diffCount: item.getTotalDiffFound,
         diffRatio: item.diffRatio,
-        skipped: +item.skipped404,
+        skipped: item.skipped404,
         fkTimeout: item.toFKFailed,
         start: formatDate(item.start_time),
         end: formatDate(item.end_time),
@@ -537,7 +537,7 @@ export const getReferenceColumns = () => {
           <Link
             to={{
               pathname: "/ocean/history",
-              search: `?subsId=${record.subscriptionId}`,
+              search: `?mode=OCEAN&type=REFERENCE_HISTORY&history=DIFF_HISTORY&subscriptionId=${record.subscriptionId}`,
             }}
             target="_blank"
           >

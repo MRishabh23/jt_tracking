@@ -17,7 +17,9 @@ const OceanSummary: React.FC = () => {
   const [form] = Form.useForm();
 
   const [summaryParams, setSummaryParams] = useSearchParams({
-    report: "NORMAL"
+    type: "CRAWL_SUMMARY",
+    mode: "OCEAN",
+    query: "NORMAL",
   });
 
   const { list, loading, summaryError } = useSummaryList(summaryParams);
@@ -40,14 +42,16 @@ const OceanSummary: React.FC = () => {
 
   const onFinish = async (values: any) => {
     const carrArr = values.carrier.length > 0 ? values.carrier : [];
-    const time = values.timeDuration;
+    // const time = values.timeDuration;
     const queStr =
       values.queue !== undefined && values.queue !== null && values.queue !== ""
         ? values.queue
         : "NORMAL";
 
     const sendData = {
-      report: queStr,
+      type: "CRAWL_SUMMARY",
+      mode: "OCEAN",
+      query: queStr,
       carriers: carrArr,
       // timeDuration: time,
     };
@@ -163,7 +167,9 @@ const OceanSummary: React.FC = () => {
                 type="button"
                 onClick={() => {
                   setSummaryParams({
-                    report: "NORMAL",
+                    type: "CRAWL_SUMMARY",
+                    mode: "OCEAN",
+                    query: "NORMAL",
                     // timeDuration: "",
                   });
                   form.setFieldValue("carrier", []);
@@ -194,7 +200,8 @@ const OceanSummary: React.FC = () => {
                 pagination={{
                   pageSize: 5,
                   total: data2.length,
-                  showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                  showTotal: (total, range) =>
+                    `${range[0]}-${range[1]} of ${total} items`,
                   hideOnSinglePage: true,
                   showSizeChanger: false,
                   position: ["topRight", "bottomRight"],
@@ -207,7 +214,8 @@ const OceanSummary: React.FC = () => {
                   <div className="flex items-center justify-center">
                     <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                   </div>
-                ) : list.length === 0 && summaryParams.get("carriers")?.length !== 0 ? (
+                ) : list.length === 0 &&
+                  summaryParams.get("carriers")?.length !== 0 ? (
                   <p className="flex justify-center text-lg font-semibold text-black">
                     No records found for the searched filter
                   </p>

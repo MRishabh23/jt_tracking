@@ -143,9 +143,9 @@ export const useSummaryList = (params: any) => {
   const [loading, setLoading] = useState(false);
   const [summaryError, setSummaryError] = useState("");
   const data = {
-    type: "CRAWL_SUMMARY",
-    mode: "OCEAN",
-    report: params.get("report").toUpperCase(),
+    type: params.get("type"),
+    mode: params.get("mode"),
+    report: params.get("query").toUpperCase(),
     carriers: params.getAll("carriers") || [] ,
     timeDuration: ""
   }
@@ -394,7 +394,7 @@ export const useReferenceList = (data: OceanProp) => {
 //   return { list, loading, frame, page, handlePageChange, handlePageReset };
 // };
 
-export const useHistoryList = (data: OceanProp) => {
+export const useHistoryList = (params: any) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
@@ -419,7 +419,12 @@ export const useHistoryList = (data: OceanProp) => {
     }
   };
 
-  let newData = data;
+  let newData: OceanProp = {
+    type: params.get("type"),
+    mode: params.get("mode"),
+    subscriptionId: params.get("subscriptionId"),
+    history: params.get("history")
+  };
 
   newData = {
     ...newData,
@@ -455,7 +460,7 @@ export const useHistoryList = (data: OceanProp) => {
         });
     };
 
-    if (!ignore && data.type !== "" && data.subscriptionId !== "") {
+    if (!ignore && params.get("type") !== "" && params.get("subscriptionId") !== "") {
       defaultCall();
     } else {
       setList([]);
@@ -463,20 +468,26 @@ export const useHistoryList = (data: OceanProp) => {
     return () => {
       ignore = true;
     };
-  }, [data, JSON.stringify(tableParams)]);
+  }, [params, JSON.stringify(tableParams)]);
 
   return { list, loading, tableParams, handleTableChange };
 };
 
-export const useHistoryListCount = (data: OceanProp, page: any) => {
+export const useHistoryListCount = (params: any, page: any) => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
   const hisActData = {
     error: "",
   };
-  let newData = data;
+  let newData: OceanProp = {
+    type: params.get("type"),
+    mode: params.get("mode"),
+    subscriptionId: params.get("subscriptionId"),
+    history: params.get("history")
+  };
+;
 
-  if (data.subscriptionId !== null && data.subscriptionId !== "") {
+  if (newData.subscriptionId !== null && newData.subscriptionId !== "") {
     newData = { ...newData, totalRecordCount: "true" };
   }
 
@@ -516,7 +527,7 @@ export const useHistoryListCount = (data: OceanProp, page: any) => {
     return () => {
       ignore = true;
     };
-  }, [data]);
+  }, [params]);
 
   return { count };
 };
