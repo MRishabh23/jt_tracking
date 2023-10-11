@@ -203,13 +203,15 @@ export const SummaryCreation = (summaryList: any) => {
         rnfRatio: item.getReferenceNotFoundPercentage,
         diffCount: item.getTotalDiffFound,
         diffRatio: item.diffRatio,
-        skipped: +item.skipped404,
+        skipped: item.skipped404,
         fkTimeout: item.toFKFailed,
         start: formatDate(item.start_time),
         end: formatDate(item.end_time),
         schedulerId: item.schedulerId,
         queue: item.queueType,
         lastRun: item.lastRunStartAt,
+        hitRateCount: item.hitRateCount,
+        hitRatePer: item.hitRatePer,
         failCategories: {
           "Sending Failure": item.toFKFailed,
           "Scraping Failure": item.toFKFailedScraping,
@@ -934,10 +936,16 @@ export const getSummaryColumns = () => {
     },
     {
       title: "HitRate",
-      dataIndex: "diffRatio",
-      key: "diffRatio",
+      dataIndex: "hitRateCount",
+      key: "hitRateCount",
       align: "center",
-      render: (diffRatio) => <p>{diffRatio}%</p>,
+      render: (hitRateCount, record: any) => (
+        <p>
+          {record.queue === "ADAPTIVE_CRAWL"
+            ? `${hitRateCount} (${record.hitRatePer}%)`
+            : "NA"}
+        </p>
+      ),
       width: 120,
     },
     {
