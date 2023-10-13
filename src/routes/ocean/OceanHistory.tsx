@@ -21,27 +21,13 @@ import "react18-json-view/src/style.css";
 
 const ReferenceHistory: React.FC = () => {
   useCheckAuth();
-  // const location = useLocation();
-  // const navigate = useNavigate();
   const [form] = Form.useForm();
-  // const myParam: any = new URLSearchParams(location.search);
   const gError = useSelector((state: any) => state.ocean.hError);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-  // const [diff, setDiff] = useState(false);
-  const [historyParam, setHistoryParam] = useSearchParams(
-  //   {
-  //   mode: "OCEAN",
-  //   type: "REFERENCE_HISTORY",
-  //   subscriptionId:
-  //     myParam.get("subsId") !== undefined &&
-  //     myParam.get("subsId") !== null &&
-  //     myParam.get("subsId") !== ""
-  //       ? myParam.get("subsId").toUpperCase()
-  //       : "",
-  //   history: "DIFF_HISTORY",
-  // }
-  );
+  const [historyParam, setHistoryParam] =
+    useSearchParams();
+
   const { list, loading, tableParams, handleTableChange } =
     useHistoryList(historyParam);
   const { count } = useHistoryListCount(
@@ -77,8 +63,6 @@ const ReferenceHistory: React.FC = () => {
     const subsId = values.SubscriptionId;
     const status = values.status === undefined ? "ALL_HISTORY" : values.status;
     const sendData = {
-      mode: "OCEAN",
-      type: "REFERENCE_HISTORY",
       subscriptionId: subsId,
       history: status,
     };
@@ -164,97 +148,49 @@ const ReferenceHistory: React.FC = () => {
           <h3 className="text-3xl">Crawl History</h3>
         </div>
         <div className="p-3 mt-4 bg-gray-200 rounded-md lg:mt-12">
-          {/* {historyParam.size === 0 ? ( */}
-            <Form
-              name="basic"
-              form={form}
-              onFinish={onFinish}
-              size="middle"
-              className="flex flex-col gap-4 pt-3 lg:flex-row lg:justify-center lg:gap-6"
-              initialValues={{ status: "DIFF_HISTORY", SubscriptionId: historyParam.get("subscriptionId") || ""}}
+          <Form
+            name="basic"
+            form={form}
+            onFinish={onFinish}
+            size="middle"
+            className="flex flex-col gap-4 pt-3 lg:flex-row lg:justify-center lg:gap-6"
+            initialValues={{
+              status: "DIFF_HISTORY",
+              SubscriptionId: historyParam.get("subscriptionId") || "",
+            }}
+          >
+            <Form.Item
+              label={<p className="text-lg">SubscriptionId</p>}
+              name="SubscriptionId"
+              className="flex-1 mb-0"
+              rules={[
+                { required: true, message: "Please input SubscriptionId" },
+              ]}
             >
-              <Form.Item
-                label={<p className="text-lg">SubscriptionId</p>}
-                name="SubscriptionId"
-                className="flex-1 mb-0"
-                rules={[
-                  { required: true, message: "Please input SubscriptionId" },
-                ]}
+              <Input allowClear placeholder="Enter SubscriptionId" />
+            </Form.Item>
+
+            <Form.Item
+              label={<p className="text-lg">Crawl Status</p>}
+              name="status"
+              className="flex-1 mb-0"
+            >
+              <Select placeholder="select crawl status" allowClear={true}>
+                <Select.Option value="DIFF_HISTORY">DIFF HISTORY</Select.Option>
+                <Select.Option value="ALL_HISTORY">ALL HISTORY</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item>
+              <button
+                type="submit"
+                className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
               >
-                <Input allowClear placeholder="Enter SubscriptionId" />
-              </Form.Item>
-
-              <Form.Item
-                label={<p className="text-lg">Crawl Status</p>}
-                name="status"
-                className="flex-1 mb-0"
-              >
-                <Select placeholder="select crawl status" allowClear={true}>
-                  <Select.Option value="DIFF_HISTORY">
-                    DIFF HISTORY
-                  </Select.Option>
-                  <Select.Option value="ALL_HISTORY">ALL HISTORY</Select.Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item>
-                <button
-                  type="submit"
-                  className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-                >
-                  Refresh
-                </button>
-              </Form.Item>
-            </Form>
-          {/* ) : (
-            <div className="flex flex-col items-center justify-center gap-3">
-              <div className="flex flex-col gap-6 lg:flex-row">
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigate("/ocean/history");
-                    setHistoryParam({
-                      type: "REFERENCE_HISTORY",
-                      mode: "OCEAN",
-                      subscriptionId: "",
-                      history: "DIFF_HISTORY",
-                    });
-                  }}
-                  className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-                >
-                  More Queries
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    // navigate("/reference/history");
-
-                    let history = diff ? "DIFF_HISTORY" : "ALL_HISTORY";
-                    setDiff(!diff);
-                    setHistoryParam({
-                      type: "REFERENCE_HISTORY",
-                      mode: "OCEAN",
-                      subscriptionId: subId,
-                      history: history,
-                    });
-                    const pagination: TablePaginationConfig = {
-                      current: 1,
-                      pageSize: 25,
-                    };
-                    handleTableChange(pagination);
-                  }}
-                  className="px-4 py-1  text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-                >
-                  {diff ? "Diff History" : "All History"}
-                </button>
-              </div>
-              <div>
-                <p className="text-lg font-semibold">
-                  Showing - {diff ? "All History" : "Difference History"}
-                </p>
-              </div>
-            </div>
-          )} */}
+                Refresh
+              </button>
+            </Form.Item>
+          </Form>
+          
         </div>
         {error !== "" ? (
           <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">

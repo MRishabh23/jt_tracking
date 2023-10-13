@@ -17,9 +17,7 @@ const OceanSummary: React.FC = () => {
   const [form] = Form.useForm();
 
   const [summaryParams, setSummaryParams] = useSearchParams({
-    type: "CRAWL_SUMMARY",
-    mode: "OCEAN",
-    query: "NORMAL",
+    queue: "NORMAL",
   });
 
   const { list, loading, summaryError } = useSummaryList(summaryParams);
@@ -49,9 +47,7 @@ const OceanSummary: React.FC = () => {
         : "NORMAL";
 
     const sendData = {
-      type: "CRAWL_SUMMARY",
-      mode: "OCEAN",
-      query: queStr,
+      queue: queStr,
       carriers: carrArr,
       // timeDuration: time,
     };
@@ -167,9 +163,7 @@ const OceanSummary: React.FC = () => {
                 type="button"
                 onClick={() => {
                   setSummaryParams({
-                    type: "CRAWL_SUMMARY",
-                    mode: "OCEAN",
-                    query: "NORMAL",
+                    queue: "NORMAL",
                     // timeDuration: "",
                   });
                   form.setFieldValue("carrier", []);

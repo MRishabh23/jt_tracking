@@ -210,6 +210,8 @@ export const SummaryCreation = (summaryList: any) => {
         schedulerId: item.schedulerId,
         queue: item.queueType,
         lastRun: item.lastRunStartAt,
+        hitRateCount: item.hitRateCount,
+        hitRatePer: item.hitRatePer,
         failCategories: {
           "Sending Failure": item.toFKFailed,
           "Scraping Failure": item.toFKFailedScraping,
@@ -310,7 +312,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=total&report=${record.queue}&count=${record.total}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=total&queue=${record.queue}&count=${record.total}`,
             }}
             target="_blank"
           >
@@ -332,7 +334,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=first&report=${record.queue}&count=${record.first}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=first&queue=${record.queue}&count=${record.first}`,
             }}
             target="_blank"
           >
@@ -354,7 +356,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=second&report=${record.queue}&count=${record.second}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=second&queue=${record.queue}&count=${record.second}`,
             }}
             target="_blank"
           >
@@ -376,7 +378,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=third&report=${record.queue}&count=${record.third}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=third&queue=${record.queue}&count=${record.third}`,
             }}
             target="_blank"
           >
@@ -398,7 +400,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fourth&report=${record.fourth}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=fourth&queue=${record.fourth}`,
             }}
             target="_blank"
           >
@@ -420,7 +422,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=fifth&report=${record.queue}&count=${record.fifth}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=fifth&queue=${record.queue}&count=${record.fifth}`,
             }}
             target="_blank"
           >
@@ -442,7 +444,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=sixth&report=${record.queue}&count=${record.sixth}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=sixth&queue=${record.queue}&count=${record.sixth}`,
             }}
             target="_blank"
           >
@@ -464,7 +466,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=seventh&report=${record.queue}&count=${record.seventh}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=seventh&queue=${record.queue}&count=${record.seventh}`,
             }}
             target="_blank"
           >
@@ -486,7 +488,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=eight&report=${record.queue}&count=${record.eight}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=eight&queue=${record.queue}&count=${record.eight}`,
             }}
             target="_blank"
           >
@@ -508,7 +510,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carrier=${record.carrier}&refType=${record.referenceType}&type=ninth&report=${record.queue}&count=${record.ninth}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=ninth&queue=${record.queue}&count=${record.ninth}`,
             }}
             target="_blank"
           >
@@ -537,7 +539,7 @@ export const getReferenceColumns = () => {
           <Link
             to={{
               pathname: "/ocean/history",
-              search: `?mode=OCEAN&type=REFERENCE_HISTORY&history=DIFF_HISTORY&subscriptionId=${record.subscriptionId}`,
+              search: `?subscriptionId=${record.subscriptionId}&history=DIFF_HISTORY`,
             }}
             target="_blank"
           >
@@ -859,7 +861,7 @@ export const getSummaryColumns = () => {
       key: "duration",
       align: "center",
       render: (duration, record: any) => (
-        <p style={{ color: record.durationMin >= 120 ? "red" : "inherit" }}>
+        <p style={{ color: record.durationMin >= 90 ? "red" : "inherit" }}>
           {duration}
         </p>
       ),
@@ -903,7 +905,7 @@ export const getSummaryColumns = () => {
           ))}
         >
           <span
-            style={{ color: record.failedRatio >= 2.0 ? "red" : "inherit" }}
+            style={{ color: record.failedRatio >= 3.0 ? "red" : "inherit" }}
           >
             {failedCount} ({record.failedRatio}%)
           </span>
@@ -913,11 +915,11 @@ export const getSummaryColumns = () => {
     },
 
     {
-      title: "Diff",
+      title: "DiffRate",
       dataIndex: "diffCount",
       key: "diffCount",
       render: (diffCount, record: any) => (
-        <p>
+        <p style={{ color: record.diffRatio >= 10.0 ? "red" : "inherit" }}>
           {diffCount} ({record.diffRatio}%)
         </p>
       ),
@@ -934,10 +936,16 @@ export const getSummaryColumns = () => {
     },
     {
       title: "HitRate",
-      dataIndex: "diffRatio",
-      key: "diffRatio",
+      dataIndex: "hitRateCount",
+      key: "hitRateCount",
       align: "center",
-      render: (diffRatio) => <p>{diffRatio}%</p>,
+      render: (hitRateCount, record: any) => (
+        <p style={{ color: record.hitRatePer >= 1.0 ? "red" : "inherit" }}>
+          {record.queue === "ADAPTIVE_CRAWL"
+            ? `${hitRateCount} (${record.hitRatePer}%)`
+            : "NA"}
+        </p>
+      ),
       width: 120,
     },
     {

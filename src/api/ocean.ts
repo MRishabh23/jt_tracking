@@ -143,9 +143,9 @@ export const useSummaryList = (params: any) => {
   const [loading, setLoading] = useState(false);
   const [summaryError, setSummaryError] = useState("");
   const data = {
-    type: params.get("type"),
-    mode: params.get("mode"),
-    report: params.get("query").toUpperCase(),
+    type: "CRAWL_SUMMARY",
+    mode: "OCEAN",
+    report: params.get("queue").toUpperCase(),
     carriers: params.getAll("carriers") || [] ,
     timeDuration: ""
   }
@@ -184,17 +184,27 @@ export const useSummaryList = (params: any) => {
 };
 
 export const useReferenceListCount = (
-  data: OceanProp,
+  param: any,
   page: any,
-  myParam: any
-) => {
+  ) => {
   const [count, setCount] = useState(0);
   const [loadingCount, setLoadingCount] = useState(false);
   const dispatch = useDispatch();
   const refActData = {
     error: "",
   };
-  let newData = data;
+  const data = {
+    report: (param.get("queue") || "").toUpperCase(),
+    carriers: (param.getAll("carriers") || ""),
+    referenceType: (param.get("referenceType") || ""),
+    timeCategory: (param.get("type") || ""),
+    active: param.get("active") || "yes",
+    searchQuery: param.get("searchQuery") || "",
+    mode: "OCEAN",
+    type: "REFERENCE_LIST"
+  }
+  let newData: any = data;
+  // console.log(newData);
   if (
     data.searchQuery === undefined ||
     data.searchQuery === null ||
@@ -202,6 +212,12 @@ export const useReferenceListCount = (
   ) {
     newData = { ...newData, totalRecordCount: "true" };
   }
+  else 
+  {
+    newData = { ...newData, totalRecordCount: "false" };
+  }
+
+  // console.log(newData);
 
   useEffect(() => {
     let ignore = false;
@@ -209,21 +225,25 @@ export const useReferenceListCount = (
       setLoadingCount(true);
       await oceanCalls(newData)
         .then((res) => {
+          // console.log("response");
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
             setCount(result.response[0].count);
             setLoadingCount(false);
           } else {
+            // console.log("from else");
             throw { message: res.message };
           }
         })
         .catch((err) => {
+          // console.log("from catch");
           refActData.error = err.message;
           dispatch(referenceListAction(refActData));
         });
     };
-    if (!ignore && myParam.size !== 0) {
-      setCount(myParam.get("count"));
+    const count = param.get("count")||"";
+    if (!ignore && count!=="") {
+      setCount(param.get("count"));
     } else if (
       !ignore &&
       newData.type !== "" &&
@@ -236,12 +256,12 @@ export const useReferenceListCount = (
     return () => {
       ignore = true;
     };
-  }, [data]);
+  }, [param]);
 
   return { count, loadingCount };
 };
 
-export const useReferenceList = (data: OceanProp) => {
+export const useReferenceList = (param: any) => {
   const [list, setList] = useState([]);
   const [frame, setFrame] = useState("default");
   const [loading, setLoading] = useState(false);
@@ -266,12 +286,27 @@ export const useReferenceList = (data: OceanProp) => {
       setList([]);
     }
   };
+  const searchQ = param.get("searchQuery") || "";
+  const data = searchQ === "" ?{
+    report: (param.get("queue") || "").toUpperCase(),
+    carriers: (param.getAll("carriers") || ""),
+    referenceType: (param.get("referenceType") || ""),
+    timeCategory: (param.get("type") || ""),
+    searchQuery: param.get("searchQuery") || "",
+    active: param.get("active") || "yes",
+    mode: "OCEAN",
+    type: "REFERENCE_LIST"
+  }
+  :
+  {
+    mode: "OCEAN",
+    type: "REFERENCE_LIST",
+    searchQuery: param.get("searchQuery") || "",
+  }
 
-  let newData = data;
+  let newData: any = data;
   if (
-    data.searchQuery === undefined ||
-    data.searchQuery === null ||
-    data.searchQuery === ""
+    searchQ === ""
   ) {
     newData = {
       ...newData,
@@ -285,6 +320,7 @@ export const useReferenceList = (data: OceanProp) => {
       setLoading(true);
       await oceanCalls(newData)
         .then((res) => {
+          // console.log("response list", res);
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
             setList(result.response);
@@ -303,9 +339,7 @@ export const useReferenceList = (data: OceanProp) => {
     if (!ignore && data.type !== "") {
       defaultCall();
       if (
-        data.searchQuery !== undefined &&
-        data.searchQuery !== null &&
-        data.searchQuery !== ""
+       searchQ !== ""
       ) {
         setFrame("search");
       } else {
@@ -315,7 +349,7 @@ export const useReferenceList = (data: OceanProp) => {
     return () => {
       ignore = true;
     };
-  }, [data, JSON.stringify(tableParams)]);
+  }, [param, JSON.stringify(tableParams)]);
 
   return { list, loading, frame, tableParams, handleTableChange };
 };
@@ -420,10 +454,10 @@ export const useHistoryList = (params: any) => {
   };
 
   let newData: OceanProp = {
-    type: params.get("type"),
-    mode: params.get("mode"),
+    mode: "OCEAN",
+    type: "REFERENCE_HISTORY",
     subscriptionId: params.get("subscriptionId"),
-    history: params.get("history")
+    history: params.get("history")|| "DIFF_HISTORY"
   };
 
   newData = {
@@ -480,9 +514,9 @@ export const useHistoryListCount = (params: any, page: any) => {
     error: "",
   };
   let newData: OceanProp = {
-    type: params.get("type"),
-    mode: params.get("mode"),
-    subscriptionId: params.get("subscriptionId"),
+    mode: "OCEAN",
+    type: "REFERENCE_HISTORY",
+    subscriptionId: params.get("subscriptionId") || "",
     history: params.get("history")
   };
 ;
@@ -594,4 +628,4 @@ export const useFetchHistoryData = (data: OceanProp) => {
   }, [data]);
 
   return { obj, objLoad, contextHolder };
-};
+}
