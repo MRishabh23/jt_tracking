@@ -161,7 +161,7 @@ const ReferenceList: React.FC = () => {
               <Form.Item name="SubscriptionId" className="mb-0">
                 <Search
                   className="w-full xms:w-[350px]"
-                  allowClear
+                  allowClear={false}
                   autoComplete="off"
                   placeholder="Enter SubscriptionId"
                   enterButton="Search"
@@ -249,7 +249,7 @@ const ReferenceList: React.FC = () => {
             carrier: "",
             refType: "",
             active: "yes",
-            crawlQueue: "",
+            crawlQueue: "NORMAL",
           }}
           form={form1}
         >
@@ -289,7 +289,7 @@ const ReferenceList: React.FC = () => {
             name="active"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
-            <Select placeholder="Select active status..." allowClear={true}>
+            <Select placeholder="Select active status..." allowClear={false}>
               <Select.Option value="all">All</Select.Option>
               <Select.Option value="yes">Yes</Select.Option>
               <Select.Option value="no">No</Select.Option>
@@ -300,7 +300,7 @@ const ReferenceList: React.FC = () => {
             name="crawlQueue"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
-            <Select placeholder="select crawl queue type..." allowClear={true}>
+            <Select placeholder="select crawl queue type..." allowClear={false}>
               <Select.Option value="NORMAL">Normal</Select.Option>
               <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
               <Select.Option value="RNF">Not found</Select.Option>

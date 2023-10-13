@@ -205,6 +205,13 @@ export const useReferenceListCount = (
         .then((res) => {
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
+            if (
+              result.response.error !== undefined &&
+              result.response.error !== null &&
+              result.response.error !== ""
+            ) {
+              throw { message: result.response.error };
+            }
             setCount(result.response[0].count);
             setLoadingCount(false);
           } else {
@@ -281,6 +288,13 @@ export const useReferenceList = (data: OceanProp) => {
         .then((res) => {
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
+            if (
+              result.response.error !== undefined &&
+              result.response.error !== null &&
+              result.response.error !== ""
+            ) {
+              throw { message: result.response.error };
+            }
             setList(result.response);
             setLoading(false);
           } else {

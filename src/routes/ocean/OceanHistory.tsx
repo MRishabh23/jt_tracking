@@ -188,7 +188,7 @@ const ReferenceHistory: React.FC = () => {
                 name="status"
                 className="flex-1 mb-0"
               >
-                <Select placeholder="select crawl status" allowClear={true}>
+                <Select placeholder="select crawl status" allowClear={false}>
                   <Select.Option value="DIFF_HISTORY">
                     DIFF HISTORY
                   </Select.Option>

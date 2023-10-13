@@ -131,7 +131,7 @@ const OceanSummary: React.FC = () => {
             name="queue"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
-            <Select placeholder="select a queue..." allowClear={true}>
+            <Select placeholder="select a queue..." allowClear={false}>
               <Select.Option value="NORMAL">Normal</Select.Option>
               <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
               {/* <Select.Option value="rnf">Reference Not Found</Select.Option> */}
