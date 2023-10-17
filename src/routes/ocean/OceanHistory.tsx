@@ -161,7 +161,6 @@ const ReferenceHistory: React.FC = () => {
                 <Select.Option value="ALL_HISTORY">ALL HISTORY</Select.Option>
               </Select>
             </Form.Item>
-
             <Form.Item>
               <button
                 type="submit"
@@ -171,7 +170,6 @@ const ReferenceHistory: React.FC = () => {
               </button>
             </Form.Item>
           </Form>
-          
         </div>
         { historyError !=="" || historyCountError !== ""  ? (
           <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
