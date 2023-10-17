@@ -1,16 +1,10 @@
 import {
   CARRIER_LIST,
-  LATENCY_LIST,
-  REFERENCE_LIST,
-  HISTORY_LIST,
 } from "../actions/ocean.action";
 
 const initialState = {
   carrierList: [],
   cError: "",
-  lError: "",
-  rError: "",
-  hError: "",
 };
 
 const oceanReducer = (state = initialState, action: any) => {
@@ -32,45 +26,6 @@ const oceanReducer = (state = initialState, action: any) => {
         };
       }
       return state;
-    case LATENCY_LIST:
-      const lError = action.obj.error;
-      if (lError !== undefined && lError !== "") {
-        return {
-          ...state,
-          lError: lError,
-        };
-      } else {
-        return {
-          ...state,
-          lError: "",
-        };
-      }
-    case REFERENCE_LIST:
-      const rError = action.obj.error;
-      if (rError !== undefined && rError !== "") {
-        return {
-          ...state,
-          rError: rError,
-        };
-      } else {
-        return {
-          ...state,
-          rError: "",
-        };
-      }
-    case HISTORY_LIST:
-      const hError = action.obj.error;
-      if (hError !== undefined && hError !== "") {
-        return {
-          ...state,
-          hError: hError,
-        };
-      } else {
-        return {
-          ...state,
-          hError: "",
-        };
-      }
     default:
       return state;
   }

@@ -1,36 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Form, Select, Table } from "antd";
 import {
   DataType,
   getLatencyColumns,
   latencyCreation,
 } from "../../components/report";
-import { OceanProp, useCarrierList, useLatencyList } from "../../api/ocean";
-import { useDispatch, useSelector } from "react-redux";
-import { latencyListAction } from "../../store/actions/ocean.action";
+import { useCarrierList, useLatencyList } from "../../api/ocean";
 import { useCheckAuth } from "../../api/auth";
 import { FaSpinner } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
 
 interface props {}
 
 const OceanLatency: React.FC<props> = () => {
   useCheckAuth();
 
-  const gError = useSelector((state: any) => state.ocean.lError);
-  const [carrData, setCarrData] = useState<OceanProp>({
-    type: "LATENCY",
-    mode: "OCEAN",
-    report: "NORMAL",
+  const [params, setParams] = useSearchParams({
+    queue: "NORMAL",
     carriers: [],
     referenceType: "",
   });
+
   const { carrierList } = useCarrierList();
-  const { list, loading } = useLatencyList(carrData);
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
+  const { list, loading, latencyError="" } = useLatencyList(params);
 
   const onFinish = (values: any) => {
-    dispatch(latencyListAction({ error: "" }));
     const carrArr = [values.carrier];
     const queStr =
       values.queue !== undefined && values.queue !== null && values.queue !== ""
@@ -44,13 +38,11 @@ const OceanLatency: React.FC<props> = () => {
         : "";
 
     const sendData = {
-      type: "LATENCY",
-      mode: "OCEAN",
-      report: queStr,
+      queue: queStr,
       carriers: carrArr,
       referenceType: refStr,
     };
-    setCarrData(sendData);
+    setParams(sendData);
   };
 
   const mainList = latencyCreation(list);
@@ -67,19 +59,6 @@ const OceanLatency: React.FC<props> = () => {
   //   setSelectState(newState);
   // };
 
-  useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
-      if (gError !== "") {
-        setError(gError);
-      } else {
-        setError("");
-      }
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [gError]);
 
   return (
     <>
@@ -156,19 +135,11 @@ const OceanLatency: React.FC<props> = () => {
                 Refresh
               </button>
             </Form.Item>
-            <Form.Item>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-              >
-                Reset Default
-              </button>
-            </Form.Item>
           </Form>
         </div>
-        {error !== "" ? (
+        {latencyError !== "" ? (
           <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-            {error.includes("timeout") ? "Request Timeout" : error}
+            {latencyError.includes("timeout") ? "Request Timeout" : latencyError}
           </div>
         ) : (
           <div className="mt-7">

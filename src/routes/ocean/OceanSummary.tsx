@@ -8,22 +8,19 @@ import {
   SummaryCreation,
   getSummaryColumns,
 } from "../../components/report";
-import { OceanProp, useSummaryList } from "../../api/ocean";
+import { useSummaryList } from "../../api/ocean";
+import { useSearchParams } from "react-router-dom";
 
 const OceanSummary: React.FC = () => {
   useCheckAuth();
   const [selectState, setSelectState] = useState<String[]>([]);
   const [form] = Form.useForm();
-  //   const [timeValue, setTimeValue] = useState("");
-  const [summaryData, setSummaryData] = useState<OceanProp>({
-    type: "CRAWL_SUMMARY",
-    mode: "OCEAN",
-    report: "NORMAL",
-    carriers: [],
-    timeDuration: "",
+
+  const [summaryParams, setSummaryParams] = useSearchParams({
+    queue: "NORMAL",
   });
 
-  const { list, loading, summaryError } = useSummaryList(summaryData);
+  const { list, loading, summaryError } = useSummaryList(summaryParams);
 
   const mainList = SummaryCreation(list);
 
@@ -42,26 +39,20 @@ const OceanSummary: React.FC = () => {
   };
 
   const onFinish = async (values: any) => {
-    // const carrArr =
-    //   timeValue !== undefined && timeValue !== ""
-    //     ? [values.carrier]
-    //     : values.carrier;
     const carrArr = values.carrier.length > 0 ? values.carrier : [];
-    const time = values.timeDuration;
+    // const time = values.timeDuration;
     const queStr =
       values.queue !== undefined && values.queue !== null && values.queue !== ""
         ? values.queue
         : "NORMAL";
 
     const sendData = {
-      mode: "OCEAN",
-      type: "CRAWL_SUMMARY",
-      report: queStr,
+      queue: queStr,
       carriers: carrArr,
-      timeDuration: time,
+      // timeDuration: time,
     };
 
-    setSummaryData(sendData);
+    setSummaryParams(sendData);
   };
 
   return (
@@ -171,12 +162,9 @@ const OceanSummary: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setSummaryData({
-                    type: "CRAWL_SUMMARY",
-                    mode: "OCEAN",
-                    carriers: [],
-                    report: "NORMAL",
-                    timeDuration: "",
+                  setSummaryParams({
+                    queue: "NORMAL",
+                    // timeDuration: "",
                   });
                   form.setFieldValue("carrier", []);
                   form.setFieldValue("queue", "NORMAL");
@@ -206,7 +194,8 @@ const OceanSummary: React.FC = () => {
                 pagination={{
                   pageSize: 5,
                   total: data2.length,
-                  showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                  showTotal: (total, range) =>
+                    `${range[0]}-${range[1]} of ${total} items`,
                   hideOnSinglePage: true,
                   showSizeChanger: false,
                   position: ["topRight", "bottomRight"],
@@ -219,7 +208,8 @@ const OceanSummary: React.FC = () => {
                   <div className="flex items-center justify-center">
                     <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                   </div>
-                ) : list.length === 0 && summaryData.carriers?.length !== 0 ? (
+                ) : list.length === 0 &&
+                  summaryParams.get("carriers")?.length !== 0 ? (
                   <p className="flex justify-center text-lg font-semibold text-black">
                     No records found for the searched filter
                   </p>

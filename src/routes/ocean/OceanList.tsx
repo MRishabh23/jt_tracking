@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Form, Input, Drawer, Space, Select, Table } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+
 import {
-  OceanProp,
   useCarrierList,
   useReferenceList,
   useReferenceListCount,
 } from "../../api/ocean";
 import type { TablePaginationConfig } from "antd";
-import { referenceListAction } from "../../store/actions/ocean.action";
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useSearchParams } from "react-router-dom";
 import {
   DataType,
   getReferenceColumns,
@@ -27,57 +25,25 @@ const customDrawerStyle = {
 
 const ReferenceList: React.FC = () => {
   useCheckAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const myParam: any = new URLSearchParams(location.search);
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
-  const gError = useSelector((state: any) => state.ocean.rError);
-  const [refData, setRefData] = useState<OceanProp>({
-    mode: "OCEAN",
-    type: "REFERENCE_LIST",
-    report:
-      myParam.get("report") !== undefined &&
-      myParam.get("report") !== null &&
-      myParam.get("report") !== ""
-        ? myParam.get("report").toUpperCase()
-        : "",
-    carriers:
-      myParam.get("carrier") !== undefined &&
-      myParam.get("carrier") !== null &&
-      myParam.get("carrier") !== ""
-        ? [myParam.get("carrier")]
-        : ["acl"],
-    referenceType:
-      myParam.get("refType") !== undefined &&
-      myParam.get("refType") !== null &&
-      myParam.get("refType") !== ""
-        ? myParam.get("refType")
-        : "",
-    timeCategory:
-      myParam.get("type") !== undefined &&
-      myParam.get("type") !== null &&
-      myParam.get("type") !== ""
-        ? myParam.get("type")
-        : "",
-    active:
-      myParam.get("carrier") !== undefined &&
-      myParam.get("carrier") !== null &&
-      myParam.get("carrier") !== ""
-        ? "yes"
-        : "yes",
-  });
+ 
+  const [param, setParam] = useSearchParams({
+     queue: "",
+     carriers: ["acl"],
+     referenceType: "",
+     type: "",
+     active: "yes"
+  })
+
   const { carrierList } = useCarrierList();
-  const { list, loading, frame, tableParams, handleTableChange } =
-    useReferenceList(refData);
-  const { count, loadingCount } = useReferenceListCount(
-    refData,
+  const { list, loading, frame, tableParams, handleTableChange, referenceError } =
+    useReferenceList(param);
+  const { count, loadingCount, referenceCountError } = useReferenceListCount(
+    param,
     tableParams.pagination?.current,
-    myParam
   );
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
+  
 
   const mainList = referenceCreation(list);
   const getRefCol = getReferenceColumns();
@@ -86,7 +52,6 @@ const ReferenceList: React.FC = () => {
     list === null || mainList.length === 0 ? [] : mainList;
 
   const onFinish = async (values: any) => {
-    dispatch(referenceListAction({ error: "" }));
     setOpen(false);
     form.resetFields();
     const carrier = values.carrier;
@@ -95,15 +60,13 @@ const ReferenceList: React.FC = () => {
     const crawlQueue = values.crawlQueue === undefined ? "" : values.crawlQueue;
 
     const sendData = {
-      mode: "OCEAN",
-      type: "REFERENCE_LIST",
-      report: crawlQueue,
+      queue: crawlQueue,
       carriers: [carrier],
       referenceType: refType,
       timeCategory: "",
       active: active,
     };
-    setRefData(sendData);
+    setParam(sendData);
     const pagination: TablePaginationConfig = {
       current: 1,
       pageSize: 5,
@@ -112,16 +75,13 @@ const ReferenceList: React.FC = () => {
   };
 
   const onFinishSearch = async (value: any) => {
-    dispatch(referenceListAction({ error: "" }));
     form1.resetFields();
     const subId = value.SubscriptionId;
 
     const sendData = {
-      mode: "OCEAN",
-      type: "REFERENCE_LIST",
       searchQuery: subId,
     };
-    setRefData(sendData);
+    setParam(sendData);
   };
 
   const [open, setOpen] = useState(false);
@@ -130,19 +90,7 @@ const ReferenceList: React.FC = () => {
     setOpen(!open);
   };
 
-  useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
-      if (gError !== "") {
-        setError(gError);
-      } else {
-        setError("");
-      }
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [gError]);
+  
 
   return (
     <div className="relative w-full min-h-full p-3">
@@ -150,7 +98,6 @@ const ReferenceList: React.FC = () => {
         <h3 className="text-3xl">Reference List</h3>
       </div>
       <div className="flex flex-col items-center justify-around p-5 mt-8 bg-gray-200 rounded-md xms:flex-row lg:mt-12">
-        {myParam.size === 0 ? (
           <>
             <Form
               name="search"
@@ -178,22 +125,10 @@ const ReferenceList: React.FC = () => {
               Filter
             </button>
           </>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              navigate("/ocean/reference");
-              window.location.reload();
-            }}
-            className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-          >
-            Default List
-          </button>
-        )}
-      </div>
-      {error !== "" ? (
+        </div>
+      {referenceError !== "" || referenceCountError !== "" ? (
         <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-          {error.includes("timeout") ? "Request Timeout" : error}
+          {referenceError.includes("timeout") ? "Request Timeout" : referenceError}
         </div>
       ) : (
         <div className="mt-7">
