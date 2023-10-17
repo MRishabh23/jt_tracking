@@ -43,13 +43,7 @@ const ReferenceHistory: React.FC = () => {
   });
   const { obj, objLoad, contextHolder } = useFetchHistoryData(isModalOpen.data);
 
-  let subId = "";
-  if (historyParam.size !== 0) {
-    subId = historyParam.get("subscriptionId") || "";
-  } else {
-    subId = form.getFieldValue("SubscriptionId");
-  }
-  const mainList = HistoryCreation(list, subId);
+  const mainList = HistoryCreation(list, historyParam.get("subscriptionId") || "");
 
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
