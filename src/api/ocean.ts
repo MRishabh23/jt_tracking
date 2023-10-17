@@ -3,9 +3,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   carrierListAction,
-  latencyListAction,
-  referenceListAction,
-  historyListAction,
 } from "../store/actions/ocean.action";
 import type { TablePaginationConfig } from "antd/es/table";
 import { notification } from "antd";
@@ -99,15 +96,20 @@ export const useCarrierList = () => {
   return { carrierList };
 };
 
-export const useLatencyList = (data: OceanProp) => {
+export const useLatencyList = (params: any) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
-  const latActData = {
-    error: "",
+  const [latencyError, setLatencyError] = useState("");
+  const data = {
+    type: "LATENCY",
+    mode: "OCEAN",
+    report: params.get("queue").toUpperCase(),
+    carriers: params.getAll("carriers") || [],
+    referenceType: params.get("referenceType") || "",
   };
   useEffect(() => {
     let ignore = false;
+    setLatencyError("");
     const defaultCall = async () => {
       setLoading(false);
       await oceanCalls(data)
@@ -122,8 +124,7 @@ export const useLatencyList = (data: OceanProp) => {
         })
         .catch((err) => {
           setLoading(true);
-          latActData.error = err.message;
-          dispatch(latencyListAction(latActData));
+          setLatencyError(err.message);
         });
     };
     if (!ignore && data.type !== "") {
@@ -133,9 +134,9 @@ export const useLatencyList = (data: OceanProp) => {
     return () => {
       ignore = true;
     };
-  }, [data]);
+  }, [params]);
 
-  return { list, loading };
+  return { list, loading, latencyError };
 };
 
 export const useSummaryList = (params: any) => {
@@ -146,11 +147,12 @@ export const useSummaryList = (params: any) => {
     type: "CRAWL_SUMMARY",
     mode: "OCEAN",
     report: params.get("queue").toUpperCase(),
-    carriers: params.getAll("carriers") || [] ,
-    timeDuration: ""
-  }
+    carriers: params.getAll("carriers") || [],
+    timeDuration: "",
+  };
   useEffect(() => {
     let ignore = false;
+    setSummaryError("");
     const defaultCall = async () => {
       setLoading(true);
       await oceanCalls(data)
@@ -159,7 +161,6 @@ export const useSummaryList = (params: any) => {
             const result = res.data;
             setList(result.response);
             setLoading(false);
-            setSummaryError("");
           } else {
             throw { message: res.message };
           }
@@ -183,66 +184,60 @@ export const useSummaryList = (params: any) => {
   return { list, loading, summaryError };
 };
 
-export const useReferenceListCount = (
-  param: any,
-  page: any,
-  ) => {
+export const useReferenceListCount = (param: any, page: any) => {
   const [count, setCount] = useState(0);
   const [loadingCount, setLoadingCount] = useState(false);
-  const dispatch = useDispatch();
-  const refActData = {
-    error: "",
-  };
+  const [referenceCountError, setReferenceCountError] = useState("");
   const data = {
     report: (param.get("queue") || "").toUpperCase(),
-    carriers: (param.getAll("carriers") || ""),
-    referenceType: (param.get("referenceType") || ""),
-    timeCategory: (param.get("type") || ""),
+    carriers: param.getAll("carriers") || "",
+    referenceType: param.get("referenceType") || "",
+    timeCategory: param.get("type") || "",
     active: param.get("active") || "yes",
     searchQuery: param.get("searchQuery") || "",
     mode: "OCEAN",
-    type: "REFERENCE_LIST"
-  }
+    type: "REFERENCE_LIST",
+  };
   let newData: any = data;
-  // console.log(newData);
   if (
     data.searchQuery === undefined ||
     data.searchQuery === null ||
     data.searchQuery === ""
   ) {
     newData = { ...newData, totalRecordCount: "true" };
-  }
-  else 
-  {
+  } else {
     newData = { ...newData, totalRecordCount: "false" };
   }
 
-  // console.log(newData);
 
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
+      setReferenceCountError("");
       setLoadingCount(true);
       await oceanCalls(newData)
         .then((res) => {
-          // console.log("response");
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
+            if (
+              result.response.error !== undefined &&
+              result.response.error !== null &&
+              result.response.error !== ""
+            ) {
+              throw { message: result.response.error };
+            }
             setCount(result.response[0].count);
             setLoadingCount(false);
           } else {
-            // console.log("from else");
             throw { message: res.message };
           }
         })
         .catch((err) => {
-          // console.log("from catch");
-          refActData.error = err.message;
-          dispatch(referenceListAction(refActData));
+          setReferenceCountError(err.message);
         });
     };
-    const count = param.get("count")||"";
-    if (!ignore && count!=="") {
+    const count = param.get("count") || "";
+    if (!ignore && count !== "") {
       setCount(param.get("count"));
     } else if (
       !ignore &&
@@ -258,13 +253,14 @@ export const useReferenceListCount = (
     };
   }, [param]);
 
-  return { count, loadingCount };
+  return { count, loadingCount, referenceCountError };
 };
 
 export const useReferenceList = (param: any) => {
   const [list, setList] = useState([]);
   const [frame, setFrame] = useState("default");
   const [loading, setLoading] = useState(false);
+  const [referenceError, setReferenceError] = useState("");
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
@@ -272,42 +268,36 @@ export const useReferenceList = (param: any) => {
       showSizeChanger: false,
     },
   });
-  const dispatch = useDispatch();
-  const refActData = {
-    error: "",
-  };
   const handleTableChange = (pagination: TablePaginationConfig) => {
     setTableParams({
       pagination,
     });
 
-    // `dataSource` is useless since `pageSize` changed
     if (pagination.pageSize !== tableParams.pagination?.pageSize) {
       setList([]);
     }
   };
   const searchQ = param.get("searchQuery") || "";
-  const data = searchQ === "" ?{
-    report: (param.get("queue") || "").toUpperCase(),
-    carriers: (param.getAll("carriers") || ""),
-    referenceType: (param.get("referenceType") || ""),
-    timeCategory: (param.get("type") || ""),
-    searchQuery: param.get("searchQuery") || "",
-    active: param.get("active") || "yes",
-    mode: "OCEAN",
-    type: "REFERENCE_LIST"
-  }
-  :
-  {
-    mode: "OCEAN",
-    type: "REFERENCE_LIST",
-    searchQuery: param.get("searchQuery") || "",
-  }
+  const data =
+    searchQ === ""
+      ? {
+          report: (param.get("queue") || "").toUpperCase(),
+          carriers: param.getAll("carriers") || "",
+          referenceType: param.get("referenceType") || "",
+          timeCategory: param.get("type") || "",
+          searchQuery: param.get("searchQuery") || "",
+          active: param.get("active") || "yes",
+          mode: "OCEAN",
+          type: "REFERENCE_LIST",
+        }
+      : {
+          mode: "OCEAN",
+          type: "REFERENCE_LIST",
+          searchQuery: param.get("searchQuery") || "",
+        };
 
   let newData: any = data;
-  if (
-    searchQ === ""
-  ) {
+  if (searchQ === "") {
     newData = {
       ...newData,
       limit: tableParams.pagination?.pageSize,
@@ -317,12 +307,19 @@ export const useReferenceList = (param: any) => {
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
+      setReferenceError("");
       setLoading(true);
       await oceanCalls(newData)
         .then((res) => {
-          // console.log("response list", res);
           if (res.status === 200 && res.data.statusCode === "200") {
             const result = res.data;
+            if (
+              result.response.error !== undefined &&
+              result.response.error !== null &&
+              result.response.error !== ""
+            ) {
+              throw { message: result.response.error };
+            }
             setList(result.response);
             setLoading(false);
           } else {
@@ -331,16 +328,13 @@ export const useReferenceList = (param: any) => {
         })
         .catch((err) => {
           setLoading(false);
-          refActData.error = err.message;
-          dispatch(referenceListAction(refActData));
+          setReferenceError(err.message);
         });
     };
 
     if (!ignore && data.type !== "") {
       defaultCall();
-      if (
-       searchQ !== ""
-      ) {
+      if (searchQ !== "") {
         setFrame("search");
       } else {
         setFrame("default");
@@ -351,7 +345,7 @@ export const useReferenceList = (param: any) => {
     };
   }, [param, JSON.stringify(tableParams)]);
 
-  return { list, loading, frame, tableParams, handleTableChange };
+  return { list, loading, frame, tableParams, handleTableChange, referenceError };
 };
 
 // export const useReferenceList = (data: OceanProp) => {
@@ -431,6 +425,7 @@ export const useReferenceList = (param: any) => {
 export const useHistoryList = (params: any) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
@@ -438,10 +433,10 @@ export const useHistoryList = (params: any) => {
       showSizeChanger: false,
     },
   });
-  const dispatch = useDispatch();
-  const hisActData = {
-    error: "",
-  };
+  // const dispatch = useDispatch();
+  // const hisActData = {
+  //   error: "",
+  // };
   const handleTableChange = (pagination: TablePaginationConfig) => {
     setTableParams({
       pagination,
@@ -457,7 +452,7 @@ export const useHistoryList = (params: any) => {
     mode: "OCEAN",
     type: "REFERENCE_HISTORY",
     subscriptionId: params.get("subscriptionId"),
-    history: params.get("history")|| "DIFF_HISTORY"
+    history: params.get("history") || "DIFF_HISTORY",
   };
 
   newData = {
@@ -469,6 +464,7 @@ export const useHistoryList = (params: any) => {
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
+      setHistoryError("");
       setLoading(true);
       await oceanCalls(newData)
         .then((res) => {
@@ -482,19 +478,25 @@ export const useHistoryList = (params: any) => {
               throw { message: result.response.error };
             }
             setList(result.response);
+
             setLoading(false);
           } else {
             throw { message: res.message };
           }
         })
         .catch((err) => {
+          setHistoryError(err.message);
           setLoading(false);
-          hisActData.error = err.message;
-          dispatch(historyListAction(hisActData));
+          // hisActData.error = err.message;
+          // dispatch(historyListAction(hisActData));
         });
     };
 
-    if (!ignore && params.get("type") !== "" && params.get("subscriptionId") !== "") {
+    if (
+      !ignore &&
+      params.get("type") !== "" &&
+      params.get("subscriptionId") !== ""
+    ) {
       defaultCall();
     } else {
       setList([]);
@@ -504,29 +506,25 @@ export const useHistoryList = (params: any) => {
     };
   }, [params, JSON.stringify(tableParams)]);
 
-  return { list, loading, tableParams, handleTableChange };
+  return { list, loading, tableParams, handleTableChange, historyError };
 };
 
 export const useHistoryListCount = (params: any, page: any) => {
   const [count, setCount] = useState(0);
-  const dispatch = useDispatch();
-  const hisActData = {
-    error: "",
-  };
+  const [historyCountError, setHistoryCountError] = useState("");
   let newData: OceanProp = {
     mode: "OCEAN",
     type: "REFERENCE_HISTORY",
     subscriptionId: params.get("subscriptionId") || "",
-    history: params.get("history")
+    history: params.get("history"),
   };
-;
-
   if (newData.subscriptionId !== null && newData.subscriptionId !== "") {
     newData = { ...newData, totalRecordCount: "true" };
   }
 
   useEffect(() => {
     let ignore = false;
+    setHistoryCountError("")
     const defaultCall = async () => {
       await oceanCalls(newData)
         .then((res) => {
@@ -539,14 +537,14 @@ export const useHistoryListCount = (params: any, page: any) => {
             ) {
               throw { message: result.response.error };
             }
+            setHistoryCountError("");
             setCount(result.response[0].count);
           } else {
             throw { message: res.message };
           }
         })
         .catch((err) => {
-          hisActData.error = err.message;
-          dispatch(historyListAction(hisActData));
+          setHistoryCountError(err.message);
         });
     };
     if (
@@ -563,7 +561,7 @@ export const useHistoryListCount = (params: any, page: any) => {
     };
   }, [params]);
 
-  return { count };
+  return { count, historyCountError };
 };
 
 export const useFetchHistoryData = (data: OceanProp) => {
@@ -628,4 +626,4 @@ export const useFetchHistoryData = (data: OceanProp) => {
   }, [data]);
 
   return { obj, objLoad, contextHolder };
-}
+};

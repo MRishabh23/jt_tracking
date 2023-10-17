@@ -400,7 +400,7 @@ export const getLatencyColumns = (mainList: any) => {
           <Link
             to={{
               pathname: "/ocean/reference",
-              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=fourth&queue=${record.fourth}`,
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=fourth&queue=${record.queue}&count=${record.fourth}`,
             }}
             target="_blank"
           >

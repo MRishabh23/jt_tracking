@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Form, Input, Drawer, Space, Select, Table } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+
 import {
   useCarrierList,
   useReferenceList,
   useReferenceListCount,
 } from "../../api/ocean";
 import type { TablePaginationConfig } from "antd";
-import { referenceListAction } from "../../store/actions/ocean.action";
 import {  useSearchParams } from "react-router-dom";
 import {
   DataType,
@@ -26,49 +25,9 @@ const customDrawerStyle = {
 
 const ReferenceList: React.FC = () => {
   useCheckAuth();
-  // const location = useLocation();
-  // const navigate = useNavigate();
-
-  // const myParam: any = new URLSearchParams(location.search);
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
-  const gError = useSelector((state: any) => state.ocean.rError);
-
-  // const [refData, setRefData] = useState<OceanProp>({
-  //   mode: "OCEAN",
-  //   type: "REFERENCE_LIST",
-  //   report:
-  //     myParam.get("report") !== undefined &&
-  //     myParam.get("report") !== null &&
-  //     myParam.get("report") !== ""
-  //       ? myParam.get("report").toUpperCase()
-  //       : "",
-  //   carriers:
-  //     myParam.get("carrier") !== undefined &&
-  //     myParam.get("carrier") !== null &&
-  //     myParam.get("carrier") !== ""
-  //       ? [myParam.get("carrier")]
-  //       : ["acl"],
-  //   referenceType:
-  //     myParam.get("refType") !== undefined &&
-  //     myParam.get("refType") !== null &&
-  //     myParam.get("refType") !== ""
-  //       ? myParam.get("refType")
-  //       : "",
-  //   timeCategory:
-  //     myParam.get("type") !== undefined &&
-  //     myParam.get("type") !== null &&
-  //     myParam.get("type") !== ""
-  //       ? myParam.get("type")
-  //       : "",
-  //   active:
-  //     myParam.get("carrier") !== undefined &&
-  //     myParam.get("carrier") !== null &&
-  //     myParam.get("carrier") !== ""
-  //       ? "yes"
-  //       : "yes",
-  // });
-
+ 
   const [param, setParam] = useSearchParams({
      queue: "",
      carriers: ["acl"],
@@ -78,14 +37,13 @@ const ReferenceList: React.FC = () => {
   })
 
   const { carrierList } = useCarrierList();
-  const { list, loading, frame, tableParams, handleTableChange } =
+  const { list, loading, frame, tableParams, handleTableChange, referenceError } =
     useReferenceList(param);
-  const { count, loadingCount } = useReferenceListCount(
+  const { count, loadingCount, referenceCountError } = useReferenceListCount(
     param,
     tableParams.pagination?.current,
   );
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
+  
 
   const mainList = referenceCreation(list);
   const getRefCol = getReferenceColumns();
@@ -94,7 +52,6 @@ const ReferenceList: React.FC = () => {
     list === null || mainList.length === 0 ? [] : mainList;
 
   const onFinish = async (values: any) => {
-    dispatch(referenceListAction({ error: "" }));
     setOpen(false);
     form.resetFields();
     const carrier = values.carrier;
@@ -118,7 +75,6 @@ const ReferenceList: React.FC = () => {
   };
 
   const onFinishSearch = async (value: any) => {
-    dispatch(referenceListAction({ error: "" }));
     form1.resetFields();
     const subId = value.SubscriptionId;
 
@@ -134,19 +90,7 @@ const ReferenceList: React.FC = () => {
     setOpen(!open);
   };
 
-  useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
-      if (gError !== "") {
-        setError(gError);
-      } else {
-        setError("");
-      }
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [gError]);
+  
 
   return (
     <div className="relative w-full min-h-full p-3">
@@ -182,9 +126,9 @@ const ReferenceList: React.FC = () => {
             </button>
           </>
         </div>
-      {error !== "" ? (
+      {referenceError !== "" || referenceCountError !== "" ? (
         <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-          {error.includes("timeout") ? "Request Timeout" : error}
+          {referenceError.includes("timeout") ? "Request Timeout" : referenceError}
         </div>
       ) : (
         <div className="mt-7">
@@ -240,7 +184,7 @@ const ReferenceList: React.FC = () => {
             carrier: "",
             refType: "",
             active: "yes",
-            crawlQueue: "",
+            crawlQueue: "NORMAL",
           }}
           form={form1}
         >
@@ -280,7 +224,7 @@ const ReferenceList: React.FC = () => {
             name="active"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
-            <Select placeholder="Select active status..." allowClear={true}>
+            <Select placeholder="Select active status..." allowClear={false}>
               <Select.Option value="all">All</Select.Option>
               <Select.Option value="yes">Yes</Select.Option>
               <Select.Option value="no">No</Select.Option>
@@ -291,7 +235,7 @@ const ReferenceList: React.FC = () => {
             name="crawlQueue"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
-            <Select placeholder="select crawl queue type..." allowClear={true}>
+            <Select placeholder="select crawl queue type..." allowClear={false}>
               <Select.Option value="NORMAL">Normal</Select.Option>
               <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
               <Select.Option value="RNF">Not found</Select.Option>

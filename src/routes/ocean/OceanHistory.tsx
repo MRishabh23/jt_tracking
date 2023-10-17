@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Input, Modal, Select, Table } from "antd";
 import { useCheckAuth } from "../../api/auth";
 import { useSearchParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import type { TablePaginationConfig } from "antd";
 import {
   DataType,
   HistoryCreation,
   getHistoryColumns,
 } from "../../components/report";
-import { historyListAction } from "../../store/actions/ocean.action";
 import {
   useFetchHistoryData,
   useHistoryList,
@@ -22,18 +20,16 @@ import "react18-json-view/src/style.css";
 const ReferenceHistory: React.FC = () => {
   useCheckAuth();
   const [form] = Form.useForm();
-  const gError = useSelector((state: any) => state.ocean.hError);
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
   const [historyParam, setHistoryParam] =
     useSearchParams();
 
-  const { list, loading, tableParams, handleTableChange } =
+  const { list, loading, tableParams, handleTableChange, historyError= "" } =
     useHistoryList(historyParam);
-  const { count } = useHistoryListCount(
+  const { count, historyCountError= "" } = useHistoryListCount(
     historyParam,
     tableParams.pagination?.current
   );
+
   const [isModalOpen, setIsModalOpen] = useState({
     open: false,
     data: {
@@ -59,7 +55,6 @@ const ReferenceHistory: React.FC = () => {
     list === null || mainList.length === 0 ? [] : mainList;
 
   const onFinish = async (values: any) => {
-    dispatch(historyListAction({ error: "" }));
     const subsId = values.SubscriptionId;
     const status = values.status === undefined ? "ALL_HISTORY" : values.status;
     const sendData = {
@@ -77,20 +72,6 @@ const ReferenceHistory: React.FC = () => {
   };
 
   const getHisCol = getHistoryColumns(isModalOpen, setIsModalOpen);
-
-  useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
-      if (gError !== "") {
-        setError(gError);
-      } else {
-        setError("");
-      }
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [gError]);
 
   const handleModal = () => {
     setIsModalOpen({
@@ -175,7 +156,7 @@ const ReferenceHistory: React.FC = () => {
               name="status"
               className="flex-1 mb-0"
             >
-              <Select placeholder="select crawl status" allowClear={true}>
+              <Select placeholder="select crawl status" allowClear={false}>
                 <Select.Option value="DIFF_HISTORY">DIFF HISTORY</Select.Option>
                 <Select.Option value="ALL_HISTORY">ALL HISTORY</Select.Option>
               </Select>
@@ -192,9 +173,9 @@ const ReferenceHistory: React.FC = () => {
           </Form>
           
         </div>
-        {error !== "" ? (
+        { historyError !=="" || historyCountError !== ""  ? (
           <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-            {error.includes("timeout") ? "Request Timeout" : error}
+            {historyError.includes("timeout") ? "Request Timeout" : historyError}
           </div>
         ) : (
           <div className="mt-7">
