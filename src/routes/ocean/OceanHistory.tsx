@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Input, Modal, Select, Table } from "antd";
 import { useCheckAuth } from "../../api/auth";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import type { TablePaginationConfig } from "antd";
 import {
   DataType,
   HistoryCreation,
   getHistoryColumns,
 } from "../../components/report";
-import { historyListAction } from "../../store/actions/ocean.action";
 import {
-  OceanProp,
   useFetchHistoryData,
   useHistoryList,
   useHistoryListCount,
@@ -22,31 +19,17 @@ import "react18-json-view/src/style.css";
 
 const ReferenceHistory: React.FC = () => {
   useCheckAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
   const [form] = Form.useForm();
-  const myParam: any = new URLSearchParams(location.search);
-  const gError = useSelector((state: any) => state.ocean.hError);
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
-  const [diff, setDiff] = useState(false);
-  const [historyData, setHistoryData] = useState<OceanProp>({
-    mode: "OCEAN",
-    type: "REFERENCE_HISTORY",
-    subscriptionId:
-      myParam.get("subsId") !== undefined &&
-      myParam.get("subsId") !== null &&
-      myParam.get("subsId") !== ""
-        ? myParam.get("subsId").toUpperCase()
-        : "",
-    history: "DIFF_HISTORY",
-  });
-  const { list, loading, tableParams, handleTableChange } =
-    useHistoryList(historyData);
-  const { count } = useHistoryListCount(
-    historyData,
+  const [historyParam, setHistoryParam] =
+    useSearchParams();
+
+  const { list, loading, tableParams, handleTableChange, historyError= "" } =
+    useHistoryList(historyParam);
+  const { count, historyCountError= "" } = useHistoryListCount(
+    historyParam,
     tableParams.pagination?.current
   );
+
   const [isModalOpen, setIsModalOpen] = useState({
     open: false,
     data: {
@@ -60,29 +43,20 @@ const ReferenceHistory: React.FC = () => {
   });
   const { obj, objLoad, contextHolder } = useFetchHistoryData(isModalOpen.data);
 
-  let subId = "";
-  if (myParam.size !== 0) {
-    subId = myParam.get("subsId");
-  } else {
-    subId = form.getFieldValue("SubscriptionId");
-  }
-  const mainList = HistoryCreation(list, subId);
+  const mainList = HistoryCreation(list, historyParam.get("subscriptionId") || "");
 
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
 
   const onFinish = async (values: any) => {
-    dispatch(historyListAction({ error: "" }));
     const subsId = values.SubscriptionId;
     const status = values.status === undefined ? "ALL_HISTORY" : values.status;
     const sendData = {
-      mode: "OCEAN",
-      type: "REFERENCE_HISTORY",
       subscriptionId: subsId,
       history: status,
     };
 
-    setHistoryData(sendData);
+    setHistoryParam(sendData);
 
     const pagination: TablePaginationConfig = {
       current: 1,
@@ -92,20 +66,6 @@ const ReferenceHistory: React.FC = () => {
   };
 
   const getHisCol = getHistoryColumns(isModalOpen, setIsModalOpen);
-
-  useEffect(() => {
-    let ignore = false;
-    if (!ignore) {
-      if (gError !== "") {
-        setError(gError);
-      } else {
-        setError("");
-      }
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [gError]);
 
   const handleModal = () => {
     setIsModalOpen({
@@ -163,101 +123,51 @@ const ReferenceHistory: React.FC = () => {
           <h3 className="text-3xl">Crawl History</h3>
         </div>
         <div className="p-3 mt-4 bg-gray-200 rounded-md lg:mt-12">
-          {myParam.size === 0 ? (
-            <Form
-              name="basic"
-              form={form}
-              onFinish={onFinish}
-              size="middle"
-              className="flex flex-col gap-4 pt-3 lg:flex-row lg:justify-center lg:gap-6"
-              initialValues={{ status: "DIFF_HISTORY" }}
+          <Form
+            name="basic"
+            form={form}
+            onFinish={onFinish}
+            size="middle"
+            className="flex flex-col gap-4 pt-3 lg:flex-row lg:justify-center lg:gap-6"
+            initialValues={{
+              status: "DIFF_HISTORY",
+              SubscriptionId: historyParam.get("subscriptionId") || "",
+            }}
+          >
+            <Form.Item
+              label={<p className="text-lg">SubscriptionId</p>}
+              name="SubscriptionId"
+              className="flex-1 mb-0"
+              rules={[
+                { required: true, message: "Please input SubscriptionId" },
+              ]}
             >
-              <Form.Item
-                label={<p className="text-lg">SubscriptionId</p>}
-                name="SubscriptionId"
-                className="flex-1 mb-0"
-                rules={[
-                  { required: true, message: "Please input SubscriptionId" },
-                ]}
+              <Input allowClear placeholder="Enter SubscriptionId" />
+            </Form.Item>
+
+            <Form.Item
+              label={<p className="text-lg">Crawl Status</p>}
+              name="status"
+              className="flex-1 mb-0"
+            >
+              <Select placeholder="select crawl status" allowClear={false}>
+                <Select.Option value="DIFF_HISTORY">DIFF HISTORY</Select.Option>
+                <Select.Option value="ALL_HISTORY">ALL HISTORY</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item>
+              <button
+                type="submit"
+                className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
               >
-                <Input allowClear placeholder="Enter SubscriptionId" />
-              </Form.Item>
-
-              <Form.Item
-                label={<p className="text-lg">Crawl Status</p>}
-                name="status"
-                className="flex-1 mb-0"
-              >
-                <Select placeholder="select crawl status" allowClear={false}>
-                  <Select.Option value="DIFF_HISTORY">
-                    DIFF HISTORY
-                  </Select.Option>
-                  <Select.Option value="ALL_HISTORY">ALL HISTORY</Select.Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item>
-                <button
-                  type="submit"
-                  className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-                >
-                  Refresh
-                </button>
-              </Form.Item>
-            </Form>
-          ) : (
-            <div className="flex flex-col items-center justify-center gap-3">
-              <div className="flex flex-col gap-6 lg:flex-row">
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigate("/ocean/history");
-                    setHistoryData({
-                      type: "REFERENCE_HISTORY",
-                      mode: "OCEAN",
-                      subscriptionId: "",
-                      history: "DIFF_HISTORY",
-                    });
-                  }}
-                  className="px-4 py-1 w-40 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-                >
-                  More Queries
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    // navigate("/reference/history");
-
-                    let history = diff ? "DIFF_HISTORY" : "ALL_HISTORY";
-                    setDiff(!diff);
-                    setHistoryData({
-                      type: "REFERENCE_HISTORY",
-                      mode: "OCEAN",
-                      subscriptionId: subId,
-                      history: history,
-                    });
-                    const pagination: TablePaginationConfig = {
-                      current: 1,
-                      pageSize: 5,
-                    };
-                    handleTableChange(pagination);
-                  }}
-                  className="px-4 py-1  text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-                >
-                  {diff ? "Diff History" : "All History"}
-                </button>
-              </div>
-              <div>
-                <p className="text-lg font-semibold">
-                  Showing - {diff ? "All History" : "Difference History"}
-                </p>
-              </div>
-            </div>
-          )}
+                Refresh
+              </button>
+            </Form.Item>
+          </Form>
         </div>
-        {error !== "" ? (
+        { historyError !=="" || historyCountError !== ""  ? (
           <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-            {error.includes("timeout") ? "Request Timeout" : error}
+            {historyError.includes("timeout") ? "Request Timeout" : historyError}
           </div>
         ) : (
           <div className="mt-7">

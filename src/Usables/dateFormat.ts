@@ -18,6 +18,8 @@ function getDayWithSuffix(day: number): string {
 
 function formatDate(inputDate: string): string {
   // Create a Date object from the input date string
+  if(inputDate !== "")
+  {
   const date = new Date(inputDate);
 
   // Extract day, month, and year
@@ -41,6 +43,9 @@ function formatDate(inputDate: string): string {
 
   // Return the formatted date string
   return formattedDate;
+}
+else
+return "";
 }
 
 export default formatDate;
