@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useCheckAuth } from "../../api/auth";
-import { Form, Select, Table } from "antd";
+import { Form, Select, Table, DatePicker } from "antd";
 import { useCarrierList } from "../../api/ocean";
 import { FaSpinner } from "react-icons/fa";
 import {
@@ -11,9 +11,11 @@ import {
 import { useSummaryList } from "../../api/ocean";
 import { useSearchParams } from "react-router-dom";
 
+const { RangePicker } = DatePicker;
+
 const OceanSummary: React.FC = () => {
   useCheckAuth();
-  const [selectState, setSelectState] = useState<String[]>([]);
+  const [showRange, setShowRange] = useState(false);
   const [form] = Form.useForm();
 
   const [summaryParams, setSummaryParams] = useSearchParams({
@@ -31,16 +33,47 @@ const OceanSummary: React.FC = () => {
   const getSumCol = getSummaryColumns();
 
   const handleChange = (value: any) => {
-    let newState = [];
-    for (let x in value) {
-      newState.push(value[x]);
-    }
-    setSelectState(newState);
-  };
+       if(value !== undefined && value !== null && value !== "")
+       {
+        setShowRange(true);
+       }
+       else
+       {
+        setShowRange(false);
+        form.setFieldValue("range", undefined);
+       }
+    };
 
   const onFinish = async (values: any) => {
-    const carrArr = values.carrier.length > 0 ? values.carrier : [];
-    // const time = values.timeDuration;
+    let start = "";
+    let end = "";
+    if(values.range !== null && values.range !== undefined && values.range !== "")
+    {
+    const r = values.range[0];
+    let day = r.$D.toString();
+    if (day.length === 1) {
+      day = "0" + day;
+    }
+    let month = (r.$M + 1).toString();
+    if(month.length === 1) {
+      month = "0" + month;
+    }
+
+     start = `${r.$y}-${month}-${day} 00:00:00`;
+
+    const e = values.range[1];
+    let eday = e.$D.toString();
+    if (eday.length === 1) {
+      eday = "0" + eday;
+    }
+    let emonth = (e.$M + 1).toString();
+    if(emonth.length === 1) {
+      emonth = "0" + emonth;
+    }
+
+     end = `${e.$y}-${emonth}-${eday} 23:59:59`;
+  }
+    const carrArr = values.carrier !== null && values.carrier !== undefined && values.carrier !== "" ? [values.carrier] : [];
     const queStr =
       values.queue !== undefined && values.queue !== null && values.queue !== ""
         ? values.queue
@@ -50,6 +83,8 @@ const OceanSummary: React.FC = () => {
       queue: queStr,
       carriers: carrArr,
       // timeDuration: time,
+      start: start,
+      end: end
     };
 
     setSummaryParams(sendData);
@@ -77,12 +112,6 @@ const OceanSummary: React.FC = () => {
           >
             <Select
               allowClear={true}
-              //   mode={
-              //     timeValue !== undefined && timeValue !== ""
-              //       ? undefined
-              //       : "multiple"
-              //   }
-              mode="multiple"
               onChange={(value) => {
                 handleChange(value);
               }}
@@ -98,12 +127,12 @@ const OceanSummary: React.FC = () => {
                     //     ? true
                     //     : false
                     // }
-                    disabled={
-                      selectState.length === 5 &&
-                      !selectState.includes(item.toLowerCase())
-                        ? true
-                        : false
-                    }
+                    // disabled={
+                    //   selectState.length === 5 &&
+                    //   !selectState.includes(item.toLowerCase())
+                    //     ? true
+                    //     : false
+                    // }
                     key={index}
                     value={`${item.toLowerCase()}`}
                   >
@@ -127,6 +156,13 @@ const OceanSummary: React.FC = () => {
               <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
               {/* <Select.Option value="rnf">Reference Not Found</Select.Option> */}
             </Select>
+          </Form.Item>
+          <Form.Item
+            label={<p className="text-lg">Range</p>}
+            name="range"
+            className="min-w-[200px]"
+          >
+            <RangePicker disabled={!showRange} />
           </Form.Item>
           {/* <Form.Item
             label={<p className="text-lg">Time Duration</p>}
@@ -168,7 +204,6 @@ const OceanSummary: React.FC = () => {
                   });
                   form.setFieldValue("carrier", []);
                   form.setFieldValue("queue", "NORMAL");
-                  setSelectState([]);
                 }}
                 className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
               >
