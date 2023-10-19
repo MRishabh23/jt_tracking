@@ -149,6 +149,8 @@ export const useSummaryList = (params: any) => {
     report: params.get("queue").toUpperCase(),
     carriers: params.getAll("carriers") || [],
     timeDuration: "",
+    startTime : params.get("start") || "",
+    endTime : params.get("end") || "",
   };
   useEffect(() => {
     let ignore = false;

@@ -39,12 +39,16 @@ export interface DataType {
   duration?: string;
   rnfCount?: number;
   diffCount?: number;
+  durationToLaunch?: string;
+  deliverCount?: number;
+  closeCount?: number;
   diffRatio?: string;
   skipped?: number;
   fkTimeout?: number;
   start?: string;
   end?: string;
   lastRun?: string;
+  crawlFrequency?: string;
   failCategories?: {};
 }
 
@@ -183,11 +187,6 @@ export const HistoryCreation = (historyList: any, subId: string) => {
 
 export const SummaryCreation = (summaryList: any) => {
   const sList = summaryList
-    .sort(function (a: any, b: any) {
-      const nameA = +a.jtCrawledTotal;
-      const nameB = +b.jtCrawledTotal;
-      return nameB - nameA;
-    })
     .map((item: any, index: number) => {
       return {
         key: index,
@@ -204,7 +203,10 @@ export const SummaryCreation = (summaryList: any) => {
         diffCount: item.getTotalDiffFound,
         diffRatio: item.diffRatio,
         skipped: item.skipped404,
-        fkTimeout: item.toFKFailed,
+        fkTimeout: item.toFKFailedNotSent,
+        durationToLaunch: item.durationToLaunch,
+        deliverCount: item.deliverCount,
+        closeCount: item.closeCount,
         start: formatDate(item.start_time),
         end: formatDate(item.end_time),
         schedulerId: item.schedulerId,
@@ -212,8 +214,9 @@ export const SummaryCreation = (summaryList: any) => {
         lastRun: item.lastRunStartAt,
         hitRateCount: item.hitRateCount,
         hitRatePer: item.hitRatePer,
+        crawlFrequency: item.crawlFrequency,
         failCategories: {
-          "Sending Failure": item.toFKFailed,
+          "Sending Failure": item.toFKFailedNotSent,
           "Scraping Failure": item.toFKFailedScraping,
           "Mapping Failure": item.toFKFailedMapping,
           "Validation Failure": item.toFKFailedValidation,
@@ -926,7 +929,34 @@ export const getSummaryColumns = () => {
       align: "center",
       width: 120,
     },
-
+    {
+      title: "Crawl Frequency",
+      dataIndex: "crawlFrequency",
+      key: "crawlFrequency",
+      align: "center",
+      width: 120,
+    },
+    {
+      title: "Duration To Launch",
+      dataIndex: "durationToLaunch",
+      key: "durationToLaunch",
+      align: "center",
+      width: 120,
+    },
+    {
+      title: "Deliver Count",
+      dataIndex: "deliverCount",
+      key: "deliverCount",
+      align: "center",
+      width: 120,
+    },
+    {
+      title: "Close Count",
+      dataIndex: "closeCount",
+      key: "closeCount",
+      align: "center",
+      width: 120,
+    },
     {
       title: "FK Timeout",
       dataIndex: "fkTimeout",
