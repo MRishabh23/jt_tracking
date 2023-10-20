@@ -15,6 +15,7 @@ const { RangePicker } = DatePicker;
 
 const OceanSummary: React.FC = () => {
   useCheckAuth();
+  const [selectState, setSelectState] = useState<String[]>([]);
   const [showRange, setShowRange] = useState(false);
   const [form] = Form.useForm();
 
@@ -33,16 +34,22 @@ const OceanSummary: React.FC = () => {
   const getSumCol = getSummaryColumns();
 
   const handleChange = (value: any) => {
-       if(value !== undefined && value !== null && value !== "")
-       {
-        setShowRange(true);
-       }
-       else
-       {
-        setShowRange(false);
-        form.setFieldValue("range", undefined);
-       }
-    };
+    if(value.length === 1)
+         {
+          setShowRange(true);
+         }
+         else
+         {
+          setShowRange(false);
+          form.setFieldValue("range", undefined);
+         }
+    let newState = [];
+    for (let x in value) {
+      newState.push(value[x]);
+    }
+    setSelectState(newState);
+  };
+
 
   const onFinish = async (values: any) => {
     let start = "";
@@ -73,7 +80,10 @@ const OceanSummary: React.FC = () => {
 
      end = `${e.$y}-${emonth}-${eday} 23:59:59`;
   }
-    const carrArr = values.carrier !== null && values.carrier !== undefined && values.carrier !== "" ? [values.carrier] : [];
+  
+    const carrArr = values.carrier !== null && values.carrier !== undefined && values.carrier !== "" ? values.carrier : [];
+    // const time = values.timeDuration;
+   
     const queStr =
       values.queue !== undefined && values.queue !== null && values.queue !== ""
         ? values.queue
@@ -112,6 +122,12 @@ const OceanSummary: React.FC = () => {
           >
             <Select
               allowClear={true}
+              //   mode={
+              //     timeValue !== undefined && timeValue !== ""
+              //       ? undefined
+              //       : "multiple"
+              //   }
+              mode="multiple"
               onChange={(value) => {
                 handleChange(value);
               }}
@@ -127,12 +143,12 @@ const OceanSummary: React.FC = () => {
                     //     ? true
                     //     : false
                     // }
-                    // disabled={
-                    //   selectState.length === 5 &&
-                    //   !selectState.includes(item.toLowerCase())
-                    //     ? true
-                    //     : false
-                    // }
+                    disabled={
+                      selectState.length === 5 &&
+                      !selectState.includes(item.toLowerCase())
+                        ? true
+                        : false
+                    }
                     key={index}
                     value={`${item.toLowerCase()}`}
                   >
@@ -160,6 +176,7 @@ const OceanSummary: React.FC = () => {
           <Form.Item
             label={<p className="text-lg">Range</p>}
             name="range"
+            
             className="min-w-[200px]"
           >
             <RangePicker disabled={!showRange} />
@@ -204,6 +221,7 @@ const OceanSummary: React.FC = () => {
                   });
                   form.setFieldValue("carrier", []);
                   form.setFieldValue("queue", "NORMAL");
+                  setSelectState([]);
                 }}
                 className="px-4 py-1 text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
               >
