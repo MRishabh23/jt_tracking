@@ -98,26 +98,29 @@ const ReferenceList: React.FC = () => {
 
   useEffect(() => {
     let ignore = false;
-    param.get("searchQuery") === null
-      ? form.setFieldValue("SubscriptionId", "")
-      : form.setFieldValue("SubscriptionId", param.get("searchQuery"));
+    if (!ignore) {
+      param.get("searchQuery") === null
+        ? form.setFieldValue("SubscriptionId", "")
+        : form.setFieldValue("SubscriptionId", param.get("searchQuery"));
 
-    param.get("carriers") !== null && param.get("carriers") !== undefined
-      ? form1.setFieldValue("carrier", param.get("carriers"))
-      : form1.setFieldValue("carrier", "");
+      param.get("carriers") !== null && param.get("carriers") !== undefined
+        ? form1.setFieldValue("carrier", param.get("carriers"))
+        : form1.setFieldValue("carrier", "");
 
-    param.get("referenceType") !== null &&
-    param.get("referenceType") !== undefined
-      ? form1.setFieldValue("refType", param.get("referenceType"))
-      : form1.setFieldValue("refType", "");
+      param.get("referenceType") !== null &&
+      param.get("referenceType") !== undefined
+        ? form1.setFieldValue("refType", param.get("referenceType"))
+        : form1.setFieldValue("refType", "");
 
-    param.get("queue") !== null && param.get("queue") !== undefined
-      ? form1.setFieldValue("crawlQueue", param.get("queue"))
-      : form1.setFieldValue("crawlQueue", "NORMAL");
+      param.get("queue") !== null && param.get("queue") !== undefined
+        ? form1.setFieldValue("crawlQueue", param.get("queue"))
+        : form1.setFieldValue("crawlQueue", "NORMAL");
 
-    param.get("active") !== null && param.get("active") !== undefined
-      ? form1.setFieldValue("active", param.get("active"))
-      : form1.setFieldValue("active", "yes");
+      param.get("active") !== null && param.get("active") !== undefined
+        ? form1.setFieldValue("active", param.get("active"))
+        : form1.setFieldValue("active", "yes");
+    }
+
     return () => {
       ignore = true;
     };
