@@ -50,7 +50,7 @@ const ReferenceHistory: React.FC = () => {
 
   const onFinish = async (values: any) => {
     const subsId = values.SubscriptionId;
-    const status = values.status === undefined ? "ALL_HISTORY" : values.status;
+    const status = values.status === undefined ? "DIFF_HISTORY" : values.status;
     const sendData = {
       subscriptionId: subsId,
       history: status,
@@ -130,7 +130,7 @@ const ReferenceHistory: React.FC = () => {
             size="middle"
             className="flex flex-col gap-4 pt-3 lg:flex-row lg:justify-center lg:gap-6"
             initialValues={{
-              status: "DIFF_HISTORY",
+              status: historyParam.get("history") || "DIFF HISTORY",
               SubscriptionId: historyParam.get("subscriptionId") || "",
             }}
           >
@@ -195,11 +195,16 @@ const ReferenceHistory: React.FC = () => {
                     <div className="flex items-center justify-center">
                       <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                     </div>
-                  ) : (
+                  ) : list.length === 0 && form.getFieldValue("SubscriptionId")!=="" ?(
+                    <p className="flex justify-center text-lg font-semibold text-black">
+                      No data!!
+                    </p>
+                  ):(
                     <p className="flex justify-center text-lg font-semibold text-black">
                       Enter the Subscription Id to see history!
                     </p>
-                  )}
+                  )
+                  }
                 </>
               )}
             </div>

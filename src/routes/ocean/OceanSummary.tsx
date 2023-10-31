@@ -10,18 +10,31 @@ import {
 } from "../../components/report";
 import { useSummaryList } from "../../api/ocean";
 import { useSearchParams } from "react-router-dom";
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const { RangePicker } = DatePicker;
+
+dayjs.extend(customParseFormat);
+
+const dateFormat = 'YYYY-MM-DD hh:mm:ss';
 
 const OceanSummary: React.FC = () => {
   useCheckAuth();
   const [selectState, setSelectState] = useState<String[]>([]);
-  const [showRange, setShowRange] = useState(false);
+  
   const [form] = Form.useForm();
 
   const [summaryParams, setSummaryParams] = useSearchParams({
     queue: "NORMAL",
   });
+
+  const carrierParam = summaryParams.getAll("carriers") || [];
+  const queueParam = summaryParams.get("queue") || "";
+  const startParam = summaryParams.get("start")|| "" ;
+  const endParam = summaryParams.get("end")|| "" ;
+
+  const [showRange, setShowRange] = useState(carrierParam.length === 1? true: false);
 
   const { list, loading, summaryError } = useSummaryList(summaryParams);
 
@@ -34,7 +47,7 @@ const OceanSummary: React.FC = () => {
   const getSumCol = getSummaryColumns();
 
   const handleChange = (value: any) => {
-    if(value.length === 1)
+    if(value.length === 1 )
          {
           setShowRange(true);
          }
@@ -100,6 +113,8 @@ const OceanSummary: React.FC = () => {
     setSummaryParams(sendData);
   };
 
+
+
   return (
     <div className="relative w-full min-h-full p-3">
       <div className="flex items-center justify-center pt-2 font-semibold">
@@ -112,7 +127,7 @@ const OceanSummary: React.FC = () => {
           form={form}
           size="middle"
           className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
-          initialValues={{ carrier: [], queue: "NORMAL" }}
+          initialValues={{ carrier: carrierParam, queue: queueParam }}
         >
           <Form.Item
             label={<p className="text-lg">Carrier</p>}
@@ -179,7 +194,7 @@ const OceanSummary: React.FC = () => {
             
             className="min-w-[200px]"
           >
-            <RangePicker disabled={!showRange} />
+            <RangePicker disabled={!showRange} defaultValue={(startParam==="" || endParam==="")?null: [dayjs(startParam, dateFormat), dayjs(endParam, dateFormat)]} />
           </Form.Item>
           {/* <Form.Item
             label={<p className="text-lg">Time Duration</p>}
