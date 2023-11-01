@@ -33,6 +33,7 @@ export interface DataType {
   crawlJson?: string;
   fkLatestJson?: string;
   activeCount?: number;
+  error?: string;
   successCount?: number;
   successRatio?: number;
   failedCount?: number;
@@ -158,6 +159,7 @@ export const HistoryCreation = (historyList: any, subId: string) => {
         item.v.crawl_status === undefined ? "No Data" : item.v.crawl_status,
       subscriptionId: subId,
       schedulerId: item.k,
+      error: convertToTitleCase(item.v.error || "") ,
       fkJson:
         item.v.fkMappedJsonResourceId === undefined ||
         item.v.fkMappedJsonResourceId === null ||
@@ -657,13 +659,17 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       title: "Crawl Status",
       dataIndex: "crawlStatus",
       key: "crawlStatus",
-      render: (crawlStatus) => (
+      render: (crawlStatus, record) => (
+        <Tooltip
+          title={ record.error === ""? "No error" : record.error }
+        >
         <Tag
           color={crawlStatus == "SUCCESS" ? colorStatus[0] : colorStatus[1]}
           key={color}
         >
           {crawlStatus.toUpperCase()}
         </Tag>
+        </Tooltip>
       ),
       align: "center",
     },
