@@ -911,7 +911,7 @@ export const getSummaryColumns = () => {
       key: "fkJson404",
       align: "center",
       render: (fkJson404, record: any) => (
-        <p>
+        <p style={{ color: record.fkJson404per > 3 ? "red" : "inherit" }}>
           {fkJson404} ({record.fkJson404per}%)
         </p>
       ),
