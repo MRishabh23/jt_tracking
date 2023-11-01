@@ -21,6 +21,10 @@ const OceanLatency: React.FC<props> = () => {
     referenceType: "",
   });
 
+  const carrierParam = params.getAll("carriers") || [];
+  const queueParam = params.get("queue") || "";
+  const refParam = params.get("referenceType")|| "" ;
+
   const { carrierList } = useCarrierList();
   const { list, loading, latencyError="" } = useLatencyList(params);
 
@@ -72,7 +76,7 @@ const OceanLatency: React.FC<props> = () => {
             onFinish={onFinish}
             size="middle"
             className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
-            initialValues={{ queue: "NORMAL" }}
+            initialValues={{ queue: queueParam, carrier: carrierParam, refType: refParam }}
           >
             <Form.Item
               label={<p className="text-lg">Carrier</p>}

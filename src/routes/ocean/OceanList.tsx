@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form, Input, Drawer, Space, Select, Table } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
@@ -27,14 +27,9 @@ const ReferenceList: React.FC = () => {
   useCheckAuth();
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
- 
-  const [param, setParam] = useSearchParams({
-     queue: "",
-     carriers: ["acl"],
-     referenceType: "",
-     type: "",
-     active: "yes"
-  })
+  
+  const [param, setParam] = useSearchParams()
+  
 
   const { carrierList } = useCarrierList();
   const { list, loading, frame, tableParams, handleTableChange, referenceError } =
@@ -53,7 +48,6 @@ const ReferenceList: React.FC = () => {
 
   const onFinish = async (values: any) => {
     setOpen(false);
-    form.resetFields();
     const carrier = values.carrier;
     const active = values.active === undefined ? "yes" : values.active;
     const refType = values.refType === undefined ? "" : values.refType;
@@ -90,7 +84,35 @@ const ReferenceList: React.FC = () => {
     setOpen(!open);
   };
 
-  
+  useEffect(()=>{
+    let ignore = false;
+    if(!ignore)
+    {
+   if( param.get("searchQuery")===null)
+   {
+    form.setFieldValue("SubscriptionId","")
+   }
+   else{
+      form.setFieldValue("SubscriptionId",param.get("searchQuery"))
+      console.log("check", param);
+      form1.setFieldValue("carrier","");
+   }
+
+    // param.get("searchQuery")!==null?form1.setFieldValue("carrier",param.get("carriers")):form1.setFieldValue("carrier","");
+
+
+    param.get("carriers")!== null && param.get("carriers")!== undefined?form1.setFieldValue("carrier",param.get("carriers")):form1.setFieldValue("carrier","");
+
+    param.get("referenceType")!== null && param.get("referenceType")!== undefined?form1.setFieldValue("refType",param.get("referenceType")):form1.setFieldValue("refType","");
+
+    param.get("queue")!== null && param.get("queue")!== undefined?form1.setFieldValue("crawlQueue",param.get("queue")):form1.setFieldValue("crawlQueue","NORMAL");
+
+    param.get("active")!== null && param.get("active")!== undefined?form1.setFieldValue("active",param.get("active")):form1.setFieldValue("active","yes");
+    }
+    return () => {
+      ignore = true;
+    };
+  },[param]);
 
   return (
     <div className="relative w-full min-h-full p-3">
@@ -102,7 +124,7 @@ const ReferenceList: React.FC = () => {
             <Form
               name="search"
               form={form}
-              initialValues={{ SubscriptionId: "" }}
+              
               onFinish={onFinishSearch}
             >
               <Form.Item name="SubscriptionId" className="mb-0">
@@ -180,12 +202,12 @@ const ReferenceList: React.FC = () => {
           className="flex flex-col gap-6"
           name="basic"
           onFinish={onFinish}
-          initialValues={{
-            carrier: "",
-            refType: "",
-            active: "yes",
-            crawlQueue: "NORMAL",
-          }}
+          // initialValues={{
+          //   carrier: "",
+          //   refType: "",
+          //   active: "yes",
+          //   crawlQueue: "NORMAL",
+          // }}
           form={form1}
         >
           <Form.Item

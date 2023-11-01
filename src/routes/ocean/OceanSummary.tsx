@@ -11,6 +11,7 @@ import {
 import { useSummaryList } from "../../api/ocean";
 import { useSearchParams } from "react-router-dom";
 
+
 const OceanSummary: React.FC = () => {
   useCheckAuth();
   const [selectState, setSelectState] = useState<String[]>([]);
@@ -19,6 +20,9 @@ const OceanSummary: React.FC = () => {
   const [summaryParams, setSummaryParams] = useSearchParams({
     queue: "NORMAL",
   });
+
+  const carrierParam = summaryParams.getAll("carriers") || [];
+  const queueParam = summaryParams.get("queue") || "";
 
   const { list, loading, summaryError } = useSummaryList(summaryParams);
 
@@ -67,7 +71,7 @@ const OceanSummary: React.FC = () => {
           form={form}
           size="middle"
           className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
-          initialValues={{ carrier: [], queue: "NORMAL" }}
+          initialValues={{ carrier: carrierParam, queue: queueParam }}
         >
           <Form.Item
             label={<p className="text-lg">Carrier</p>}
