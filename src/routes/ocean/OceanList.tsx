@@ -94,7 +94,6 @@ const ReferenceList: React.FC = () => {
    }
    else{
       form.setFieldValue("SubscriptionId",param.get("searchQuery"))
-      console.log("check", param);
       form1.setFieldValue("carrier","");
    }
 
