@@ -39,6 +39,8 @@ export interface DataType {
   failedCount?: number;
   duration?: string;
   rnfCount?: number;
+  fkJson404?: number;
+  fkJson404per?: number;
   diffCount?: number;
   durationToLaunch?: string;
   deliverCount?: number;
@@ -202,6 +204,8 @@ export const SummaryCreation = (summaryList: any) => {
         durationMin: item.timeDiffMinutes,
         rnfCount: item.getReferenceNotFound,
         rnfRatio: item.getReferenceNotFoundPercentage,
+        fkJson404: item.referenceNotFound || 0,
+        fkJson404per: item.refPercentage || 0,
         diffCount: item.getTotalDiffFound,
         diffRatio: item.diffRatio,
         skipped: item.skipped404,
@@ -897,6 +901,18 @@ export const getSummaryColumns = () => {
       render: (rnfCount, record: any) => (
         <p style={{ color: record.rnfRatio > 20 ? "red" : "inherit" }}>
           {rnfCount} ({record.rnfRatio}%)
+        </p>
+      ),
+      width: 120,
+    },
+    {
+      title: "FK Json (404)",
+      dataIndex: "fkJson404",
+      key: "fkJson404",
+      align: "center",
+      render: (fkJson404, record: any) => (
+        <p style={{ color: record.fkJson404per > 3 ? "red" : "inherit" }}>
+          {fkJson404} ({record.fkJson404per}%)
         </p>
       ),
       width: 120,
