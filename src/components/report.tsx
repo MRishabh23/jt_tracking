@@ -219,7 +219,7 @@ export const SummaryCreation = (summaryList: any) => {
         crawlFrequency: item.crawlFrequency,
         failCategories: {
           "Sending Failure": item.toFKFailedNotSent,
-          "Scraping Failure": item.toFKFailedScraping,
+          "API/Scraping Failure": item.toFKFailedScraping,
           "Mapping Failure": item.toFKFailedMapping,
           "Validation Failure": item.toFKFailedValidation,
         },
@@ -688,6 +688,9 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "fkJson",
       key: "fkJson",
       render: (fkJson, record, index) =>
+      record.error !== ""?
+      record.error
+      :
         record.fkJson !== "No Data" &&
         record.fkJson === "SAME_PAYLOAD" &&
         record.fkLatestJson !== "No Data" ? (
@@ -740,6 +743,9 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "crawlJson",
       key: "crawlJson",
       render: (crawlJson, record) =>
+      record.error !== ""?
+      record.error
+      :
         record.crawlJson !== "No Data" && record.fkJson === "SAME_PAYLOAD" ? (
           <button
             key={crawlJson + record.schedulerId}

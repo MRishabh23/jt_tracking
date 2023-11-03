@@ -280,8 +280,10 @@ export const useReferenceList = (param: any) => {
     }
   };
   const searchQ = param.get("searchQuery") || "";
+  const referenceQ = param.get("referenceQuery") || "";
+  
   const data =
-    searchQ === ""
+    (searchQ === "" && referenceQ === "")
       ? {
           report: (param.get("queue") || "").toUpperCase(),
           carriers: param.getAll("carriers") || "",
@@ -292,14 +294,21 @@ export const useReferenceList = (param: any) => {
           mode: "OCEAN",
           type: "REFERENCE_LIST",
         }
-      : {
+      : referenceQ === "" ? {
           mode: "OCEAN",
           type: "REFERENCE_LIST",
           searchQuery: param.get("searchQuery") || "",
-        };
+        }
+        :
+        {
+          mode: "OCEAN",
+          type: "REFERENCE_LIST",
+          referenceQuery: param.get("referenceQuery") || "",
+        }
+        
 
   let newData: any = data;
-  if (searchQ === "") {
+  if (searchQ === "" && referenceQ === "") {
     newData = {
       ...newData,
       limit: tableParams.pagination?.pageSize,
