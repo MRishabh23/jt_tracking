@@ -89,7 +89,8 @@ const ReferenceList: React.FC = () => {
   };
 
   const onFinishRef = async (value: any) => {
-    form1.resetFields();
+    // form1.resetFields();
+    setOpen(false);
     const carrier = value.carrier;
     const ref = value.reference;
     const query = carrier+"_"+ref;
@@ -379,7 +380,7 @@ const ReferenceList: React.FC = () => {
         <Tabs
           defaultActiveKey="1"
           centered
-          // className="border border-rose-700"
+          // className="flex border border-rose-700"
 
           size="large"
           items={items}

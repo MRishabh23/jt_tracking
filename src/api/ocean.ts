@@ -199,12 +199,16 @@ export const useReferenceListCount = (param: any, page: any) => {
     searchQuery: param.get("searchQuery") || "",
     mode: "OCEAN",
     type: "REFERENCE_LIST",
+    referenceQuery: param.get("referenceQuery") || "",
   };
   let newData: any = data;
   if (
-    data.searchQuery === undefined ||
+    (data.searchQuery === undefined ||
     data.searchQuery === null ||
-    data.searchQuery === ""
+    data.searchQuery === "")&&
+    (data.referenceQuery === undefined ||
+    data.referenceQuery === null ||
+    data.referenceQuery === "")
   ) {
     newData = { ...newData, totalRecordCount: "true" };
   } else {
@@ -345,7 +349,7 @@ export const useReferenceList = (param: any) => {
 
     if (!ignore && data.type !== "") {
       defaultCall();
-      if (searchQ !== "") {
+      if (searchQ !== "" || referenceQ !== "") {
         setFrame("search");
       } else {
         setFrame("default");
