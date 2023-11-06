@@ -205,8 +205,8 @@ export const SummaryCreation = (summaryList: any) => {
         durationMin: item.timeDiffMinutes,
         rnfCount: item.getReferenceNotFound,
         rnfRatio: item.getReferenceNotFoundPercentage,
-        fkJson404: item.referenceNotFound || 0,
-        fkJson404per: item.refPercentage || 0,
+        // fkJson404: item.referenceNotFound || 0,
+        // fkJson404per: item.refPercentage || 0,
         diffCount: item.getTotalDiffFound,
         diffRatio: item.diffRatio,
         skipped: item.skipped404,
@@ -907,18 +907,18 @@ export const getSummaryColumns = () => {
       ),
       width: 120,
     },
-    {
-      title: "FK Json (404)",
-      dataIndex: "fkJson404",
-      key: "fkJson404",
-      align: "center",
-      render: (fkJson404, record: any) => (
-        <p style={{ color: record.fkJson404per > 3 ? "red" : "inherit" }}>
-          {fkJson404} ({record.fkJson404per}%)
-        </p>
-      ),
-      width: 120,
-    },
+    // {
+    //   title: "FK Json (404)",
+    //   dataIndex: "fkJson404",
+    //   key: "fkJson404",
+    //   align: "center",
+    //   render: (fkJson404, record: any) => (
+    //     <p style={{ color: record.fkJson404per > 3 ? "red" : "inherit" }}>
+    //       {fkJson404} ({record.fkJson404per}%)
+    //     </p>
+    //   ),
+    //   width: 120,
+    // },
     {
       title: "Fail",
       dataIndex: "failedCount",
