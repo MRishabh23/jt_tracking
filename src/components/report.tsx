@@ -39,6 +39,8 @@ export interface DataType {
   failedCount?: number;
   duration?: string;
   rnfCount?: number;
+  fkJson404?: number;
+  fkJson404per?: number;
   diffCount?: number;
   diffRatio?: string;
   skipped?: number;
@@ -203,10 +205,12 @@ export const SummaryCreation = (summaryList: any) => {
         durationMin: item.timeDiffMinutes,
         rnfCount: item.getReferenceNotFound,
         rnfRatio: item.getReferenceNotFoundPercentage,
+        fkJson404: item.referenceNotFound || 0,
+        fkJson404per: item.refPercentage || 0,
         diffCount: item.getTotalDiffFound,
         diffRatio: item.diffRatio,
         skipped: item.skipped404,
-        fkTimeout: item.toFKFailed,
+        fkTimeout: item.toFKFailedNotSent || 0,
         start: formatDate(item.start_time),
         end: formatDate(item.end_time),
         schedulerId: item.schedulerId,
@@ -215,8 +219,8 @@ export const SummaryCreation = (summaryList: any) => {
         hitRateCount: item.hitRateCount,
         hitRatePer: item.hitRatePer,
         failCategories: {
-          "Sending Failure": item.toFKFailed,
-          "Scraping Failure": item.toFKFailedScraping,
+          "Sending Failure": item.toFKFailedNotSent || 0,
+          "API/Scraping Failure": item.toFKFailedScraping,
           "Mapping Failure": item.toFKFailedMapping,
           "Validation Failure": item.toFKFailedValidation,
         },
@@ -684,6 +688,9 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "fkJson",
       key: "fkJson",
       render: (fkJson, record, index) =>
+      record.error !== ""?
+      record.error
+      :
         record.fkJson !== "No Data" &&
         record.fkJson === "SAME_PAYLOAD" &&
         record.fkLatestJson !== "No Data" ? (
@@ -736,6 +743,9 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "crawlJson",
       key: "crawlJson",
       render: (crawlJson, record) =>
+      record.error !== ""?
+      record.error
+      :
         record.crawlJson !== "No Data" && record.fkJson === "SAME_PAYLOAD" ? (
           <button
             key={crawlJson + record.schedulerId}
@@ -893,6 +903,18 @@ export const getSummaryColumns = () => {
       render: (rnfCount, record: any) => (
         <p style={{ color: record.rnfRatio > 20 ? "red" : "inherit" }}>
           {rnfCount} ({record.rnfRatio}%)
+        </p>
+      ),
+      width: 120,
+    },
+    {
+      title: "FK Json (404)",
+      dataIndex: "fkJson404",
+      key: "fkJson404",
+      align: "center",
+      render: (fkJson404, record: any) => (
+        <p style={{ color: record.fkJson404per > 3 ? "red" : "inherit" }}>
+          {fkJson404} ({record.fkJson404per}%)
         </p>
       ),
       width: 120,
