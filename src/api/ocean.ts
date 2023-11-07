@@ -199,12 +199,16 @@ export const useReferenceListCount = (param: any, page: any) => {
     searchQuery: param.get("searchQuery") || "",
     mode: "OCEAN",
     type: "REFERENCE_LIST",
+    referenceQuery: param.get("referenceQuery") || "",
   };
   let newData: any = data;
   if (
-    data.searchQuery === undefined ||
+    (data.searchQuery === undefined ||
     data.searchQuery === null ||
-    data.searchQuery === ""
+    data.searchQuery === "")&&
+    (data.referenceQuery === undefined ||
+    data.referenceQuery === null ||
+    data.referenceQuery === "")
   ) {
     newData = { ...newData, totalRecordCount: "true" };
   } else {
@@ -280,8 +284,10 @@ export const useReferenceList = (param: any) => {
     }
   };
   const searchQ = param.get("searchQuery") || "";
+  const referenceQ = param.get("referenceQuery") || "";
+  
   const data =
-    searchQ === ""
+    (searchQ === "" && referenceQ === "")
       ? {
           report: (param.get("queue") || "").toUpperCase(),
           carriers: param.getAll("carriers") || "",
@@ -292,14 +298,21 @@ export const useReferenceList = (param: any) => {
           mode: "OCEAN",
           type: "REFERENCE_LIST",
         }
-      : {
+      : referenceQ === "" ? {
           mode: "OCEAN",
           type: "REFERENCE_LIST",
           searchQuery: param.get("searchQuery") || "",
-        };
+        }
+        :
+        {
+          mode: "OCEAN",
+          type: "REFERENCE_LIST",
+          referenceQuery: param.get("referenceQuery") || "",
+        }
+        
 
   let newData: any = data;
-  if (searchQ === "") {
+  if (searchQ === "" && referenceQ === "") {
     newData = {
       ...newData,
       limit: tableParams.pagination?.pageSize,
@@ -336,7 +349,7 @@ export const useReferenceList = (param: any) => {
 
     if (!ignore && data.type !== "") {
       defaultCall();
-      if (searchQ !== "") {
+      if (searchQ !== "" || referenceQ !== "") {
         setFrame("search");
       } else {
         setFrame("default");
