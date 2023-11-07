@@ -30,7 +30,7 @@ const ReferenceList: React.FC = () => {
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
   const [form2] = Form.useForm();
-
+  
   const [param, setParam] = useSearchParams();
 
   const { carrierList } = useCarrierList();
@@ -148,7 +148,7 @@ const ReferenceList: React.FC = () => {
                 { required: true, message: "Please input a reference number!" },
               ]}
             >
-              <Input allowClear={true} placeholder="Enter reference number" />
+              <Input allowClear={true} autoComplete="off" placeholder="Enter reference number" />
             </Form.Item>
             <Form.Item>
               <div className="text-center mt-[1rem]">
@@ -280,6 +280,15 @@ const ReferenceList: React.FC = () => {
       param.get("active") !== null && param.get("active") !== undefined
         ? form1.setFieldValue("active", param.get("active"))
         : form1.setFieldValue("active", "yes");
+
+        if (param.get("referenceQuery") === null || param.get("referenceQuery") === undefined) {
+          form2.setFieldValue("carrier", "");
+          form2.setFieldValue("reference", "");
+        } else {
+          const referenceArr = param.get("referenceQuery")?.split("_");
+          form2.setFieldValue("carrier", referenceArr?.[0] || "");
+          form2.setFieldValue("reference", referenceArr?.[1] || "");
+        }
     }
 
     return () => {
