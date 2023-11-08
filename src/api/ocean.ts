@@ -40,8 +40,7 @@ async function oceanCalls(data: OceanProp) {
   }
   return axios({
     url: import.meta.env.VITE_REST_URL,
-    // timeout: 300000,
-    timeout: 5000,
+    timeout: 300000,
     method: "post",
     headers: {
       "Content-Type": "application/json",
