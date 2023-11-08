@@ -40,7 +40,8 @@ async function oceanCalls(data: OceanProp) {
   }
   return axios({
     url: import.meta.env.VITE_REST_URL,
-    timeout: 300000,
+    // timeout: 300000,
+    timeout: 5000,
     method: "post",
     headers: {
       "Content-Type": "application/json",
@@ -219,7 +220,6 @@ export const useReferenceListCount = (param: any, page: any) => {
   useEffect(() => {
     let ignore = false;
     const defaultCall = async () => {
-      setReferenceCountError("");
       setLoadingCount(true);
       await oceanCalls(newData)
         .then((res) => {
@@ -244,6 +244,7 @@ export const useReferenceListCount = (param: any, page: any) => {
     };
     const count = param.get("count") || "";
     if (!ignore && count !== "") {
+      setReferenceCountError("");
       setCount(param.get("count"));
     } else if (
       !ignore &&
@@ -253,6 +254,11 @@ export const useReferenceListCount = (param: any, page: any) => {
       page === 1
     ) {
       defaultCall();
+    }
+    else
+    {
+      setReferenceCountError("");
+      setLoadingCount(false);
     }
     return () => {
       ignore = true;
@@ -466,7 +472,7 @@ export const useHistoryList = (params: any) => {
   let newData: OceanProp = {
     mode: "OCEAN",
     type: "REFERENCE_HISTORY",
-    subscriptionId: params.get("subscriptionId"),
+    subscriptionId: params.get("subscriptionId") || "",
     history: params.get("history") || "DIFF_HISTORY",
   };
 
@@ -510,7 +516,7 @@ export const useHistoryList = (params: any) => {
     if (
       !ignore &&
       params.get("type") !== "" &&
-      params.get("subscriptionId") !== ""
+      (params.get("subscriptionId")|| "") !== ""
     ) {
       defaultCall();
     } else {

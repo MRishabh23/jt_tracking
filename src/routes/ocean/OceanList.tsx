@@ -336,9 +336,7 @@ const ReferenceList: React.FC = () => {
       </div>
       {referenceError !== "" || referenceCountError !== "" ? (
         <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-          {referenceError.includes("timeout")
-            ? "Request Timeout"
-            : referenceError}
+          {referenceCountError.includes("timeout") ? "Request Timeout" : referenceCountError}
         </div>
       ) : (
         <div className="mt-7">

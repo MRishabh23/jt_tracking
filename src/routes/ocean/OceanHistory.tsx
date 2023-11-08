@@ -130,7 +130,7 @@ const ReferenceHistory: React.FC = () => {
             size="middle"
             className="flex flex-col gap-4 pt-3 lg:flex-row lg:justify-center lg:gap-6"
             initialValues={{
-              status: historyParam.get("history") || "DIFF HISTORY",
+              status: historyParam.get("history") || "DIFF_HISTORY",
               SubscriptionId: historyParam.get("subscriptionId") || "",
             }}
           >
