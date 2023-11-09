@@ -10,7 +10,7 @@ import {
   useReferenceListCount,
 } from "../../api/ocean";
 import type { TablePaginationConfig } from "antd";
-import {  useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   DataType,
   getReferenceColumns,
@@ -32,17 +32,20 @@ const ReferenceList: React.FC = () => {
   const [form2] = Form.useForm();
 
   const [param, setParam] = useSearchParams();
-  
-  
 
   const { carrierList } = useCarrierList();
-  const { list, loading, frame, tableParams, handleTableChange, referenceError } =
-    useReferenceList(param);
+  const {
+    list,
+    loading,
+    frame,
+    tableParams,
+    handleTableChange,
+    referenceError,
+  } = useReferenceList(param);
   const { count, loadingCount, referenceCountError } = useReferenceListCount(
     param,
-    tableParams.pagination?.current,
+    tableParams.pagination?.current
   );
-  
 
   const mainList = referenceCreation(list);
   const getRefCol = getReferenceColumns();
@@ -87,15 +90,13 @@ const ReferenceList: React.FC = () => {
     setOpen(false);
     const carrier = value.carrier;
     const ref = value.reference;
-    const query = carrier+"_"+ref;
-
+    const query = carrier + "_" + ref;
 
     const sendData = {
-       referenceQuery: query,
+      referenceQuery: query,
     };
     setParam(sendData);
   };
-
 
   const [open, setOpen] = useState(false);
 
@@ -143,7 +144,11 @@ const ReferenceList: React.FC = () => {
                 { required: true, message: "Please input a reference number!" },
               ]}
             >
-              <Input allowClear={true} autoComplete="off" placeholder="Enter reference number" />
+              <Input
+                allowClear={true}
+                autoComplete="off"
+                placeholder="Enter reference number"
+              />
             </Form.Item>
             <Form.Item>
               <div className="text-center mt-[1rem]">
@@ -252,45 +257,51 @@ const ReferenceList: React.FC = () => {
     },
   ];
 
-
-  useEffect(()=>{
+  useEffect(() => {
     let ignore = false;
-    if(!ignore)
-    {
-   if( param.get("searchQuery")===null)
-   {
-    form.setFieldValue("SubscriptionId","")
-   }
-   else{
-      form.setFieldValue("SubscriptionId",param.get("searchQuery"))
-      form1.setFieldValue("carrier","");
-   }
+    if (!ignore) {
+      if (param.get("searchQuery") === null) {
+        form.setFieldValue("SubscriptionId", "");
+      } else {
+        form.setFieldValue("SubscriptionId", param.get("searchQuery"));
+        form1.setFieldValue("carrier", "");
+      }
 
-    // param.get("searchQuery")!==null?form1.setFieldValue("carrier",param.get("carriers")):form1.setFieldValue("carrier","");
+      // param.get("searchQuery")!==null?form1.setFieldValue("carrier",param.get("carriers")):form1.setFieldValue("carrier","");
 
+      param.get("carriers") !== null && param.get("carriers") !== undefined
+        ? form1.setFieldValue("carrier", param.get("carriers"))
+        : form1.setFieldValue("carrier", "");
 
-    param.get("carriers")!== null && param.get("carriers")!== undefined?form1.setFieldValue("carrier",param.get("carriers")):form1.setFieldValue("carrier","");
+      param.get("referenceType") !== null &&
+      param.get("referenceType") !== undefined
+        ? form1.setFieldValue("refType", param.get("referenceType"))
+        : form1.setFieldValue("refType", "");
 
-    param.get("referenceType")!== null && param.get("referenceType")!== undefined?form1.setFieldValue("refType",param.get("referenceType")):form1.setFieldValue("refType","");
+      param.get("queue") !== null && param.get("queue") !== undefined
+        ? form1.setFieldValue("crawlQueue", param.get("queue"))
+        : form1.setFieldValue("crawlQueue", "NORMAL");
 
-    param.get("queue")!== null && param.get("queue")!== undefined?form1.setFieldValue("crawlQueue",param.get("queue")):form1.setFieldValue("crawlQueue","NORMAL");
+      param.get("active") !== null && param.get("active") !== undefined
+        ? form1.setFieldValue("active", param.get("active"))
+        : form1.setFieldValue("active", "yes");
 
-    param.get("active")!== null && param.get("active")!== undefined?form1.setFieldValue("active",param.get("active")):form1.setFieldValue("active","yes");
-    
-    if (param.get("referenceQuery") === null || param.get("referenceQuery") === undefined) {
-      form2.setFieldValue("carrier", "");
-      form2.setFieldValue("reference", "");
-    } else {
-      const referenceArr = param.get("referenceQuery")?.split("_");
-      form2.setFieldValue("carrier", referenceArr?.[0] || "");
-      form2.setFieldValue("reference", referenceArr?.[1] || "");
+      if (
+        param.get("referenceQuery") === null ||
+        param.get("referenceQuery") === undefined
+      ) {
+        form2.setFieldValue("carrier", "");
+        form2.setFieldValue("reference", "");
+      } else {
+        const referenceArr = param.get("referenceQuery")?.split("_");
+        form2.setFieldValue("carrier", referenceArr?.[0] || "");
+        form2.setFieldValue("reference", referenceArr?.[1] || "");
+      }
     }
-  
-  }
     return () => {
       ignore = true;
     };
-  },[param]);
+  }, [param]);
 
   return (
     <div className="relative w-full min-h-full p-3">
@@ -298,41 +309,42 @@ const ReferenceList: React.FC = () => {
         <h3 className="text-3xl">Reference List</h3>
       </div>
       <div className="flex flex-col items-center justify-around p-5 mt-8 bg-gray-200 rounded-md xms:flex-row lg:mt-12">
-          <>
-            <Form
-              name="search"
-              form={form}
-              
-              onFinish={onFinishSearch}
+        <>
+          <Form name="search" form={form} onFinish={onFinishSearch}>
+            <Form.Item
+              name="SubscriptionId"
+              className="mb-0"
+              rules={[{ required: true, message: "Enter a SubscriptionId" }]}
             >
-               <Form.Item 
-            name="SubscriptionId" 
-            className="mb-0"
-            rules={[{ required: true, message: "Enter a SubscriptionId" }]}
-            >
-                <Search
-                  className="w-full xms:w-[350px]"
-                  allowClear={false}
-                  autoComplete="off"
-                  placeholder="Enter SubscriptionId"
-                  enterButton="Search"
-                  size="large"
-                  onSearch={form.submit}
-                />
-              </Form.Item>
-            </Form>
-            <button
-              type="button"
-              onClick={handleDrawer}
-              className="w-20 h-10 mt-5 xms:mt-0 flex items-center justify-center text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
-            >
-              Query
-            </button>
-          </>
-        </div>
+              <Search
+                className="w-full xms:w-[350px]"
+                allowClear={false}
+                autoComplete="off"
+                placeholder="Enter SubscriptionId"
+                enterButton="Search"
+                size="large"
+                onSearch={form.submit}
+              />
+            </Form.Item>
+          </Form>
+          <button
+            type="button"
+            onClick={handleDrawer}
+            className="w-20 h-10 mt-5 xms:mt-0 flex items-center justify-center text-white bg-blue-500 rounded-md border-[1px] hover:bg-white hover:border-blue-500 hover:text-blue-500"
+          >
+            Query
+          </button>
+        </>
+      </div>
       {referenceError !== "" || referenceCountError !== "" ? (
         <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-          {referenceCountError.includes("timeout") ? "Request Timeout" : referenceCountError}
+          {referenceCountError !== ""
+            ? referenceCountError.includes("timeout")
+              ? "Request Timeout"
+              : referenceCountError
+            : referenceError.includes("timeout")
+            ? "Request Timeout"
+            : referenceError}
         </div>
       ) : (
         <div className="mt-7">
