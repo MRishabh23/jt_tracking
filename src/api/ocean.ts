@@ -197,12 +197,16 @@ export const useReferenceListCount = (param: any, page: any) => {
     searchQuery: param.get("searchQuery") || "",
     mode: "OCEAN",
     type: "REFERENCE_LIST",
+    referenceQuery: param.get("referenceQuery") || "",
   };
   let newData: any = data;
   if (
-    data.searchQuery === undefined ||
+    (data.searchQuery === undefined ||
     data.searchQuery === null ||
-    data.searchQuery === ""
+    data.searchQuery === "") && 
+    (data.referenceQuery === undefined ||
+      data.referenceQuery === null ||
+      data.referenceQuery === "")
   ) {
     newData = { ...newData, totalRecordCount: "true" };
   } else {
@@ -212,8 +216,9 @@ export const useReferenceListCount = (param: any, page: any) => {
 
   useEffect(() => {
     let ignore = false;
+    
     const defaultCall = async () => {
-      setReferenceCountError("");
+      
       setLoadingCount(true);
       await oceanCalls(newData)
         .then((res) => {
@@ -238,6 +243,7 @@ export const useReferenceListCount = (param: any, page: any) => {
     };
     const count = param.get("count") || "";
     if (!ignore && count !== "") {
+      setReferenceCountError("");
       setCount(param.get("count"));
     } else if (
       !ignore &&
@@ -247,6 +253,11 @@ export const useReferenceListCount = (param: any, page: any) => {
       page === 1
     ) {
       defaultCall();
+    }
+    else
+    {
+      setReferenceCountError("");
+      setLoadingCount(false);
     }
     return () => {
       ignore = true;
@@ -278,8 +289,10 @@ export const useReferenceList = (param: any) => {
     }
   };
   const searchQ = param.get("searchQuery") || "";
+  const referenceQ = param.get("referenceQuery") || "";
+
   const data =
-    searchQ === ""
+  (searchQ === "" && referenceQ === "")
       ? {
           report: (param.get("queue") || "").toUpperCase(),
           carriers: param.getAll("carriers") || "",
@@ -290,14 +303,21 @@ export const useReferenceList = (param: any) => {
           mode: "OCEAN",
           type: "REFERENCE_LIST",
         }
-      : {
+        : referenceQ === "" ? {
           mode: "OCEAN",
           type: "REFERENCE_LIST",
           searchQuery: param.get("searchQuery") || "",
-        };
+        }
+        :
+        {
+          mode: "OCEAN",
+          type: "REFERENCE_LIST",
+          referenceQuery: param.get("referenceQuery") || "",
+        }
+
 
   let newData: any = data;
-  if (searchQ === "") {
+  if (searchQ === "" && referenceQ === "") {
     newData = {
       ...newData,
       limit: tableParams.pagination?.pageSize,
@@ -334,7 +354,7 @@ export const useReferenceList = (param: any) => {
 
     if (!ignore && data.type !== "") {
       defaultCall();
-      if (searchQ !== "") {
+      if (searchQ !== "" || referenceQ !== "") {
         setFrame("search");
       } else {
         setFrame("default");
@@ -451,7 +471,7 @@ export const useHistoryList = (params: any) => {
   let newData: OceanProp = {
     mode: "OCEAN",
     type: "REFERENCE_HISTORY",
-    subscriptionId: params.get("subscriptionId"),
+    subscriptionId: params.get("subscriptionId") || "",
     history: params.get("history") || "DIFF_HISTORY",
   };
 
@@ -495,7 +515,7 @@ export const useHistoryList = (params: any) => {
     if (
       !ignore &&
       params.get("type") !== "" &&
-      params.get("subscriptionId") !== ""
+      (params.get("subscriptionId")|| "") !== ""
     ) {
       defaultCall();
     } else {
