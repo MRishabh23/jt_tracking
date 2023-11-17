@@ -252,6 +252,7 @@ export const useReferenceListCount = (param: any, page: any) => {
       page !== undefined &&
       page === 1
     ) {
+      setReferenceCountError("");
       defaultCall();
     }
     else

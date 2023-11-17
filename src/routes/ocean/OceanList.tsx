@@ -30,7 +30,7 @@ const ReferenceList: React.FC = () => {
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
   const [form2] = Form.useForm();
-  
+
   const [param, setParam] = useSearchParams();
 
   const { carrierList } = useCarrierList();
@@ -55,7 +55,6 @@ const ReferenceList: React.FC = () => {
 
   const onFinish = async (values: any) => {
     setOpen(false);
-    
 
     const carrier = values.carrier;
     const active = values.active === undefined ? "yes" : values.active;
@@ -93,11 +92,10 @@ const ReferenceList: React.FC = () => {
     setOpen(false);
     const carrier = value.carrier;
     const ref = value.reference;
-    const query = carrier+"_"+ref;
-
+    const query = carrier + "_" + ref;
 
     const sendData = {
-       referenceQuery: query,
+      referenceQuery: query,
     };
     setParam(sendData);
   };
@@ -148,7 +146,11 @@ const ReferenceList: React.FC = () => {
                 { required: true, message: "Please input a reference number!" },
               ]}
             >
-              <Input allowClear={true} autoComplete="off" placeholder="Enter reference number" />
+              <Input
+                allowClear={true}
+                autoComplete="off"
+                placeholder="Enter reference number"
+              />
             </Form.Item>
             <Form.Item>
               <div className="text-center mt-[1rem]">
@@ -281,14 +283,17 @@ const ReferenceList: React.FC = () => {
         ? form1.setFieldValue("active", param.get("active"))
         : form1.setFieldValue("active", "yes");
 
-        if (param.get("referenceQuery") === null || param.get("referenceQuery") === undefined) {
-          form2.setFieldValue("carrier", "");
-          form2.setFieldValue("reference", "");
-        } else {
-          const referenceArr = param.get("referenceQuery")?.split("_");
-          form2.setFieldValue("carrier", referenceArr?.[0] || "");
-          form2.setFieldValue("reference", referenceArr?.[1] || "");
-        }
+      if (
+        param.get("referenceQuery") === null ||
+        param.get("referenceQuery") === undefined
+      ) {
+        form2.setFieldValue("carrier", "");
+        form2.setFieldValue("reference", "");
+      } else {
+        const referenceArr = param.get("referenceQuery")?.split("_");
+        form2.setFieldValue("carrier", referenceArr?.[0] || "");
+        form2.setFieldValue("reference", referenceArr?.[1] || "");
+      }
     }
 
     return () => {
@@ -309,10 +314,10 @@ const ReferenceList: React.FC = () => {
             // initialValues={{ SubscriptionId:  param.get("searchQuery") === null?"": param.get("searchQuery") }}
             onFinish={onFinishSearch}
           >
-            <Form.Item 
-            name="SubscriptionId" 
-            className="mb-0"
-            rules={[{ required: true, message: "Enter a SubscriptionId" }]}
+            <Form.Item
+              name="SubscriptionId"
+              className="mb-0"
+              rules={[{ required: true, message: "Enter a SubscriptionId" }]}
             >
               <Search
                 className="w-full xms:w-[350px]"
@@ -336,7 +341,13 @@ const ReferenceList: React.FC = () => {
       </div>
       {referenceError !== "" || referenceCountError !== "" ? (
         <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-          {referenceCountError.includes("timeout") ? "Request Timeout" : referenceCountError}
+          {referenceCountError !== ""
+            ? referenceCountError.includes("timeout")
+              ? "Request Timeout"
+              : referenceCountError
+            : referenceError.includes("timeout")
+            ? "Request Timeout"
+            : referenceError}
         </div>
       ) : (
         <div className="mt-7">
