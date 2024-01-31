@@ -1032,3 +1032,23 @@ export const getSummaryColumns = () => {
 
   return columns;
 };
+
+export const getCarrierStatusColumns = () => {
+  const columns: any = [
+    {
+      title: <p className="text-lg font-semibold text-black">Carrier Name</p>,
+      dataIndex: "carrierName",
+      key: "carrierName",
+      fixed: true,
+      align: "center",
+    },
+    {
+      title: <p className="text-lg font-semibold text-black">Current Status</p>,
+      dataIndex: "status",
+      key: "status",
+      fixed: true,
+      align: "center",
+    },
+  ];
+  return columns;
+}

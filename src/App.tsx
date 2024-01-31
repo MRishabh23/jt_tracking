@@ -7,6 +7,7 @@ import OceanDashboard from "./routes/ocean/OceanDashboard";
 import OceanLatency from "./routes/ocean/OceanLatency";
 import OceanList from "./routes/ocean/OceanList";
 import OceanHistory from "./routes/ocean/OceanHistory";
+import OceanStatus from "./routes/ocean/OceanStatus";
 import Login from "./routes/auth/login";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
@@ -56,6 +57,7 @@ const App: React.FC<props> = () => {
               <Route path="reference" element={<OceanList />} />
               <Route path="history" element={<OceanHistory />} />
               <Route path="summary" element={<OceanSummary />} />
+              <Route path="status" element={<OceanStatus />} />
             </Route>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

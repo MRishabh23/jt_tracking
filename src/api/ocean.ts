@@ -96,6 +96,74 @@ export const useCarrierList = () => {
   return { carrierList };
 };
 
+export const useCurrentItemsList = () => {
+  const [currentTable, setCurrentTable] = useState({});
+  const [currentTableError, setCurrentTableError] = useState();
+  const [loading, setLoading] = useState(false);
+  const data = { type: "INCIDENT", mode: "OCEAN", incident_type:"CURRENT"};
+  useEffect(() => {
+    let ignore = false;
+    const currentCall = async () => {
+      setLoading(true);
+      await oceanCalls(data)
+        .then((res) => {
+          const result = res.data;
+          if (result.statusCode === "200") {
+            // console.log(result);
+            setCurrentTable(result.response);
+            setLoading(false);
+          } else {
+            throw { message: result.response };
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          setCurrentTableError(err.message)
+        });
+    };
+    if (!ignore && data.type !== "") {
+      currentCall();
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+  return { loading,currentTable, currentTableError };
+};
+
+export const usePastItemsList = () => {
+  const [pastTable, setPastTable] = useState({});
+  const [pastTableError, setPastTableError] = useState();
+  const data = { type: "INCIDENT", mode: "OCEAN", incident_type:"PAST"};
+  useEffect(() => {
+    let ignore = false;
+    const pastCall = async () => {
+      await oceanCalls(data)
+        .then((res) => {
+          const result = res.data;
+          if (result.statusCode === "200") {
+            // console.log(result);
+            setPastTable(result.response);
+          } else {
+            throw { message: result.response };
+          }
+        })
+        .catch((err) => {
+          setPastTableError(err.message)
+        });
+    };
+    if (!ignore && data.type !== "") {
+      pastCall();
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+  return { pastTable, pastTableError };
+};
+
 export const useLatencyList = (params: any) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
