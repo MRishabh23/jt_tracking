@@ -842,6 +842,8 @@ export const getSummaryColumns = () => {
           ? "Normal"
           : queue === "ADAPTIVE_CRAWL"
           ? "Adaptive"
+          : queue === "RNF_CRAWL"
+          ? "RNF"
           : "",
       width: 120,
     },
