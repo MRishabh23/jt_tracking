@@ -1,17 +1,17 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import Landing from "./routes/main/landing";
+//import Landing from "./routes/main/landing";
 //import AirDashboard from "./routes/air/AirDashboard";
-import OceanDashboard from "./routes/ocean/OceanDashboard";
+//import OceanDashboard from "./routes/ocean/OceanDashboard";
 //import AirLatency from "./routes/air/AirLatency";
-import OceanLatency from "./routes/ocean/OceanLatency";
-import OceanList from "./routes/ocean/OceanList";
-import OceanHistory from "./routes/ocean/OceanHistory";
+//import OceanLatency from "./routes/ocean/OceanLatency";
+//import OceanList from "./routes/ocean/OceanList";
+//import OceanHistory from "./routes/ocean/OceanHistory";
 import Login from "./routes/auth/login";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { useSelector } from "react-redux";
-import OceanSummary from "./routes/ocean/OceanSummary";
+//import OceanSummary from "./routes/ocean/OceanSummary";
 
 interface props {}
 
@@ -27,7 +27,10 @@ const App: React.FC<props> = () => {
     if (hasAuth === true) {
       return (
         <>
-          <Landing />
+          {/* <Landing /> */}
+          <div className="flex items-center justify-center h-full text-3xl font-bold tracking-wider text-gray-500 uppercase text-primary1-">
+            Under Maintenance...
+          </div>
         </>
       );
     } else {
@@ -49,14 +52,14 @@ const App: React.FC<props> = () => {
             {/* <Route path="/air">
               <Route index element={<AirDashboard />} />
               <Route path="latency" element={<AirLatency />} />
-            </Route> */}
+            </Route>
             <Route path="/ocean">
               <Route index element={<OceanDashboard />} />
               <Route path="latency" element={<OceanLatency />} />
               <Route path="reference" element={<OceanList />} />
               <Route path="history" element={<OceanHistory />} />
               <Route path="summary" element={<OceanSummary />} />
-            </Route>
+            </Route> */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
