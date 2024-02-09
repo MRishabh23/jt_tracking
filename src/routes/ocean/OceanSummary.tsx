@@ -129,7 +129,7 @@ const OceanSummary: React.FC = () => {
             <Select placeholder="select a queue..." allowClear={false}>
               <Select.Option value="NORMAL">Normal</Select.Option>
               <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
-              {/* <Select.Option value="rnf">Reference Not Found</Select.Option> */}
+              {/* <Select.Option value="RNF">Reference Not Found</Select.Option> */}
             </Select>
           </Form.Item>
           {/* <Form.Item
@@ -188,7 +188,7 @@ const OceanSummary: React.FC = () => {
         </div>
       ) : (
         <div className="mt-7">
-          <div className="py-1 px-4 bg-gray-200 rounded-md">
+          <div className="px-4 py-1 bg-gray-200 rounded-md">
             {list.length > 0 ? (
               <Table
                 columns={getSumCol}

@@ -1,17 +1,26 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-//import Landing from "./routes/main/landing";
+
+// Landing page import
+// import Landing from "./routes/main/landing";
+
+// Air Dashboard imports
 //import AirDashboard from "./routes/air/AirDashboard";
-//import OceanDashboard from "./routes/ocean/OceanDashboard";
 //import AirLatency from "./routes/air/AirLatency";
-//import OceanLatency from "./routes/ocean/OceanLatency";
-//import OceanList from "./routes/ocean/OceanList";
-//import OceanHistory from "./routes/ocean/OceanHistory";
+
+// Ocean Dashboard imports
+// import OceanLatency from "./routes/ocean/OceanLatency";
+// import OceanList from "./routes/ocean/OceanList";
+// import OceanHistory from "./routes/ocean/OceanHistory";
+// import OceanSummary from "./routes/ocean/OceanSummary";
+// import OceanDashboard from "./routes/ocean/OceanDashboard";
+
+// other imports
 import Login from "./routes/auth/login";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { useSelector } from "react-redux";
-//import OceanSummary from "./routes/ocean/OceanSummary";
+
 
 interface props {}
 
@@ -49,11 +58,13 @@ const App: React.FC<props> = () => {
         <main className="flex-1 p-4 overflow-auto">
           <Routes>
             <Route path="/" element={<MainPage />} />
+            {/* AIR ROUTES LOGIC */}
             {/* <Route path="/air">
               <Route index element={<AirDashboard />} />
               <Route path="latency" element={<AirLatency />} />
-            </Route>
-            <Route path="/ocean">
+            </Route> */}
+            {/* OCEAN ROUTES LOGIC */}
+            {/* <Route path="/ocean">
               <Route index element={<OceanDashboard />} />
               <Route path="latency" element={<OceanLatency />} />
               <Route path="reference" element={<OceanList />} />
