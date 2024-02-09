@@ -161,7 +161,7 @@ export const HistoryCreation = (historyList: any, subId: string) => {
     return {
       key: index,
       insertionTime: formatDate(item.v.insertion_time),
-      error: convertToTitleCase(item.v.error || "") ,
+      error: convertToTitleCase(item.v.error || ""),
       crawlStatus:
         item.v.crawl_status === undefined ? "No Data" : item.v.crawl_status,
       subscriptionId: subId,
@@ -190,45 +190,44 @@ export const HistoryCreation = (historyList: any, subId: string) => {
 };
 
 export const SummaryCreation = (summaryList: any) => {
-  const sList = summaryList
-    .map((item: any, index: number) => {
-      return {
-        key: index,
-        carrier: item.jtCarrierCode,
-        activeCount: item.jtCrawledTotal,
-        successCount: item.successCount,
-        successRatio: item.successRatio,
-        failedCount: item.failCount,
-        failedRatio: item.failureRatio,
-        duration: item.timeDiffInFk,
-        durationMin: item.timeDiffMinutes,
-        rnfCount: item.getReferenceNotFound,
-        rnfRatio: item.getReferenceNotFoundPercentage,
-        fkJson404: item.referenceNotFound || 0,
-        fkJson404per: item.refPercentage || 0,
-        diffCount: item.getTotalDiffFound,
-        diffRatio: item.diffRatio,
-        skipped: item.skipped404,
-        fkTimeout: item.toFKFailedNotSent,
-        durationToLaunch: item.durationToLaunch,
-        deliverCount: item.deliverCount,
-        closeCount: item.closeCount,
-        start: formatDate(item.start_time),
-        end: formatDate(item.end_time),
-        schedulerId: item.schedulerId,
-        queue: item.queueType,
-        lastRun: item.lastRunStartAt,
-        hitRateCount: item.hitRateCount,
-        hitRatePer: item.hitRatePer,
-        crawlFrequency: item.crawlFrequency,
-        failCategories: {
-          "Sending Failure": item.toFKFailedNotSent,
-          "API/Scraping Failure": item.toFKFailedScraping,
-          "Mapping Failure": item.toFKFailedMapping,
-          "Validation Failure": item.toFKFailedValidation,
-        },
-      };
-    });
+  const sList = summaryList.map((item: any, index: number) => {
+    return {
+      key: index,
+      carrier: item.jtCarrierCode,
+      activeCount: item.jtCrawledTotal,
+      successCount: item.successCount,
+      successRatio: item.successRatio,
+      failedCount: item.failCount,
+      failedRatio: item.failureRatio,
+      duration: item.timeDiffInFk,
+      durationMin: item.timeDiffMinutes,
+      rnfCount: item.getReferenceNotFound,
+      rnfRatio: item.getReferenceNotFoundPercentage,
+      fkJson404: item.referenceNotFound || 0,
+      fkJson404per: item.refPercentage || 0,
+      diffCount: item.getTotalDiffFound,
+      diffRatio: item.diffRatio,
+      skipped: item.skipped404,
+      fkTimeout: item.toFKFailedNotSent,
+      durationToLaunch: item.durationToLaunch,
+      deliverCount: item.deliverCount,
+      closeCount: item.closeCount,
+      start: formatDate(item.start_time),
+      end: formatDate(item.end_time),
+      schedulerId: item.schedulerId,
+      queue: item.queueType,
+      lastRun: item.lastRunStartAt,
+      hitRateCount: item.hitRateCount,
+      hitRatePer: item.hitRatePer,
+      crawlFrequency: item.crawlFrequency,
+      failCategories: {
+        "Sending Failure": item.toFKFailedNotSent,
+        "API/Scraping Failure": item.toFKFailedScraping,
+        "Mapping Failure": item.toFKFailedMapping,
+        "Validation Failure": item.toFKFailedValidation,
+      },
+    };
+  });
   return sList;
 };
 
@@ -667,17 +666,14 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "crawlStatus",
       key: "crawlStatus",
       render: (crawlStatus, record) => (
-        <Tooltip
-          title={ record.error === ""? "No error" : record.error }
-        >
+        <Tooltip title={record.error === "" ? "No error" : record.error}>
           <Tag
-          color={crawlStatus == "SUCCESS" ? colorStatus[0] : colorStatus[1]}
-          key={color}
-        >
-          {crawlStatus.toUpperCase()}
-        </Tag>
+            color={crawlStatus == "SUCCESS" ? colorStatus[0] : colorStatus[1]}
+            key={color}
+          >
+            {crawlStatus.toUpperCase()}
+          </Tag>
         </Tooltip>
-        
       ),
       align: "center",
     },
@@ -692,12 +688,11 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "fkJson",
       key: "fkJson",
       render: (fkJson, record, index) =>
-      record.error !== ""?
-      record.error
-      :
-        record.fkJson !== "No Data" &&
-        record.fkJson === "SAME_PAYLOAD" &&
-        record.fkLatestJson !== "No Data" ? (
+        record.error !== "" ? (
+          record.error
+        ) : record.fkJson !== "No Data" &&
+          record.fkJson === "SAME_PAYLOAD" &&
+          record.fkLatestJson !== "No Data" ? (
           <button
             key={`${index} + ${record.schedulerId}`}
             onClick={() =>
@@ -747,10 +742,10 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "crawlJson",
       key: "crawlJson",
       render: (crawlJson, record) =>
-      record.error !== ""?
-      record.error
-      :
-        record.crawlJson !== "No Data" && record.fkJson === "SAME_PAYLOAD" ? (
+        record.error !== "" ? (
+          record.error
+        ) : record.crawlJson !== "No Data" &&
+          record.fkJson === "SAME_PAYLOAD" ? (
           <button
             key={crawlJson + record.schedulerId}
             onClick={() =>
@@ -853,6 +848,7 @@ export const getSummaryColumns = () => {
       key: "activeCount",
       align: "center",
       width: 120,
+      sorter: (a: any, b: any) => a.activeCount - b.activeCount,
     },
     {
       title: "Skipped (404)",
@@ -900,6 +896,7 @@ export const getSummaryColumns = () => {
         </p>
       ),
       width: 120,
+      sorter: (a: any, b: any) => a.successCount - b.successCount,
     },
     {
       title: "RNF (404)",
@@ -912,6 +909,7 @@ export const getSummaryColumns = () => {
         </p>
       ),
       width: 120,
+      sorter: (a: any, b: any) => a.rnfCount - b.rnfCount,
     },
     {
       title: "FK Json (404)",
@@ -924,6 +922,7 @@ export const getSummaryColumns = () => {
         </p>
       ),
       width: 120,
+      sorter: (a: any, b: any) => a.fkJson404 - b.fkJson404,
     },
     {
       title: "Fail",
@@ -946,6 +945,7 @@ export const getSummaryColumns = () => {
         </Tooltip>
       ),
       width: 120,
+      sorter: (a: any, b: any) => a.failedCount - b.failedCount,
     },
 
     {
@@ -959,6 +959,7 @@ export const getSummaryColumns = () => {
       ),
       align: "center",
       width: 120,
+      sorter: (a: any, b: any) => a.diffCount - b.diffCount,
     },
     {
       title: "Crawl Frequency",
@@ -973,6 +974,7 @@ export const getSummaryColumns = () => {
       key: "durationToLaunch",
       align: "center",
       width: 120,
+      sorter: (a: any, b: any) => a.durationToLaunch - b.durationToLaunch,
     },
     {
       title: "Deliver Count",
@@ -980,6 +982,7 @@ export const getSummaryColumns = () => {
       key: "deliverCount",
       align: "center",
       width: 120,
+      sorter: (a: any, b: any) => a.deliverCount - b.deliverCount,
     },
     {
       title: "Close Count",
@@ -987,6 +990,7 @@ export const getSummaryColumns = () => {
       key: "closeCount",
       align: "center",
       width: 120,
+      sorter: (a: any, b: any) => a.closeCount - b.closeCount,
     },
     {
       title: "FK Timeout",
