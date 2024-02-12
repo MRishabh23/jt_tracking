@@ -2,18 +2,18 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 // Landing page import
-// import Landing from "./routes/main/landing";
+import Landing from "./routes/main/landing";
 
 // Air Dashboard imports
 // import AirDashboard from "./routes/air/AirDashboard";
 // import AirLatency from "./routes/air/AirLatency";
 
 // Ocean Dashboard imports
-// import OceanLatency from "./routes/ocean/OceanLatency";
-// import OceanList from "./routes/ocean/OceanList";
-// import OceanHistory from "./routes/ocean/OceanHistory";
-// import OceanSummary from "./routes/ocean/OceanSummary";
-// import OceanDashboard from "./routes/ocean/OceanDashboard";
+import OceanLatency from "./routes/ocean/OceanLatency";
+import OceanList from "./routes/ocean/OceanList";
+import OceanHistory from "./routes/ocean/OceanHistory";
+import OceanSummary from "./routes/ocean/OceanSummary";
+import OceanDashboard from "./routes/ocean/OceanDashboard";
 
 // other imports
 import Login from "./routes/auth/login";
@@ -36,10 +36,10 @@ const App: React.FC<props> = () => {
     if (hasAuth === true) {
       return (
         <>
-          {/* <Landing /> */}
-          <div className="flex items-center justify-center h-full text-3xl font-bold tracking-wider text-gray-500 uppercase text-primary1-">
+          <Landing />
+          {/* <div className="flex items-center justify-center h-full text-3xl font-bold tracking-wider text-gray-500 uppercase text-primary1-">
             Under Maintenance...
-          </div>
+          </div> */}
         </>
       );
     } else {
@@ -64,13 +64,13 @@ const App: React.FC<props> = () => {
               <Route path="latency" element={<AirLatency />} />
             </Route> */}
             {/* OCEAN ROUTES LOGIC */}
-            {/* <Route path="/ocean">
+            <Route path="/ocean">
               <Route index element={<OceanDashboard />} />
               <Route path="latency" element={<OceanLatency />} />
               <Route path="reference" element={<OceanList />} />
               <Route path="history" element={<OceanHistory />} />
               <Route path="summary" element={<OceanSummary />} />
-            </Route> */}
+            </Route>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
