@@ -129,7 +129,7 @@ const OceanSummary: React.FC = () => {
             <Select placeholder="select a queue..." allowClear={false}>
               <Select.Option value="NORMAL">Normal</Select.Option>
               <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
-              {/* <Select.Option value="RNF">Reference Not Found</Select.Option> */}
+              <Select.Option value="RNF">Reference Not Found</Select.Option>
             </Select>
           </Form.Item>
           {/* <Form.Item
