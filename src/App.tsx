@@ -9,8 +9,8 @@ import Landing from "./routes/main/landing";
 // import AirLatency from "./routes/air/AirLatency";
 
 // Ocean Dashboard imports
-import OceanLatency from "./routes/ocean/OceanLatency";
-import OceanList from "./routes/ocean/OceanList";
+// import OceanLatency from "./routes/ocean/OceanLatency";
+// import OceanList from "./routes/ocean/OceanList";
 import OceanHistory from "./routes/ocean/OceanHistory";
 import OceanSummary from "./routes/ocean/OceanSummary";
 import OceanDashboard from "./routes/ocean/OceanDashboard";
@@ -66,8 +66,8 @@ const App: React.FC<props> = () => {
             {/* OCEAN ROUTES LOGIC */}
             <Route path="/ocean">
               <Route index element={<OceanDashboard />} />
-              <Route path="latency" element={<OceanLatency />} />
-              <Route path="reference" element={<OceanList />} />
+              {/* <Route path="latency" element={<OceanLatency />} />
+              <Route path="reference" element={<OceanList />} /> */}
               <Route path="history" element={<OceanHistory />} />
               <Route path="summary" element={<OceanSummary />} />
             </Route>

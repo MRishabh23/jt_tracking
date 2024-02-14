@@ -5,21 +5,21 @@ import { useCheckAuth } from "../../api/auth";
 const OceanDashboard: React.FC = () => {
   useCheckAuth();
   const oceanDashMap = [
-    {
-      route: "LATENCY",
-      param: "queue=NORMAL"
-    },
-    {
-      route: "REFERENCE",
-      param: "carriers=acl&active=yes"
-    },
+    // {
+    //   route: "LATENCY",
+    //   param: "queue=NORMAL"
+    // },
+    // {
+    //   route: "REFERENCE",
+    //   param: "carriers=acl&active=yes"
+    // },
     {
       route: "HISTORY",
       param: "",
     },
     {
       route: "SUMMARY",
-      param: "queue=NORMAL"
+      param: "queue=NORMAL",
     },
   ];
   return (
@@ -34,7 +34,7 @@ const OceanDashboard: React.FC = () => {
               <Link
                 to={{
                   pathname: `/ocean/${item.route.toLowerCase()}`,
-                  search: item.param
+                  search: item.param,
                 }}
                 className="hover:text-gray-200"
               >
