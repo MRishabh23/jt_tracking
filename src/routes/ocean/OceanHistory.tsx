@@ -103,8 +103,8 @@ const ReferenceHistory: React.FC = () => {
         <div className="flex w-full h-full">
           <div className="flex-1 p-1 overflow-auto">
             <div className="flex gap-2 text-lg">
-              {Object.keys(obj[0]).length > 0 ? (
-                <JsonView src={obj[0]} />
+              {Object.keys(obj).length > 0 ? (
+                <JsonView src={obj} />
               ) : (
                 <></>
               )}
@@ -217,7 +217,7 @@ const ReferenceHistory: React.FC = () => {
                 <FaSpinner className="text-3xl text-blue-500 animate-spin" />
               </div>
             </div>
-          ) : obj.length > 0 ? (
+          ) :Object.keys(obj).length > 0 ? (
             <HistoryModal />
           ) : (
             <></>

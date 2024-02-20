@@ -7,11 +7,11 @@ const OceanDashboard: React.FC = () => {
   const oceanDashMap = [
     {
       route: "LATENCY",
-      param: "queue=NORMAL"
+      param: ""
     },
     {
       route: "REFERENCE",
-      param: "carriers=acl&active=yes"
+      param: "carriers=acl&active=yes&referenceType=BOOKING"
     },
     {
       route: "HISTORY",

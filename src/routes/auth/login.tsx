@@ -16,6 +16,7 @@ const Login: React.FC<props> = () => {
 
   const onFinish = async (values: any) => {
     const sendData = {
+      type: "LOGIN",
       username: values.username,
       password: values.password,
     };
