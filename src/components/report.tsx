@@ -850,14 +850,6 @@ export const getSummaryColumns = () => {
       sorter: (a: any, b: any) => a.activeCount - b.activeCount,
     },
     {
-      title: "Skipped (404)",
-      dataIndex: "skipped",
-      key: "skipped",
-      align: "center",
-      width: 120,
-      sorter: (a: any, b: any) => a.skipped - b.skipped,
-    },
-    {
       title: "Last Run",
       dataIndex: "lastRun",
       key: "lastRun",
@@ -903,7 +895,7 @@ export const getSummaryColumns = () => {
       key: "rnfCount",
       align: "center",
       render: (rnfCount, record: any) => (
-        <p style={{ color: record.rnfRatio > 20 ? "red" : "inherit" }}>
+        <p style={{ color: record.rnfRatio > 20 && record.queue!=="RNF_CRAWL" ? "red" : "inherit" }}>
           {rnfCount} ({record.rnfRatio}%)
         </p>
       ),
