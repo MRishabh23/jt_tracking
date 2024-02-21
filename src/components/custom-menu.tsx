@@ -25,9 +25,11 @@ const CustomMenu: React.FC<props> = ({ name, child, open, setOpen, drawer, setDr
       </div>
       <div className={open ? `block transition duration-400 ease-in-out` : `hidden`}>
         {child.map((c: any, index) => (
-          <Link key={index} to={`/${name.toLowerCase()}/${c.toLowerCase()}`} onClick={() => setDrawer(!drawer)}>
-            <p className="ml-4 text-lg">{c}</p>
-          </Link>
+          c === "Reference" ? <Link key={index} to={`/${name.toLowerCase()}/${c.toLowerCase()}?carriers=acl&active=yes&referenceType=BOOKING`} onClick={() => setDrawer(!drawer)}>
+          <p className="ml-4 text-lg">{c}</p>
+            </Link> : <Link key={index} to={`/${name.toLowerCase()}/${c.toLowerCase()}`} onClick={() => setDrawer(!drawer)}>
+          <p className="ml-4 text-lg">{c}</p>
+            </Link>
         ))}
       </div>
     </div>

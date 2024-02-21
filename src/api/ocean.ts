@@ -73,11 +73,11 @@ export const useCarrierList = () => {
       await oceanCalls(data)
         .then((res) => {
           const result = res.data;
-          if (result.statusCode === "200") {
-            carrActData.carrList = result.response.sort();
+          if (result.statusCode === "200" && res.data.response.success) {
+            carrActData.carrList = result.response.data.sort();
             dispatch(carrierListAction(carrActData));
           } else {
-            throw { message: result.response };
+            throw { message: res.data.response.data  };
           }
         })
         .catch((err) => {
@@ -98,7 +98,7 @@ export const useCarrierList = () => {
 
 export const useLatencyList = (params: any) => {
   const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [latencyError, setLatencyError] = useState("");
   const data = {
     type: "LATENCY",
@@ -114,12 +114,12 @@ export const useLatencyList = (params: any) => {
       setLoading(false);
       await oceanCalls(data)
         .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
+          if (res.status === 200 && res.data.statusCode === "200" && res.data.response.success) {
             const result = res.data;
-            setList(result.response);
+            setList(result.response.data);
             setLoading(true);
           } else {
-            throw { message: res.message };
+            throw { message: res.data.response.data  };
           }
         })
         .catch((err) => {
@@ -127,7 +127,7 @@ export const useLatencyList = (params: any) => {
           setLatencyError(err.message);
         });
     };
-    if (!ignore && data.type !== "") {
+    if (!ignore && data.type !== ""  && data.carriers.length>0) {
       defaultCall();
     }
 
@@ -157,12 +157,12 @@ export const useSummaryList = (params: any) => {
       setLoading(true);
       await oceanCalls(data)
         .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
+          if (res.status === 200 && res.data.statusCode === "200" && res.data.response.success) {
             const result = res.data;
-            setList(result.response);
+            setList(result.response.data);
             setLoading(false);
           } else {
-            throw { message: res.message };
+            throw { message: res.data.response.data  };
           }
         })
         .catch((err) => {
@@ -192,7 +192,7 @@ export const useReferenceListCount = (param: any, page: any) => {
     report: (param.get("queue") || "").toUpperCase(),
     carriers: param.getAll("carriers") || "",
     referenceType: param.get("referenceType") || "",
-    timeCategory: param.get("type") || "",
+    // timeCategory: param.get("type") || "",
     active: param.get("active") || "yes",
     searchQuery: param.get("searchQuery") || "",
     mode: "OCEAN",
@@ -222,7 +222,7 @@ export const useReferenceListCount = (param: any, page: any) => {
       setLoadingCount(true);
       await oceanCalls(newData)
         .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
+          if (res.status === 200 && res.data.statusCode === "200" && res.data.response.success) {
             const result = res.data;
             if (
               result.response.error !== undefined &&
@@ -231,10 +231,10 @@ export const useReferenceListCount = (param: any, page: any) => {
             ) {
               throw { message: result.response.error };
             }
-            setCount(result.response[0].count);
+            setCount(result.response.data[0].count);
             setLoadingCount(false);
           } else {
-            throw { message: res.message };
+            throw { message: res.data.response.data  };
           }
         })
         .catch((err) => {
@@ -296,9 +296,9 @@ export const useReferenceList = (param: any) => {
   (searchQ === "" && referenceQ === "")
       ? {
           report: (param.get("queue") || "").toUpperCase(),
-          carriers: param.getAll("carriers") || "",
+          carriers: param.getAll("carriers") || [],
           referenceType: param.get("referenceType") || "",
-          timeCategory: param.get("type") || "",
+          // timeCategory: param.get("type") || "",
           searchQuery: param.get("searchQuery") || "",
           active: param.get("active") || "yes",
           mode: "OCEAN",
@@ -332,7 +332,7 @@ export const useReferenceList = (param: any) => {
       setLoading(true);
       await oceanCalls(newData)
         .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
+          if (res.status === 200 && res.data.statusCode === "200" && res.data.response.success) {
             const result = res.data;
             if (
               result.response.error !== undefined &&
@@ -341,10 +341,10 @@ export const useReferenceList = (param: any) => {
             ) {
               throw { message: result.response.error };
             }
-            setList(result.response);
+            setList(result.response.data);
             setLoading(false);
           } else {
-            throw { message: res.message };
+            throw { message: res.data.response.data  };
           }
         })
         .catch((err) => {
@@ -489,7 +489,7 @@ export const useHistoryList = (params: any) => {
       setLoading(true);
       await oceanCalls(newData)
         .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
+          if (res.status === 200 && res.data.statusCode === "200" && res.data.response.success) {
             const result = res.data;
             if (
               result.response.error !== undefined &&
@@ -498,11 +498,11 @@ export const useHistoryList = (params: any) => {
             ) {
               throw { message: result.response.error };
             }
-            setList(result.response);
+            setList(result.response.data);
 
             setLoading(false);
           } else {
-            throw { message: res.message };
+            throw { message: res.data.response.data };
           }
         })
         .catch((err) => {
@@ -549,7 +549,7 @@ export const useHistoryListCount = (params: any, page: any) => {
     const defaultCall = async () => {
       await oceanCalls(newData)
         .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
+          if (res.status === 200 && res.data.statusCode === "200" && res.data.response.success) {
             const result = res.data;
             if (
               result.response.error !== undefined &&
@@ -559,9 +559,9 @@ export const useHistoryListCount = (params: any, page: any) => {
               throw { message: result.response.error };
             }
             setHistoryCountError("");
-            setCount(result.response[0].count);
+            setCount(result.response.data[0].count);
           } else {
-            throw { message: res.message };
+            throw { message: res.data.response.data  };
           }
         })
         .catch((err) => {
@@ -609,9 +609,9 @@ export const useFetchHistoryData = (data: OceanProp) => {
       setObjLoad(true);
       await oceanCalls(data)
         .then((res) => {
-          if (res.status === 200 && res.data.statusCode === "200") {
+          if (res.status === 200 && res.data.statusCode === "200" && res.data.response.success) {
             const result = res.data;
-            setObj(result.response);
+            setObj(result.response.data);
             setObjLoad(false);
           } else {
             throw { message: res.response.data.response };

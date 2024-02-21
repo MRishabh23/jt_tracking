@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Dropdown, Drawer } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { RiMenu3Fill } from "react-icons/ri";
+// import { RiMenu3Fill } from "react-icons/ri";
+import { AiOutlineMenu } from "react-icons/ai";
 import CustomMenu from "../components/custom-menu";
 import { IoClose } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
@@ -95,7 +96,7 @@ const Navbar: React.FC<props> = () => {
             <div className="flex items-center justify-center gap-6">
               {/* hamburg menu */}
               <div>
-                <RiMenu3Fill
+                <AiOutlineMenu
                   onClick={() => handleDrawer()}
                   className="text-3xl text-white cursor-pointer"
                 />

@@ -111,7 +111,7 @@ const OceanLatency: React.FC<props> = () => {
               <Select placeholder="select a queue..." allowClear={false}>
                 <Select.Option value="NORMAL">Normal</Select.Option>
                 <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
-                {/* <Select.Option value="rnf">Reference Not Found</Select.Option> */}
+                <Select.Option value="rnf">Reference Not Found</Select.Option>
               </Select>
             </Form.Item>
 
@@ -121,13 +121,9 @@ const OceanLatency: React.FC<props> = () => {
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
             >
               <Select placeholder="select reference type..." allowClear={true}>
-                <Select.Option value="BOOKING_NUMBER">Booking</Select.Option>
-                <Select.Option value="BILL_OF_LADING">
-                  BillOfLading
-                </Select.Option>
-                <Select.Option value="CONTAINER_NUMBER">
-                  Container
-                </Select.Option>
+              <Select.Option value="BOOKING">Booking</Select.Option>
+                <Select.Option value="BILLOFLADING">BillOfLading</Select.Option>
+                <Select.Option value="CONTAINER">Container</Select.Option>
               </Select>
             </Form.Item>
 
@@ -148,14 +144,22 @@ const OceanLatency: React.FC<props> = () => {
         ) : (
           <div className="mt-7">
             <div className="p-4 bg-gray-200 rounded-md">
-              {loading ? (
+            {loading && list.length>0 ? (
                 <Table
                   columns={getLatCol}
                   dataSource={data2}
                   pagination={false}
                   scroll={{ x: "1100px", y: "675px" }}
                 />
-              ) : (
+                ) : loading && list.length===0 && carrierParam.length===0? (
+                  <p className="flex justify-center text-lg font-semibold text-black">
+                    Select Carrier to see Latency data!
+                  </p>
+                ) : loading && list.length===0 && carrierParam.length!==0? (
+                  <p className="flex justify-center text-lg font-semibold text-black">
+                    No data for the selected filter
+                  </p>
+                ) :(
                 <div className="flex items-center justify-center">
                   <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                 </div>

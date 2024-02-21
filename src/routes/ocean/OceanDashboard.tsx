@@ -5,14 +5,14 @@ import { useCheckAuth } from "../../api/auth";
 const OceanDashboard: React.FC = () => {
   useCheckAuth();
   const oceanDashMap = [
-    // {
-    //   route: "LATENCY",
-    //   param: "queue=NORMAL"
-    // },
-    // {
-    //   route: "REFERENCE",
-    //   param: "carriers=acl&active=yes"
-    // },
+    {
+      route: "LATENCY",
+      param: ""
+    },
+    {
+      route: "REFERENCE",
+      param: "carriers=acl&active=yes&referenceType=BOOKING"
+    },
     {
       route: "HISTORY",
       param: "",
