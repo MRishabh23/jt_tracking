@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCheckAuth } from "../../api/auth";
 import { Form, Select } from "antd";
 import { FaSpinner } from "react-icons/fa";
-import { useCarrierList } from "../../api/ocean";
+import { useCarrierList, useLatencyChart } from "../../api/ocean";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,7 +14,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { latencyData } from "../ocean/tempData";
+import { useSearchParams } from "react-router-dom";
 
 ChartJS.register(
   CategoryScale,
@@ -26,10 +26,55 @@ ChartJS.register(
   Legend
 );
 
+function getMonthsToThisYear() {
+  const today = new Date();
+  const currentMonth = today.getMonth(); // 0 (January) to 11 (December)
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  // Check if current date is 2nd or later in the current month
+  const includeCurrentMonth = today.getDate() >= 2;
+
+  if (includeCurrentMonth) {
+    return monthNames.slice(0, currentMonth + 1);
+  } else {
+    return monthNames.slice(0, currentMonth);
+  }
+}
+
 const OceanLatencyChart: React.FC = () => {
   useCheckAuth();
-  const [selectState, setSelectState] = useState<String[]>([]);
+  const [form] = Form.useForm();
+  form.setFieldValue("year", "2024");
+  
+
+  const monthsList = getMonthsToThisYear();
+  // const monthsList = ["January", "February", "March", "April", "May", "June",
+  // "July", "August", "September", "October", "November", "December"];
+
   const { carrierList } = useCarrierList();
+  const [latencyChartParam, setLatencyChartParam] = useSearchParams();
+  const [selectState, setSelectState] = useState<String[]>(latencyChartParam.getAll("carriers") || []);
+  // const [selectedCarrier, setSelectedCarrier] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState<String[]>(latencyChartParam.getAll("months") || []);
+  const {
+    list,
+    loading,
+    latencyChartError = "",
+  } = useLatencyChart(latencyChartParam);
 
   const options = {
     maintainAspectRatio: false,
@@ -38,23 +83,39 @@ const OceanLatencyChart: React.FC = () => {
       legend: {
         position: "top" as const,
       },
-    //   title: {
-    //     display: true,
-    //     text: "Daily JT induced latency",
-    //   },
       layout: {
-        padding: 100
-      }
+        padding: 100,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Day"
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Latency in mins"
+        },
+      },
     },
   };
 
-  const carriers = ["HAPAG", "ACL", "MSC"];
-  const bgArray = ["LightSalmon","LightSkyBlue","Violet"];
-  const borderArray = ["Salmon","CornflowerBlue","HotPink"];
+  let chartKeys: any;
+  const dataSet = list[0];
+  if (dataSet === null || dataSet === undefined || dataSet === "") {
+    chartKeys = [];
+  } else {
+    chartKeys = Object.keys(dataSet);
+  }
+  const bgArray = ["LightSalmon", "LightSkyBlue", "MediumSeaGreen "];
+  const borderArray = ["Salmon", "CornflowerBlue", "SeaGreen "];
 
-  let labels: any[]=[]
-  for(let i=1;i<=31;i++){
-    labels.push(i)
+  let labels: any[] = [];
+  for (let i = 1; i <= 31; i++) {
+    labels.push(i);
   }
 
   const handleChange = (value: any) => {
@@ -64,29 +125,61 @@ const OceanLatencyChart: React.FC = () => {
     }
     setSelectState(newState);
   };
-  const val:any = carriers.map((carrier, index) => {
-    for (const key in latencyData) {
-      if (key === carrier) {
-        const countObj = latencyData[key];
-        let dataArr: number[] = [];
-        for (const date in countObj) {
-          dataArr.push(countObj[date]);
-        }
-        // console.log(dataArr)
+
+  const handleMonthChange = (value: any) => {
+    let newState = [];
+    for (let x in value) {
+      newState.push(value[x]);
+    }
+    setSelectedMonth(newState);
+  };
+  const val: any = chartKeys.map((keys: any, index: any) => {
+    for (const key in dataSet) {
+      if (key === keys) {
+        const dataArr = dataSet[key];
         return {
-          label: carrier,
+          label: key,
           data: dataArr,
           backgroundColor: bgArray[index],
-          borderColor: borderArray[index]
+          borderColor: borderArray[index],
         };
       }
     }
-  })
+  });
 
- const data = {
+  const data = {
     labels,
     datasets: val,
   };
+
+  const onFinish = async (values: any) => {
+    const carriers = values.carrier;
+    const year = values.year;
+    const months = values.month;
+    const sendData = {
+      carriers: carriers,
+      year: year,
+      months: months,
+    };
+    setLatencyChartParam(sendData);
+  };
+
+  useEffect(() => {
+    let ignore = false;
+    if (!ignore) {
+      latencyChartParam.get("carriers") === null
+        ? form.setFieldValue("carrier", [])
+        : form.setFieldValue("carrier", latencyChartParam.getAll("carriers"));
+
+      latencyChartParam.get("months") === null
+        ? form.setFieldValue("month", [])
+        : form.setFieldValue("month", latencyChartParam.getAll("months"));
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [latencyChartParam]);
 
   return (
     <div className="relative w-full min-h-full p-3 pt-1">
@@ -94,10 +187,14 @@ const OceanLatencyChart: React.FC = () => {
         <h3 className="text-3xl">JT Induced Latency</h3>
       </div>
       <div className="p-3 mt-8 bg-gray-200 rounded-md lg:mt-4">
+        <p className="text-sm text-red-600">
+          {" "}
+          ** You can either select multiple carriers or multiple months
+        </p>
         <Form
           name="basic"
-          //   onFinish={onFinish}
-          //   form={form}
+          onFinish={onFinish}
+          form={form}
           size="middle"
           className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
           //   initialValues={{ carrier: carrierParam, queue: queueParam, range:[dayjs(defaultStart, dateFormat), dayjs(defaultEnd, dateFormat)] }}
@@ -120,7 +217,8 @@ const OceanLatencyChart: React.FC = () => {
                 carrierList.map((item: any, index: any) => (
                   <Select.Option
                     disabled={
-                      selectState.length === 5 &&
+                      ((selectedMonth.length > 1 && selectState.length === 1) ||
+                        selectState.length === 3) &&
                       !selectState.includes(item.toLowerCase())
                         ? true
                         : false
@@ -140,7 +238,7 @@ const OceanLatencyChart: React.FC = () => {
           </Form.Item>
           <Form.Item
             label={<p className="text-lg">Year</p>}
-            name="Year"
+            name="year"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
           >
             <Select placeholder="select year..." allowClear={false}>
@@ -149,12 +247,33 @@ const OceanLatencyChart: React.FC = () => {
           </Form.Item>
           <Form.Item
             label={<p className="text-lg">Month</p>}
-            name="Month"
+            name="month"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
+            rules={[{ required: true, message: "Please input month!" }]}
           >
-            <Select placeholder="select month..." allowClear={false}>
-              <Select.Option value="JAN">January</Select.Option>
-              <Select.Option value="FEB">February</Select.Option>
+            <Select
+              placeholder="select month..."
+              allowClear={true}
+              mode="multiple"
+              onChange={(value) => {
+                handleMonthChange(value);
+              }}
+            >
+              {monthsList.map((item: any, index: any) => (
+                <Select.Option
+                  disabled={
+                    ((selectState.length > 1 && selectedMonth.length === 1) ||
+                      selectedMonth.length === 3) &&
+                    !selectedMonth.includes(item.substring(0, 3).toLowerCase())
+                      ? true
+                      : false
+                  }
+                  key={index}
+                  value={`${item.substring(0, 3).toLowerCase()}`}
+                >
+                  {item}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item>
@@ -169,11 +288,37 @@ const OceanLatencyChart: React.FC = () => {
           </Form.Item>
         </Form>
       </div>
-      <div className="mt-3 h-[35rem]">
-        <div className="min-h-full py-4 px-10 bg-gray-200 rounded-md">
-            <Line options={options} data={data} />
+      {latencyChartError !== "" || latencyChartError !== "" ? (
+        <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
+          {latencyChartError.includes("timeout")
+            ? "Request Timeout"
+            : latencyChartError}
         </div>
-      </div>
+      ) : (
+        <div
+          className={`mt-3 ${
+            chartKeys.length !== 0 && !loading ? `h-[35rem]` : `h-full`
+          }`}
+        >
+          <div className="min-h-full py-4 px-10 bg-gray-200 rounded-md">
+            {chartKeys.length !== 0 && !loading ? (
+              <Line options={options} data={data} />
+            ) : (
+              <>
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <FaSpinner className="text-3xl text-blue-500 animate-spin" />
+                  </div>
+                ) : (
+                  <p className="flex justify-center text-lg font-semibold text-black">
+                    Enter Carrier, Month and Year to see Induced Latency!
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
