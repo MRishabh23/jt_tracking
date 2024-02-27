@@ -21,6 +21,10 @@ const OceanDashboard: React.FC = () => {
       route: "SUMMARY",
       param: "queue=NORMAL",
     },
+    {
+      route: "INDUCED-LATENCY",
+      param: ""
+    }
   ];
   return (
     <>

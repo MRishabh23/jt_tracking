@@ -184,6 +184,51 @@ export const useSummaryList = (params: any) => {
   return { list, loading, summaryError };
 };
 
+export const useLatencyChart = (params: any) => {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [latencyChartError, setLatencyChartError] = useState("");
+  const data = {
+    type: "INDUCED_LATENCY",
+    mode: "OCEAN",
+    carriers: params.getAll("carriers") || [],
+    year: params.get("year") || "2024",
+    months : params.getAll("months") || []
+  };
+  useEffect(() => {
+    let ignore = false;
+    setLatencyChartError("");
+    const defaultCall = async () => {
+      setLoading(true);
+      await oceanCalls(data)
+        .then((res) => {
+          if (res.status === 200 && res.data.statusCode === "200" && res.data.response.success) {
+            const result = res.data;
+            setList(result.response.data);
+            setLoading(false);
+          } else {
+            throw { message: res.data.response.data };
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          setLatencyChartError(err.message);
+        });
+    };
+    if (!ignore && data.type !== "" && data.carriers.length !== 0 && data.months.length !== 0) {
+      defaultCall();
+    } else {
+      setList([]);
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [params]);
+
+  return { list, loading, latencyChartError };
+};
+
 export const useReferenceListCount = (param: any, page: any) => {
   const [count, setCount] = useState(0);
   const [loadingCount, setLoadingCount] = useState(false);

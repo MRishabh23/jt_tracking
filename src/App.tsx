@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 // Landing page import
 import Landing from "./routes/main/landing";
+import OceanLatencyChart from "./routes/ocean/OceanLatencyChart";
 
 // Air Dashboard imports
 // import AirDashboard from "./routes/air/AirDashboard";
@@ -70,6 +71,7 @@ const App: React.FC<props> = () => {
               <Route path="reference" element={<OceanList />} />
               <Route path="history" element={<OceanHistory />} />
               <Route path="summary" element={<OceanSummary />} />
+              <Route path="induced-latency" element={<OceanLatencyChart />} />
             </Route>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
