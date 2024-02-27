@@ -22,7 +22,7 @@ const OceanDashboard: React.FC = () => {
       param: "queue=NORMAL"
     },
     {
-      route: "INDUCED_LATENCY",
+      route: "INDUCED-LATENCY",
       param: ""
     }
   ];
