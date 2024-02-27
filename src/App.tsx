@@ -57,7 +57,7 @@ const App: React.FC<props> = () => {
               <Route path="reference" element={<OceanList />} />
               <Route path="history" element={<OceanHistory />} />
               <Route path="summary" element={<OceanSummary />} />
-              <Route path="induced_latency" element={<OceanLatencyChart />} />
+              <Route path="induced-latency" element={<OceanLatencyChart />} />
             </Route>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

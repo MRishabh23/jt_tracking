@@ -73,7 +73,7 @@ const Navbar: React.FC<props> = () => {
           />
           <CustomMenu
             name="Ocean"
-            child={["Latency", "Reference", "History", "Summary","Induced_Latency"]}
+            child={["Latency", "Reference", "History", "Summary","Induced-Latency"]}
             open={ocean}
             setOpen={setOcean}
             drawer={open}
