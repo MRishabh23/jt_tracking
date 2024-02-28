@@ -248,6 +248,7 @@ const OceanLatencyChart: React.FC = () => {
             label={<p className="text-lg">Month</p>}
             name="month"
             className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
+            rules={[{ required: true, message: "Please input month!" }]}
           >
             <Select
               placeholder="select month..."
