@@ -302,10 +302,7 @@ export const getLatencyColumns = (mainList: any) => {
       title: "Queue",
       key: "queue",
       dataIndex: "queue",
-      render: (text) =>
-          text==="Rnf"?
-          text.toUpperCase():
-          text,
+      render: (text) => (text === "Rnf" ? text.toUpperCase() : text),
       fixed: true,
       width: 90,
       align: "center",
@@ -314,20 +311,7 @@ export const getLatencyColumns = (mainList: any) => {
       title: "Total",
       dataIndex: "total",
       key: "total",
-      render: (text, record: any) =>
-        record.total > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=total&queue=${record.queue}&count=${record.total}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link> 
-        ) : (
-          0
-        ),
+      render: (text, record: any) => (record.total > 0 ? text : 0),
       sorter: (a: any, b: any) => a.total - b.total,
       width: 75,
       align: "center",
@@ -338,15 +322,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "first",
       render: (text, record: any) =>
         record.first > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=first&queue=${record.queue}&count=${record.first}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=first&queue=${record.queue}&count=${record.first}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -360,15 +344,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "second",
       render: (text, record: any) =>
         record.second > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=second&queue=${record.queue}&count=${record.second}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=second&queue=${record.queue}&count=${record.second}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -382,15 +366,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "third",
       render: (text, record: any) =>
         record.third > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=third&queue=${record.queue}&count=${record.third}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=third&queue=${record.queue}&count=${record.third}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -404,15 +388,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "fourth",
       render: (text, record: any) =>
         record.fourth > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=fourth&queue=${record.queue}&count=${record.fourth}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=fourth&queue=${record.queue}&count=${record.fourth}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -426,15 +410,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "fifth",
       render: (text, record: any) =>
         record.fifth > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=fifth&queue=${record.queue}&count=${record.fifth}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=fifth&queue=${record.queue}&count=${record.fifth}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -448,15 +432,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "sixth",
       render: (text, record: any) =>
         record.sixth > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=sixth&queue=${record.queue}&count=${record.sixth}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=sixth&queue=${record.queue}&count=${record.sixth}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -470,15 +454,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "seventh",
       render: (text, record: any) =>
         record.seventh > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=seventh&queue=${record.queue}&count=${record.seventh}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=seventh&queue=${record.queue}&count=${record.seventh}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -492,15 +476,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "eight",
       render: (text, record: any) =>
         record.eight > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=eight&queue=${record.queue}&count=${record.eight}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=eight&queue=${record.queue}&count=${record.eight}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -514,15 +498,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "ninth",
       render: (text, record: any) =>
         record.ninth > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=ninth&queue=${record.queue}&count=${record.ninth}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=ninth&queue=${record.queue}&count=${record.ninth}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -895,7 +879,14 @@ export const getSummaryColumns = () => {
       key: "rnfCount",
       align: "center",
       render: (rnfCount, record: any) => (
-        <p style={{ color: record.rnfRatio > 20 && record.queue!=="RNF_CRAWL" ? "red" : "inherit" }}>
+        <p
+          style={{
+            color:
+              record.rnfRatio > 20 && record.queue !== "RNF_CRAWL"
+                ? "red"
+                : "inherit",
+          }}
+        >
           {rnfCount} ({record.rnfRatio}%)
         </p>
       ),

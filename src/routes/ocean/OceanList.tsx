@@ -71,7 +71,7 @@ const ReferenceList: React.FC = () => {
       queue: crawlQueue,
       carriers: [carrier],
       referenceType: refType,
-      timeCategory: "",
+      bucket: "",
       active: active,
     };
     setParam(sendData);
