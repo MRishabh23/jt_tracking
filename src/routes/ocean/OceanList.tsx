@@ -37,6 +37,7 @@ const ReferenceList: React.FC = () => {
     active: "yes",
     referenceType: "BOOKING"
   });
+
   const [isActiveYes, setIsActiveYes]= useState(param.get("active")==="yes"?true:false)
 
   const { carrierList } = useCarrierList();
@@ -216,13 +217,12 @@ const ReferenceList: React.FC = () => {
                 )}
               </Select>
             </Form.Item>
-            
+
             <Form.Item
               label={<p className="text-lg">Active</p>}
               name="active"
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
               rules={[{ required: true, message: "Please Select active status!" }]}
-              
             >
               <Select 
               placeholder="Select active status..." 
@@ -233,6 +233,7 @@ const ReferenceList: React.FC = () => {
                 <Select.Option value="no">No</Select.Option>
               </Select>
             </Form.Item>
+            
             <Form.Item
               label={<p className="text-lg">Reference</p>}
               name="refType"
@@ -249,6 +250,7 @@ const ReferenceList: React.FC = () => {
                 </Select.Option>
               </Select>
             </Form.Item>
+            
             <Form.Item
               label={<p className="text-lg">Crawl Queue</p>}
               name="crawlQueue"

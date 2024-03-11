@@ -59,7 +59,6 @@ const OceanLatencyChart: React.FC = () => {
   useCheckAuth();
   const [form] = Form.useForm();
   form.setFieldValue("year", "2024");
-  
 
   const monthsList = getMonthsToThisYear();
   // const monthsList = ["January", "February", "March", "April", "May", "June",
@@ -323,4 +322,6 @@ const OceanLatencyChart: React.FC = () => {
   );
 };
 
+
 export default React.memo(OceanLatencyChart);
+

@@ -41,6 +41,8 @@ export interface DataType {
   fkJson404per?: number;
   duration?: string;
   rnfCount?: number;
+  fkJson404?: number;
+  fkJson404per?: number;
   diffCount?: number;
   durationToLaunch?: string;
   deliverCount?: number;
@@ -161,6 +163,7 @@ export const HistoryCreation = (historyList: any, subId: string) => {
         item.v.crawl_status === undefined ? "No Data" : item.v.crawl_status,
       subscriptionId: subId,
       schedulerId: item.k,
+      error: convertToTitleCase(item.v.error || "") ,
       fkJson:
         item.v.fkMappedJsonResourceId === undefined ||
         item.v.fkMappedJsonResourceId === null ||
@@ -906,6 +909,18 @@ export const getSummaryColumns = () => {
       width: 120,
       sorter: (a: any, b: any) => a.fkJson404 - b.fkJson404,
     },
+    // {
+    //   title: "FK Json (404)",
+    //   dataIndex: "fkJson404",
+    //   key: "fkJson404",
+    //   align: "center",
+    //   render: (fkJson404, record: any) => (
+    //     <p style={{ color: record.fkJson404per > 3 ? "red" : "inherit" }}>
+    //       {fkJson404} ({record.fkJson404per}%)
+    //     </p>
+    //   ),
+    //   width: 120,
+    // },
     {
       title: "Fail",
       dataIndex: "failedCount",

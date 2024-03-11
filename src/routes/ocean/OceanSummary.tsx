@@ -19,6 +19,7 @@ dayjs.extend(customParseFormat);
 
 const dateFormat = "YYYY-MM-DD hh:mm:ss";
 
+
 const OceanSummary: React.FC = () => {
   useCheckAuth();
   const [selectState, setSelectState] = useState<String[]>([]);
@@ -273,7 +274,7 @@ const OceanSummary: React.FC = () => {
         </div>
       ) : (
         <div className="mt-7">
-          <div className="py-1 px-4 bg-gray-200 rounded-md">
+          <div className="px-4 py-1 bg-gray-200 rounded-md">
             {list.length > 0 ? (
               <Table
                 columns={getSumCol}

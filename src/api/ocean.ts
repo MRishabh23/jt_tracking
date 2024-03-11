@@ -277,6 +277,7 @@ export const useReferenceListCount = (param: any, page: any) => {
 
   useEffect(() => {
     let ignore = false;
+    
     const defaultCall = async () => {
       setLoadingCount(true);
       await oceanCalls(newData)
@@ -318,6 +319,11 @@ export const useReferenceListCount = (param: any, page: any) => {
       setReferenceCountError("");
       defaultCall();
     } else {
+      setReferenceCountError("");
+      setLoadingCount(false);
+    }
+    else
+    {
       setReferenceCountError("");
       setLoadingCount(false);
     }
@@ -568,7 +574,6 @@ export const useHistoryList = (params: any) => {
       setLoading(true);
       await oceanCalls(newData)
         .then((res) => {
-          console.log(res);
           if (
             res.status === 200 &&
             res.data.statusCode === "200" &&
@@ -582,7 +587,6 @@ export const useHistoryList = (params: any) => {
             ) {
               throw { message: result.response.error };
             }
-            console.log(result.response.data);
             setList(result.response.data);
 
             setLoading(false);
@@ -698,7 +702,6 @@ export const useFetchHistoryData = (data: OceanProp) => {
       setObjLoad(true);
       await oceanCalls(data)
         .then((res) => {
-          console.log(res);
           if (
             res.status === 200 &&
             res.data.statusCode === "200" &&
@@ -706,7 +709,6 @@ export const useFetchHistoryData = (data: OceanProp) => {
           ) {
             const result = res.data;
             setObj(result.response.data);
-            console.log(result.response.data);
             setObjLoad(false);
           } else {
             throw { message: res.response.data.response };

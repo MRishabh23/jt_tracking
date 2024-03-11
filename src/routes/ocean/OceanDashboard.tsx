@@ -19,7 +19,7 @@ const OceanDashboard: React.FC = () => {
     },
     {
       route: "SUMMARY",
-      param: "queue=NORMAL"
+      param: "queue=NORMAL",
     },
     {
       route: "INDUCED-LATENCY",
@@ -38,7 +38,7 @@ const OceanDashboard: React.FC = () => {
               <Link
                 to={{
                   pathname: `/ocean/${item.route.toLowerCase()}`,
-                  search: item.param
+                  search: item.param,
                 }}
                 className="hover:text-gray-200"
               >
