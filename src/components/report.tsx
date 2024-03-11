@@ -41,8 +41,6 @@ export interface DataType {
   fkJson404per?: number;
   duration?: string;
   rnfCount?: number;
-  fkJson404?: number;
-  fkJson404per?: number;
   diffCount?: number;
   durationToLaunch?: string;
   deliverCount?: number;
@@ -163,7 +161,6 @@ export const HistoryCreation = (historyList: any, subId: string) => {
         item.v.crawl_status === undefined ? "No Data" : item.v.crawl_status,
       subscriptionId: subId,
       schedulerId: item.k,
-      error: convertToTitleCase(item.v.error || "") ,
       fkJson:
         item.v.fkMappedJsonResourceId === undefined ||
         item.v.fkMappedJsonResourceId === null ||

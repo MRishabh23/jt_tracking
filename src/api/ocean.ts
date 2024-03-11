@@ -322,11 +322,7 @@ export const useReferenceListCount = (param: any, page: any) => {
       setReferenceCountError("");
       setLoadingCount(false);
     }
-    else
-    {
-      setReferenceCountError("");
-      setLoadingCount(false);
-    }
+    
     return () => {
       ignore = true;
     };
