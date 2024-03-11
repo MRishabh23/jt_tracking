@@ -37,17 +37,23 @@ export interface DataType {
   successCount?: number;
   successRatio?: number;
   failedCount?: number;
+  fkJson404?: number;
+  fkJson404per?: number;
   duration?: string;
   rnfCount?: number;
   fkJson404?: number;
   fkJson404per?: number;
   diffCount?: number;
+  durationToLaunch?: string;
+  deliverCount?: number;
+  closeCount?: number;
   diffRatio?: string;
   skipped?: number;
   fkTimeout?: number;
   start?: string;
   end?: string;
   lastRun?: string;
+  crawlFrequency?: string;
   failCategories?: {};
 }
 
@@ -131,7 +137,7 @@ export const referenceCreation = (referenceList: any) => {
       key: index,
       carrier: item.carrier,
       referenceType: item.referenceType,
-      queue:item.queue,
+      queue: item.queue,
       subscriptionId: item.subscriptionId,
       status: item.status,
       referenceNumber: item.referenceNumber,
@@ -152,6 +158,7 @@ export const HistoryCreation = (historyList: any, subId: string) => {
     return {
       key: index,
       insertionTime: formatDate(item.v.insertion_time),
+      error: convertToTitleCase(item.v.error || ""),
       crawlStatus:
         item.v.crawl_status === undefined ? "No Data" : item.v.crawl_status,
       subscriptionId: subId,
@@ -181,46 +188,44 @@ export const HistoryCreation = (historyList: any, subId: string) => {
 };
 
 export const SummaryCreation = (summaryList: any) => {
-  const sList = summaryList
-    .sort(function (a: any, b: any) {
-      const nameA = +a.jtCrawledTotal;
-      const nameB = +b.jtCrawledTotal;
-      return nameB - nameA;
-    })
-    .map((item: any, index: number) => {
-      return {
-        key: index,
-        carrier: item.jtCarrierCode,
-        activeCount: item.jtCrawledTotal,
-        successCount: item.successCount,
-        successRatio: item.successRatio,
-        failedCount: item.failCount,
-        failedRatio: item.failureRatio,
-        duration: item.timeDiffInFk,
-        durationMin: item.timeDiffMinutes,
-        rnfCount: item.getReferenceNotFound,
-        rnfRatio: item.getReferenceNotFoundPercentage,
-        // fkJson404: item.referenceNotFound || 0,
-        // fkJson404per: item.refPercentage || 0,
-        diffCount: item.getTotalDiffFound,
-        diffRatio: item.diffRatio,
-        skipped: item.skipped404,
-        fkTimeout: item.toFKFailedNotSent || 0,
-        start: formatDate(item.start_time),
-        end: formatDate(item.end_time),
-        schedulerId: item.schedulerId,
-        queue: item.queueType,
-        lastRun: item.lastRunStartAt,
-        hitRateCount: item.hitRateCount,
-        hitRatePer: item.hitRatePer,
-        failCategories: {
-          "Sending Failure": item.toFKFailedNotSent || 0,
-          "API/Scraping Failure": item.toFKFailedScraping,
-          "Mapping Failure": item.toFKFailedMapping,
-          "Validation Failure": item.toFKFailedValidation,
-        },
-      };
-    });
+  const sList = summaryList.map((item: any, index: number) => {
+    return {
+      key: index,
+      carrier: item.jtCarrierCode,
+      activeCount: item.jtCrawledTotal,
+      successCount: item.successCount,
+      successRatio: item.successRatio,
+      failedCount: item.failCount,
+      failedRatio: item.failureRatio,
+      duration: item.timeDiffInFk,
+      durationMin: item.timeDiffMinutes,
+      rnfCount: item.getReferenceNotFound,
+      rnfRatio: item.getReferenceNotFoundPercentage,
+      fkJson404: item.referenceNotFound || 0,
+      fkJson404per: item.refPercentage || 0,
+      diffCount: item.getTotalDiffFound,
+      diffRatio: item.diffRatio,
+      skipped: item.skipped404,
+      fkTimeout: item.toFKFailedNotSent,
+      durationToLaunch: item.durationToLaunch,
+      deliverCount: item.deliverCount,
+      closeCount: item.closeCount,
+      start: formatDate(item.start_time),
+      end: formatDate(item.end_time),
+      schedulerId: item.schedulerId,
+      queue: item.queueType,
+      lastRun: item.lastRunStartAt,
+      hitRateCount: item.hitRateCount,
+      hitRatePer: item.hitRatePer,
+      crawlFrequency: item.crawlFrequency,
+      failCategories: {
+        "Sending Failure": item.toFKFailedNotSent,
+        "API/Scraping Failure": item.toFKFailedScraping,
+        "Mapping Failure": item.toFKFailedMapping,
+        "Validation Failure": item.toFKFailedValidation,
+      },
+    };
+  });
   return sList;
 };
 
@@ -300,10 +305,7 @@ export const getLatencyColumns = (mainList: any) => {
       title: "Queue",
       key: "queue",
       dataIndex: "queue",
-      render: (text) =>
-          text==="Rnf"?
-          text.toUpperCase():
-          text,
+      render: (text) => (text === "Rnf" ? text.toUpperCase() : text),
       fixed: true,
       width: 90,
       align: "center",
@@ -312,20 +314,7 @@ export const getLatencyColumns = (mainList: any) => {
       title: "Total",
       dataIndex: "total",
       key: "total",
-      render: (text, record: any) =>
-        record.total > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=total&queue=${record.queue}&count=${record.total}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
-        ) : (
-          0
-        ),
+      render: (text, record: any) => (record.total > 0 ? text : 0),
       sorter: (a: any, b: any) => a.total - b.total,
       width: 75,
       align: "center",
@@ -336,15 +325,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "first",
       render: (text, record: any) =>
         record.first > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=first&queue=${record.queue}&count=${record.first}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=first&queue=${record.queue}&count=${record.first}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -358,15 +347,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "second",
       render: (text, record: any) =>
         record.second > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=second&queue=${record.queue}&count=${record.second}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=second&queue=${record.queue}&count=${record.second}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -380,15 +369,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "third",
       render: (text, record: any) =>
         record.third > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=third&queue=${record.queue}&count=${record.third}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=third&queue=${record.queue}&count=${record.third}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -402,15 +391,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "fourth",
       render: (text, record: any) =>
         record.fourth > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=fourth&queue=${record.queue}&count=${record.fourth}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=fourth&queue=${record.queue}&count=${record.fourth}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -424,15 +413,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "fifth",
       render: (text, record: any) =>
         record.fifth > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=fifth&queue=${record.queue}&count=${record.fifth}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=fifth&queue=${record.queue}&count=${record.fifth}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -446,15 +435,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "sixth",
       render: (text, record: any) =>
         record.sixth > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=sixth&queue=${record.queue}&count=${record.sixth}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=sixth&queue=${record.queue}&count=${record.sixth}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -468,15 +457,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "seventh",
       render: (text, record: any) =>
         record.seventh > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=seventh&queue=${record.queue}&count=${record.seventh}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=seventh&queue=${record.queue}&count=${record.seventh}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -490,15 +479,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "eight",
       render: (text, record: any) =>
         record.eight > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=eight&queue=${record.queue}&count=${record.eight}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=eight&queue=${record.queue}&count=${record.eight}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -512,15 +501,15 @@ export const getLatencyColumns = (mainList: any) => {
       key: "ninth",
       render: (text, record: any) =>
         record.ninth > 0 ? (
-          // <Link
-          //   to={{
-          //     pathname: "/ocean/reference",
-          //     search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&type=ninth&queue=${record.queue}&count=${record.ninth}`,
-          //   }}
-          //   target="_blank"
-          // >
-            text
-          // </Link>
+          <Link
+            to={{
+              pathname: "/ocean/reference",
+              search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=ninth&queue=${record.queue}&count=${record.ninth}`,
+            }}
+            target="_blank"
+          >
+            {text}
+          </Link>
         ) : (
           0
         ),
@@ -663,15 +652,13 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "crawlStatus",
       key: "crawlStatus",
       render: (crawlStatus, record) => (
-        <Tooltip
-          title={ record.error === ""? "No error" : record.error }
-        >
-        <Tag
-          color={crawlStatus == "SUCCESS" ? colorStatus[0] : colorStatus[1]}
-          key={color}
-        >
-          {crawlStatus.toUpperCase()}
-        </Tag>
+        <Tooltip title={record.error === "" ? "No error" : record.error}>
+          <Tag
+            color={crawlStatus == "SUCCESS" ? colorStatus[0] : colorStatus[1]}
+            key={color}
+          >
+            {crawlStatus.toUpperCase()}
+          </Tag>
         </Tooltip>
       ),
       align: "center",
@@ -687,12 +674,11 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "fkJson",
       key: "fkJson",
       render: (fkJson, record, index) =>
-      record.error !== ""?
-      record.error
-      :
-        record.fkJson !== "No Data" &&
-        record.fkJson === "SAME_PAYLOAD" &&
-        record.fkLatestJson !== "No Data" ? (
+        record.error !== "" ? (
+          record.error
+        ) : record.fkJson !== "No Data" &&
+          record.fkJson === "SAME_PAYLOAD" &&
+          record.fkLatestJson !== "No Data" ? (
           <button
             key={`${index} + ${record.schedulerId}`}
             onClick={() =>
@@ -742,10 +728,10 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
       dataIndex: "crawlJson",
       key: "crawlJson",
       render: (crawlJson, record) =>
-      record.error !== ""?
-      record.error
-      :
-        record.crawlJson !== "No Data" && record.fkJson === "SAME_PAYLOAD" ? (
+        record.error !== "" ? (
+          record.error
+        ) : record.crawlJson !== "No Data" &&
+          record.fkJson === "SAME_PAYLOAD" ? (
           <button
             key={crawlJson + record.schedulerId}
             onClick={() =>
@@ -837,8 +823,8 @@ export const getSummaryColumns = () => {
           ? "Normal"
           : queue === "ADAPTIVE_CRAWL"
           ? "Adaptive"
-          : queue === "RNF_CRAWL" 
-          ? "RNF" 
+          : queue === "RNF_CRAWL"
+          ? "RNF"
           : "",
       width: 120,
     },
@@ -848,6 +834,7 @@ export const getSummaryColumns = () => {
       key: "activeCount",
       align: "center",
       width: 120,
+      sorter: (a: any, b: any) => a.activeCount - b.activeCount,
     },
     {
       title: "Last Run",
@@ -887,6 +874,7 @@ export const getSummaryColumns = () => {
         </p>
       ),
       width: 120,
+      sorter: (a: any, b: any) => a.successCount - b.successCount,
     },
     {
       title: "RNF (404)",
@@ -894,11 +882,32 @@ export const getSummaryColumns = () => {
       key: "rnfCount",
       align: "center",
       render: (rnfCount, record: any) => (
-        <p style={{ color: record.rnfRatio > 20 && record.queue!=="RNF_CRAWL" ? "red" : "inherit" }}>
+        <p
+          style={{
+            color:
+              record.rnfRatio > 20 && record.queue !== "RNF_CRAWL"
+                ? "red"
+                : "inherit",
+          }}
+        >
           {rnfCount} ({record.rnfRatio}%)
         </p>
       ),
       width: 120,
+      sorter: (a: any, b: any) => a.rnfCount - b.rnfCount,
+    },
+    {
+      title: "FK Json (404)",
+      dataIndex: "fkJson404",
+      key: "fkJson404",
+      align: "center",
+      render: (fkJson404, record: any) => (
+        <p style={{ color: record.fkJson404per > 3 ? "red" : "inherit" }}>
+          {fkJson404} ({record.fkJson404per}%)
+        </p>
+      ),
+      width: 120,
+      sorter: (a: any, b: any) => a.fkJson404 - b.fkJson404,
     },
     // {
     //   title: "FK Json (404)",
@@ -933,6 +942,7 @@ export const getSummaryColumns = () => {
         </Tooltip>
       ),
       width: 120,
+      sorter: (a: any, b: any) => a.failedCount - b.failedCount,
     },
 
     {
@@ -946,8 +956,39 @@ export const getSummaryColumns = () => {
       ),
       align: "center",
       width: 120,
+      sorter: (a: any, b: any) => a.diffCount - b.diffCount,
     },
-
+    {
+      title: "Crawl Frequency",
+      dataIndex: "crawlFrequency",
+      key: "crawlFrequency",
+      align: "center",
+      width: 120,
+    },
+    {
+      title: "Duration To Launch",
+      dataIndex: "durationToLaunch",
+      key: "durationToLaunch",
+      align: "center",
+      width: 120,
+      sorter: (a: any, b: any) => a.durationToLaunch - b.durationToLaunch,
+    },
+    {
+      title: "Deliver Count",
+      dataIndex: "deliverCount",
+      key: "deliverCount",
+      align: "center",
+      width: 120,
+      sorter: (a: any, b: any) => a.deliverCount - b.deliverCount,
+    },
+    {
+      title: "Close Count",
+      dataIndex: "closeCount",
+      key: "closeCount",
+      align: "center",
+      width: 120,
+      sorter: (a: any, b: any) => a.closeCount - b.closeCount,
+    },
     {
       title: "FK Timeout",
       dataIndex: "fkTimeout",

@@ -15,13 +15,13 @@ import OceanList from "./routes/ocean/OceanList";
 import OceanHistory from "./routes/ocean/OceanHistory";
 import OceanSummary from "./routes/ocean/OceanSummary";
 import OceanDashboard from "./routes/ocean/OceanDashboard";
+import OceanLatencyChart from "./routes/ocean/OceanLatencyChart";
 
 // other imports
 import Login from "./routes/auth/login";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { useSelector } from "react-redux";
-
 
 interface props {}
 

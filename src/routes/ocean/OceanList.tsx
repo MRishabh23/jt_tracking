@@ -27,6 +27,7 @@ const customDrawerStyle = {
 
 const ReferenceList: React.FC = () => {
   useCheckAuth();
+  
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
   const [form2] = Form.useForm();
@@ -61,6 +62,7 @@ const ReferenceList: React.FC = () => {
 
   const onFinish = async (values: any) => {
     setOpen(false);
+
     const carrier = values.carrier;
     const active = values.active === undefined ? "yes" : values.active;
     const refType = values.refType === undefined || active==="no"? "" : values.refType;
@@ -70,7 +72,7 @@ const ReferenceList: React.FC = () => {
       queue: crawlQueue,
       carriers: [carrier],
       referenceType: refType,
-      timeCategory: "",
+      bucket: "",
       active: active,
     };
     setParam(sendData);
@@ -78,6 +80,7 @@ const ReferenceList: React.FC = () => {
       current: 1,
       pageSize: 5,
     };
+
     handleTableChange(pagination);
   };
 
@@ -214,12 +217,12 @@ const ReferenceList: React.FC = () => {
                 )}
               </Select>
             </Form.Item>
+
             <Form.Item
               label={<p className="text-lg">Active</p>}
               name="active"
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
               rules={[{ required: true, message: "Please Select active status!" }]}
-
             >
               <Select 
               placeholder="Select active status..." 
@@ -230,6 +233,7 @@ const ReferenceList: React.FC = () => {
                 <Select.Option value="no">No</Select.Option>
               </Select>
             </Form.Item>
+            
             <Form.Item
               label={<p className="text-lg">Reference</p>}
               name="refType"
@@ -246,6 +250,7 @@ const ReferenceList: React.FC = () => {
                 </Select.Option>
               </Select>
             </Form.Item>
+            
             <Form.Item
               label={<p className="text-lg">Crawl Queue</p>}
               name="crawlQueue"
@@ -280,14 +285,9 @@ const ReferenceList: React.FC = () => {
   useEffect(() => {
     let ignore = false;
     if (!ignore) {
-      if (param.get("searchQuery") === null) {
-        form.setFieldValue("SubscriptionId", "");
-      } else {
-        form.setFieldValue("SubscriptionId", param.get("searchQuery"));
-        form1.setFieldValue("carrier", "");
-      }
-
-      // param.get("searchQuery")!==null?form1.setFieldValue("carrier",param.get("carriers")):form1.setFieldValue("carrier","");
+      param.get("searchQuery") === null
+        ? form.setFieldValue("SubscriptionId", "")
+        : form.setFieldValue("SubscriptionId", param.get("searchQuery"));
 
       param.get("carriers") !== null && param.get("carriers") !== undefined
         ? form1.setFieldValue("carrier", param.get("carriers"))
@@ -298,11 +298,11 @@ const ReferenceList: React.FC = () => {
         ? form1.setFieldValue("refType", param.get("referenceType"))
         : form1.setFieldValue("refType", "BOOKING");
 
-        param.get("queue") !== null && param.get("queue") !== undefined && param.get("queue") !== ""
+      param.get("queue") !== null && param.get("queue") !== undefined && param.get("queue") !== ""
         ? form1.setFieldValue("crawlQueue", param.get("queue"))
         : form1.setFieldValue("crawlQueue", "NORMAL");
 
-        param.get("active") !== null && param.get("active") !== undefined && param.get("active")!== ""
+      param.get("active") !== null && param.get("active") !== undefined && param.get("active")!== ""
         ? form1.setFieldValue("active", param.get("active"))
         : form1.setFieldValue("active", "yes");
 
@@ -318,6 +318,7 @@ const ReferenceList: React.FC = () => {
         form2.setFieldValue("reference", referenceArr?.[1] || "");
       }
     }
+
     return () => {
       ignore = true;
     };
@@ -330,7 +331,12 @@ const ReferenceList: React.FC = () => {
       </div>
       <div className="flex flex-col items-center justify-around p-5 mt-8 bg-gray-200 rounded-md xms:flex-row lg:mt-12">
         <>
-          <Form name="search" form={form} onFinish={onFinishSearch}>
+          <Form
+            name="search"
+            form={form}
+            // initialValues={{ SubscriptionId:  param.get("searchQuery") === null?"": param.get("searchQuery") }}
+            onFinish={onFinishSearch}
+          >
             <Form.Item
               name="SubscriptionId"
               className="mb-0"
@@ -368,7 +374,7 @@ const ReferenceList: React.FC = () => {
         </div>
       ) : (
         <div className="mt-7">
-          <div className=" p-4 bg-gray-200 rounded-md">
+          <div className="p-4 bg-gray-200 rounded-md ">
             <Table
               columns={getRefCol}
               dataSource={data2}

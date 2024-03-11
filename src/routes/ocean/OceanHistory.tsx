@@ -103,7 +103,7 @@ const ReferenceHistory: React.FC = () => {
         <div className="flex w-full h-full">
           <div className="flex-1 p-1 overflow-auto">
             <div className="flex gap-2 text-lg">
-            {Object.keys(obj).length > 0 ? (
+              {Object.keys(obj).length > 0 ? (
                 <JsonView src={obj} />
               ) : (
                 <></>
@@ -195,7 +195,7 @@ const ReferenceHistory: React.FC = () => {
                     <div className="flex items-center justify-center">
                       <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                     </div>
-                   ) : list.length === 0 && form.getFieldValue("SubscriptionId")!=="" ?(
+                  ) : list.length === 0 && form.getFieldValue("SubscriptionId")!=="" ?(
                     <p className="flex justify-center text-lg font-semibold text-black">
                       No data!!
                     </p>
@@ -203,7 +203,8 @@ const ReferenceHistory: React.FC = () => {
                     <p className="flex justify-center text-lg font-semibold text-black">
                       Enter the Subscription Id to see history!
                     </p>
-                  )}
+                  )
+                  }
                 </>
               )}
             </div>

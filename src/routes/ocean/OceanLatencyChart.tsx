@@ -27,43 +27,44 @@ ChartJS.register(
 );
 
 function getMonthsToThisYear() {
-    const today = new Date();
-    const currentMonth = today.getMonth(); // 0 (January) to 11 (December)
-  
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-  
-    // Check if current date is 2nd or later in the current month
-    const includeCurrentMonth = today.getDate() >= 2;
-  
-    if (includeCurrentMonth) {
-      return monthNames.slice(0, currentMonth + 1);
-    } else {
-      return monthNames.slice(0, currentMonth);
-    }
+  const today = new Date();
+  const currentMonth = today.getMonth(); // 0 (January) to 11 (December)
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  // Check if current date is 2nd or later in the current month
+  const includeCurrentMonth = today.getDate() >= 2;
+
+  if (includeCurrentMonth) {
+    return monthNames.slice(0, currentMonth + 1);
+  } else {
+    return monthNames.slice(0, currentMonth);
   }
+}
 
 const OceanLatencyChart: React.FC = () => {
   useCheckAuth();
   const [form] = Form.useForm();
   form.setFieldValue("year", "2024");
 
-
   const monthsList = getMonthsToThisYear();
-  const { carrierList } = useCarrierList();
+  // const monthsList = ["January", "February", "March", "April", "May", "June",
+  // "July", "August", "September", "October", "November", "December"];
 
+  const { carrierList } = useCarrierList();
   const [latencyChartParam, setLatencyChartParam] = useSearchParams();
   const [selectState, setSelectState] = useState<String[]>(latencyChartParam.getAll("carriers") || []);
   // const [selectedCarrier, setSelectedCarrier] = useState([]);
@@ -143,9 +144,9 @@ const OceanLatencyChart: React.FC = () => {
         };
       }
     }
-  })
+  });
 
- const data = {
+  const data = {
     labels,
     datasets: val,
   };
@@ -179,14 +180,13 @@ const OceanLatencyChart: React.FC = () => {
     };
   }, [latencyChartParam]);
 
-
   return (
     <div className="relative w-full min-h-full p-3 pt-1">
       <div className="flex items-center justify-center font-semibold">
         <h3 className="text-3xl">JT Induced Latency</h3>
       </div>
       <div className="p-3 mt-8 bg-gray-200 rounded-md lg:mt-4">
-      <p className="text-sm text-red-600">
+        <p className="text-sm text-red-600">
           {" "}
           ** You can either select multiple carriers or multiple months
         </p>
@@ -216,7 +216,7 @@ const OceanLatencyChart: React.FC = () => {
                 carrierList.map((item: any, index: any) => (
                   <Select.Option
                     disabled={
-                        ((selectedMonth.length > 1 && selectState.length === 1) ||
+                      ((selectedMonth.length > 1 && selectState.length === 1) ||
                         selectState.length === 3) &&
                       !selectState.includes(item.toLowerCase())
                         ? true
@@ -322,4 +322,6 @@ const OceanLatencyChart: React.FC = () => {
   );
 };
 
+
 export default React.memo(OceanLatencyChart);
+
