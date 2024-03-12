@@ -58,7 +58,7 @@ function getMonthsToThisYear() {
 const OceanLatencyChart: React.FC = () => {
   useCheckAuth();
   const [form] = Form.useForm();
-  form.setFieldValue("year", "2024");
+  // form.setFieldValue("year", "2024");
 
   const monthsList = getMonthsToThisYear();
   // const monthsList = ["January", "February", "March", "April", "May", "June",
@@ -66,9 +66,13 @@ const OceanLatencyChart: React.FC = () => {
 
   const { carrierList } = useCarrierList();
   const [latencyChartParam, setLatencyChartParam] = useSearchParams();
-  const [selectState, setSelectState] = useState<String[]>(latencyChartParam.getAll("carriers") || []);
+  // const [selectState, setSelectState] = useState<String[]>(latencyChartParam.getAll("carriers") || []);
+  const [selectState, setSelectState] = useState<String[]>([]);
   // const [selectedCarrier, setSelectedCarrier] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState<String[]>(latencyChartParam.getAll("months") || []);
+  // const [selectedMonth, setSelectedMonth] = useState<String[]>(
+  //   latencyChartParam.getAll("months") || []
+  // );
+  const [selectedMonth, setSelectedMonth] = useState<String[]>([]);
   const {
     list,
     loading,
@@ -90,13 +94,17 @@ const OceanLatencyChart: React.FC = () => {
       x: {
         title: {
           display: true,
-          text: "Day"
+          text: "Day",
         },
       },
       y: {
         title: {
           display: true,
-          text: "Latency in mins"
+          text: "Latency in mins",
+        },
+        beginAtZero: true,
+        ticks: {
+          stepSize: 4,
         },
       },
     },
@@ -109,8 +117,20 @@ const OceanLatencyChart: React.FC = () => {
   } else {
     chartKeys = Object.keys(dataSet);
   }
-  const bgArray = ["LightSalmon", "LightSkyBlue", "MediumSeaGreen "];
-  const borderArray = ["Salmon", "CornflowerBlue", "SeaGreen "];
+  const bgArray = [
+    "LightSalmon",
+    "LightSkyBlue",
+    "MediumSeaGreen",
+    "LightPink",
+    "Peru",
+  ];
+  const borderArray = [
+    "Salmon",
+    "CornflowerBlue",
+    "SeaGreen",
+    "HotPink",
+    "Sienna",
+  ];
 
   let labels: any[] = [];
   for (let i = 1; i <= 31; i++) {
@@ -135,10 +155,11 @@ const OceanLatencyChart: React.FC = () => {
   const val: any = chartKeys.map((keys: any, index: any) => {
     for (const key in dataSet) {
       if (key === keys) {
-        const dataArr = dataSet[key];
+        const dataArr: any[] = dataSet[key];
+        const dataArrInHours = dataArr.map((minutes) => minutes / 60.0);
         return {
           label: key,
-          data: dataArr,
+          data: dataArrInHours,
           backgroundColor: bgArray[index],
           borderColor: borderArray[index],
         };
@@ -169,10 +190,12 @@ const OceanLatencyChart: React.FC = () => {
       latencyChartParam.get("carriers") === null
         ? form.setFieldValue("carrier", [])
         : form.setFieldValue("carrier", latencyChartParam.getAll("carriers"));
+      setSelectState(latencyChartParam.getAll("carriers") || []);
 
       latencyChartParam.get("months") === null
         ? form.setFieldValue("month", [])
         : form.setFieldValue("month", latencyChartParam.getAll("months"));
+        setSelectedMonth(latencyChartParam.getAll("months") || [])
     }
 
     return () => {
@@ -196,7 +219,7 @@ const OceanLatencyChart: React.FC = () => {
           form={form}
           size="middle"
           className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
-          //   initialValues={{ carrier: carrierParam, queue: queueParam, range:[dayjs(defaultStart, dateFormat), dayjs(defaultEnd, dateFormat)] }}
+            initialValues={{ year : "2024" }}
         >
           <Form.Item
             label={<p className="text-lg">Carrier</p>}
@@ -217,7 +240,7 @@ const OceanLatencyChart: React.FC = () => {
                   <Select.Option
                     disabled={
                       ((selectedMonth.length > 1 && selectState.length === 1) ||
-                        selectState.length === 3) &&
+                        selectState.length === 5) &&
                       !selectState.includes(item.toLowerCase())
                         ? true
                         : false
@@ -322,6 +345,4 @@ const OceanLatencyChart: React.FC = () => {
   );
 };
 
-
 export default React.memo(OceanLatencyChart);
-
