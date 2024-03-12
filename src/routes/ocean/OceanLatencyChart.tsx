@@ -100,7 +100,7 @@ const OceanLatencyChart: React.FC = () => {
       y: {
         title: {
           display: true,
-          text: "Latency in mins",
+          text: "Latency in hours",
         },
         beginAtZero: true,
         ticks: {
