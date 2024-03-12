@@ -51,7 +51,7 @@ export const useLogin = (data: LoginProp) => {
         .then((res) => {
           const result = res.data;
           if (result.statusCode === "200") {
-            if (result.response.attempt === "failed") {
+            if (result.response.success === false) {
               throw { message: result.response.data };
             } else {
               msg("success", "Login Successful!!");
