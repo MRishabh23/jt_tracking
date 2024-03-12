@@ -1,6 +1,6 @@
-import Truck from "../assets/truck.avif";
-import Air from "../assets/Air.avif";
-import Ocean from "../assets/Ocean.avif";
+import Air from "../assets/Air.jpg";
+import Ocean from "../assets/Ocean.jpg";
+import Truck from "../assets/Truck.jpg";
 
 
 export const imageList = [
