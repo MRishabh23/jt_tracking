@@ -58,20 +58,12 @@ function getMonthsToThisYear() {
 const OceanLatencyChart: React.FC = () => {
   useCheckAuth();
   const [form] = Form.useForm();
-  // form.setFieldValue("year", "2024");
 
   const monthsList = getMonthsToThisYear();
-  // const monthsList = ["January", "February", "March", "April", "May", "June",
-  // "July", "August", "September", "October", "November", "December"];
 
   const { carrierList } = useCarrierList();
   const [latencyChartParam, setLatencyChartParam] = useSearchParams();
-  // const [selectState, setSelectState] = useState<String[]>(latencyChartParam.getAll("carriers") || []);
   const [selectState, setSelectState] = useState<String[]>([]);
-  // const [selectedCarrier, setSelectedCarrier] = useState([]);
-  // const [selectedMonth, setSelectedMonth] = useState<String[]>(
-  //   latencyChartParam.getAll("months") || []
-  // );
   const [selectedMonth, setSelectedMonth] = useState<String[]>([]);
   const {
     list,
@@ -322,7 +314,7 @@ const OceanLatencyChart: React.FC = () => {
             chartKeys.length !== 0 && !loading ? `h-[35rem]` : `h-full`
           }`}
         >
-          <div className="min-h-full py-4 px-10 bg-gray-200 rounded-md">
+          <div className="min-h-full px-10 py-4 bg-gray-200 rounded-md">
             {chartKeys.length !== 0 && !loading ? (
               <Line options={options} data={data} />
             ) : (

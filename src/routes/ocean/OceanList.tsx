@@ -27,18 +27,20 @@ const customDrawerStyle = {
 
 const ReferenceList: React.FC = () => {
   useCheckAuth();
-  
+
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
   const [form2] = Form.useForm();
 
   const [param, setParam] = useSearchParams({
-    carriers:["acl"],
+    carriers: ["acl"],
     active: "yes",
-    referenceType: "BOOKING"
+    referenceType: "BOOKING",
   });
 
-  const [isActiveYes, setIsActiveYes]= useState(param.get("active")==="yes"?true:false)
+  const [isActiveYes, setIsActiveYes] = useState(
+    param.get("active") === "yes" ? true : false
+  );
 
   const { carrierList } = useCarrierList();
   const {
@@ -65,13 +67,18 @@ const ReferenceList: React.FC = () => {
 
     const carrier = values.carrier;
     const active = values.active === undefined ? "yes" : values.active;
-    const refType = values.refType === undefined || active==="no"? "" : values.refType;
-    const crawlQueue = values.crawlQueue === undefined || active==="no"? "" : values.crawlQueue;
+    const refType =
+      values.refType === undefined || active === "no" ? "" : values.refType;
+    const crawlQueue =
+      values.crawlQueue === undefined || active === "no"
+        ? ""
+        : values.crawlQueue;
 
     const sendData = {
       queue: crawlQueue,
       carriers: [carrier],
       referenceType: refType,
+      //timeCategory: "",
       bucket: "",
       active: active,
     };
@@ -114,11 +121,9 @@ const ReferenceList: React.FC = () => {
   };
 
   const handleActive = (value: any) => {
-    if(value==="no")
-    setIsActiveYes(false)
-    else
-    setIsActiveYes(true)
-  }
+    if (value === "no") setIsActiveYes(false);
+    else setIsActiveYes(true);
+  };
 
   const items: TabsProps["items"] = [
     {
@@ -222,35 +227,45 @@ const ReferenceList: React.FC = () => {
               label={<p className="text-lg">Active</p>}
               name="active"
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-              rules={[{ required: true, message: "Please Select active status!" }]}
+              rules={[
+                { required: true, message: "Please Select active status!" },
+              ]}
             >
-              <Select 
-              placeholder="Select active status..." 
-              allowClear={false}
-              onChange={handleActive}
+              <Select
+                placeholder="Select active status..."
+                allowClear={false}
+                onChange={handleActive}
               >
                 <Select.Option value="yes">Yes</Select.Option>
                 <Select.Option value="no">No</Select.Option>
               </Select>
             </Form.Item>
-            
+
             <Form.Item
               label={<p className="text-lg">Reference</p>}
               name="refType"
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
-              rules={isActiveYes?[{ required: true, message: "Please select reference type!" }]:[]}
+              rules={
+                isActiveYes
+                  ? [
+                      {
+                        required: true,
+                        message: "Please select reference type!",
+                      },
+                    ]
+                  : []
+              }
             >
-              <Select placeholder="select reference type..." disabled={!isActiveYes}>
+              <Select
+                placeholder="select reference type..."
+                disabled={!isActiveYes}
+              >
                 <Select.Option value="BOOKING">Booking</Select.Option>
-                <Select.Option value="BILLOFLADING">
-                  BillOfLading
-                </Select.Option>
-                <Select.Option value="CONTAINER">
-                  Container
-                </Select.Option>
+                <Select.Option value="BILLOFLADING">BillOfLading</Select.Option>
+                <Select.Option value="CONTAINER">Container</Select.Option>
               </Select>
             </Form.Item>
-            
+
             <Form.Item
               label={<p className="text-lg">Crawl Queue</p>}
               name="crawlQueue"
@@ -294,15 +309,20 @@ const ReferenceList: React.FC = () => {
         : form1.setFieldValue("carrier", "");
 
       param.get("referenceType") !== null &&
-      param.get("referenceType") !== undefined && param.get("referenceType") !== ""
+      param.get("referenceType") !== undefined &&
+      param.get("referenceType") !== ""
         ? form1.setFieldValue("refType", param.get("referenceType"))
         : form1.setFieldValue("refType", "BOOKING");
 
-      param.get("queue") !== null && param.get("queue") !== undefined && param.get("queue") !== ""
+      param.get("queue") !== null &&
+      param.get("queue") !== undefined &&
+      param.get("queue") !== ""
         ? form1.setFieldValue("crawlQueue", param.get("queue"))
         : form1.setFieldValue("crawlQueue", "NORMAL");
 
-      param.get("active") !== null && param.get("active") !== undefined && param.get("active")!== ""
+      param.get("active") !== null &&
+      param.get("active") !== undefined &&
+      param.get("active") !== ""
         ? form1.setFieldValue("active", param.get("active"))
         : form1.setFieldValue("active", "yes");
 

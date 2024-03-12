@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Dropdown, Drawer } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-// import { RiMenu3Fill } from "react-icons/ri";
 import { AiOutlineMenu } from "react-icons/ai";
 import CustomMenu from "../components/custom-menu";
 import { IoClose } from "react-icons/io5";
