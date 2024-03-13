@@ -1,4 +1,3 @@
-
 function getDayWithSuffix(day: number): string {
   if (day >= 11 && day <= 13) {
     return `${day}th`;
@@ -18,34 +17,37 @@ function getDayWithSuffix(day: number): string {
 
 function formatDate(inputDate: string): string {
   // Create a Date object from the input date string
-  if(inputDate !== "")
-  {
-  const date = new Date(inputDate);
+  if (inputDate !== "") {
+    if (!inputDate.includes(" ")) {
+      inputDate = inputDate.slice(0, 10) + " " + inputDate.slice(10);
+    }
 
-  // Extract day, month, and year
-  const day = date.getDate();
-  const year = date.getFullYear();
+    const date = new Date(inputDate);
 
-  // Options for formatting
-  const options: Intl.DateTimeFormatOptions = {
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-  };
+    // Extract day, month, and year
+    const day = date.getDate();
+    const year = date.getFullYear();
 
-  // Format the time part using the specified options and locale 'en-GB'
-  const timePart: string = date.toLocaleTimeString('en-GB', options);
+    // Options for formatting
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    };
 
-  // Format the date part with a suffix for the day
-  const formattedDate: string = `${getDayWithSuffix(day)} ${
-    new Intl.DateTimeFormat('en-GB', { month: 'short' }).format(date)
-  } ${year}, ${timePart}`;
+    // Format the time part using the specified options and locale 'en-GB'
+    const timePart: string = date.toLocaleTimeString("en-GB", options);
 
-  // Return the formatted date string
-  return formattedDate;
-}
-else
-return "";
+    // Format the date part with a suffix for the day
+    const formattedDate: string = `${getDayWithSuffix(
+      day
+    )} ${new Intl.DateTimeFormat("en-GB", { month: "short" }).format(
+      date
+    )} ${year}, ${timePart}`;
+
+    // Return the formatted date string
+    return formattedDate;
+  } else return "";
 }
 
 export default formatDate;
