@@ -17,7 +17,7 @@ import { FaSpinner } from "react-icons/fa";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 
-const ReferenceHistory: React.FC = () => {
+const AirHistory: React.FC = () => {
   useCheckAuth();
   const [form] = Form.useForm();
   const [historyParam, setHistoryParam] = useSearchParams();
@@ -28,18 +28,18 @@ const ReferenceHistory: React.FC = () => {
     tableParams,
     handleTableChange,
     historyError = "",
-  } = useHistoryList(historyParam, "OCEAN");
+  } = useHistoryList(historyParam, "AIR");
   const { count, historyCountError = "" } = useHistoryListCount(
     historyParam,
     tableParams.pagination?.current,
-    "OCEAN"
+    "AIR"
   );
 
   const [isModalOpen, setIsModalOpen] = useState({
     open: false,
     data: {
       type: "FETCH_HISTORY",
-      mode: "OCEAN",
+      mode: "AIR",
       subscriptionId: "",
       schId: "",
       resourceId: "",
@@ -81,7 +81,7 @@ const ReferenceHistory: React.FC = () => {
       open: !isModalOpen.open,
       data: {
         type: "FETCH_HISTORY",
-        mode: "OCEAN",
+        mode: "AIR",
         subscriptionId: "",
         schId: "",
         resourceId: "",
@@ -234,4 +234,4 @@ const ReferenceHistory: React.FC = () => {
   );
 };
 
-export default React.memo(ReferenceHistory);
+export default React.memo(AirHistory);

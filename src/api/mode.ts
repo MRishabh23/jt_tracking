@@ -487,7 +487,7 @@ export const useReferenceList = (param: any) => {
   };
 };
 
-export const useHistoryList = (params: any) => {
+export const useHistoryList = (params: any, mode: string) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [historyError, setHistoryError] = useState("");
@@ -498,10 +498,7 @@ export const useHistoryList = (params: any) => {
       showSizeChanger: false,
     },
   });
-  // const dispatch = useDispatch();
-  // const hisActData = {
-  //   error: "",
-  // };
+  
   const handleTableChange = (pagination: TablePaginationConfig) => {
     setTableParams({
       pagination,
@@ -514,7 +511,7 @@ export const useHistoryList = (params: any) => {
   };
 
   let newData: OceanProp = {
-    mode: "OCEAN",
+    mode: mode,
     type: "REFERENCE_HISTORY",
     subscriptionId: params.get("subscriptionId") || "",
     history: params.get("history") || "DIFF_HISTORY",
@@ -556,8 +553,6 @@ export const useHistoryList = (params: any) => {
         .catch((err) => {
           setHistoryError(err.message);
           setLoading(false);
-          // hisActData.error = err.message;
-          // dispatch(historyListAction(hisActData));
         });
     };
 
@@ -578,11 +573,11 @@ export const useHistoryList = (params: any) => {
   return { list, loading, tableParams, handleTableChange, historyError };
 };
 
-export const useHistoryListCount = (params: any, page: any) => {
+export const useHistoryListCount = (params: any, page: any, mode: string) => {
   const [count, setCount] = useState(0);
   const [historyCountError, setHistoryCountError] = useState("");
   let newData: OceanProp = {
-    mode: "OCEAN",
+    mode: mode,
     type: "REFERENCE_HISTORY",
     subscriptionId: params.get("subscriptionId") || "",
     history: params.get("history"),

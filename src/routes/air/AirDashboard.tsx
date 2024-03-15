@@ -13,10 +13,10 @@ const AirDashboard: React.FC = () => {
     //   route: "REFERENCE",
     //   param: "carriers=acl&active=yes&referenceType=BOOKING"
     // },
-    // {
-    //   route: "HISTORY",
-    //   param: "",
-    // },
+    {
+      route: "HISTORY",
+      param: "",
+    },
     {
       route: "SUMMARY",
       param: "queue=NORMAL",
