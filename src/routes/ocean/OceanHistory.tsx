@@ -12,7 +12,7 @@ import {
   useFetchHistoryData,
   useHistoryList,
   useHistoryListCount,
-} from "../../api/ocean";
+} from "../../api/mode";
 import { FaSpinner } from "react-icons/fa";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
@@ -20,12 +20,16 @@ import "react18-json-view/src/style.css";
 const ReferenceHistory: React.FC = () => {
   useCheckAuth();
   const [form] = Form.useForm();
-  const [historyParam, setHistoryParam] =
-    useSearchParams();
+  const [historyParam, setHistoryParam] = useSearchParams();
 
-  const { list, loading, tableParams, handleTableChange, historyError= "" } =
-    useHistoryList(historyParam);
-  const { count, historyCountError= "" } = useHistoryListCount(
+  const {
+    list,
+    loading,
+    tableParams,
+    handleTableChange,
+    historyError = "",
+  } = useHistoryList(historyParam);
+  const { count, historyCountError = "" } = useHistoryListCount(
     historyParam,
     tableParams.pagination?.current
   );
@@ -43,7 +47,10 @@ const ReferenceHistory: React.FC = () => {
   });
   const { obj, objLoad, contextHolder } = useFetchHistoryData(isModalOpen.data);
 
-  const mainList = HistoryCreation(list, historyParam.get("subscriptionId") || "");
+  const mainList = HistoryCreation(
+    list,
+    historyParam.get("subscriptionId") || ""
+  );
 
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
@@ -103,11 +110,7 @@ const ReferenceHistory: React.FC = () => {
         <div className="flex w-full h-full">
           <div className="flex-1 p-1 overflow-auto">
             <div className="flex gap-2 text-lg">
-              {Object.keys(obj).length > 0 ? (
-                <JsonView src={obj} />
-              ) : (
-                <></>
-              )}
+              {Object.keys(obj).length > 0 ? <JsonView src={obj} /> : <></>}
             </div>
           </div>
         </div>
@@ -165,9 +168,11 @@ const ReferenceHistory: React.FC = () => {
             </Form.Item>
           </Form>
         </div>
-        { historyError !=="" || historyCountError !== ""  ? (
+        {historyError !== "" || historyCountError !== "" ? (
           <div className="flex items-center justify-center h-full py-3 mt-5 text-2xl font-medium bg-red-100 rounded-md">
-            {historyError.includes("timeout") ? "Request Timeout" : historyError}
+            {historyError.includes("timeout")
+              ? "Request Timeout"
+              : historyError}
           </div>
         ) : (
           <div className="mt-7">
@@ -195,16 +200,16 @@ const ReferenceHistory: React.FC = () => {
                     <div className="flex items-center justify-center">
                       <FaSpinner className="text-3xl text-blue-500 animate-spin" />
                     </div>
-                  ) : list.length === 0 && form.getFieldValue("SubscriptionId")!=="" ?(
+                  ) : list.length === 0 &&
+                    form.getFieldValue("SubscriptionId") !== "" ? (
                     <p className="flex justify-center text-lg font-semibold text-black">
                       No data!!
                     </p>
-                  ):(
+                  ) : (
                     <p className="flex justify-center text-lg font-semibold text-black">
                       Enter the Subscription Id to see history!
                     </p>
-                  )
-                  }
+                  )}
                 </>
               )}
             </div>
@@ -217,7 +222,7 @@ const ReferenceHistory: React.FC = () => {
                 <FaSpinner className="text-3xl text-blue-500 animate-spin" />
               </div>
             </div>
-          ) :Object.keys(obj).length > 0 ? (
+          ) : Object.keys(obj).length > 0 ? (
             <HistoryModal />
           ) : (
             <></>

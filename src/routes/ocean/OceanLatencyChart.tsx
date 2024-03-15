@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useCheckAuth } from "../../api/auth";
 import { Form, Select } from "antd";
 import { FaSpinner } from "react-icons/fa";
-import { useCarrierList, useLatencyChart } from "../../api/ocean";
+import { useOceanCarrierList, useLatencyChart } from "../../api/mode";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -61,7 +61,7 @@ const OceanLatencyChart: React.FC = () => {
 
   const monthsList = getMonthsToThisYear();
 
-  const { carrierList } = useCarrierList();
+  const { carrierList } = useOceanCarrierList();
   const [latencyChartParam, setLatencyChartParam] = useSearchParams();
   const [selectState, setSelectState] = useState<String[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<String[]>([]);
@@ -187,7 +187,7 @@ const OceanLatencyChart: React.FC = () => {
       latencyChartParam.get("months") === null
         ? form.setFieldValue("month", [])
         : form.setFieldValue("month", latencyChartParam.getAll("months"));
-        setSelectedMonth(latencyChartParam.getAll("months") || [])
+      setSelectedMonth(latencyChartParam.getAll("months") || []);
     }
 
     return () => {
@@ -211,7 +211,7 @@ const OceanLatencyChart: React.FC = () => {
           form={form}
           size="middle"
           className="flex flex-col gap-1 pt-3 lg:flex-row lg:gap-2"
-            initialValues={{ year : "2024" }}
+          initialValues={{ year: "2024" }}
         >
           <Form.Item
             label={<p className="text-lg">Carrier</p>}

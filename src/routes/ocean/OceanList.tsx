@@ -5,10 +5,10 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 
 import {
-  useCarrierList,
+  useOceanCarrierList,
   useReferenceList,
   useReferenceListCount,
-} from "../../api/ocean";
+} from "../../api/mode";
 import type { TablePaginationConfig } from "antd";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -42,7 +42,7 @@ const ReferenceList: React.FC = () => {
     param.get("active") === "yes" ? true : false
   );
 
-  const { carrierList } = useCarrierList();
+  const { carrierList } = useOceanCarrierList();
   const {
     list,
     loading,

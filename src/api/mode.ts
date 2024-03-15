@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { carrierListAction } from "../store/actions/ocean.action";
+import { oceanCarrierListAction, airCarrierListAction } from "../store/actions/mode.action";
 import type { TablePaginationConfig } from "antd/es/table";
 import { notification } from "antd";
 //import type { NotificationPlacement } from 'antd/es/notification/interface';
@@ -57,8 +57,8 @@ async function oceanCalls(data: OceanProp) {
     });
 }
 
-export const useCarrierList = () => {
-  const carrierList = useSelector((state: any) => state.ocean.carrierList);
+export const useOceanCarrierList = () => {
+  const carrierList = useSelector((state: any) => state.ocean.oceanCarrierList);
   const dispatch = useDispatch();
   const data = { type: "CARRIER_LIST", mode: "OCEAN" };
   const carrActData = {
@@ -73,14 +73,51 @@ export const useCarrierList = () => {
           const result = res.data;
           if (result.statusCode === "200" && res.data.response.success) {
             carrActData.carrList = result.response.data.sort();
-            dispatch(carrierListAction(carrActData));
+            dispatch(oceanCarrierListAction(carrActData));
           } else {
             throw { message: res.data.response.data };
           }
         })
         .catch((err) => {
           carrActData.error = err.message;
-          dispatch(carrierListAction(carrActData));
+          dispatch(oceanCarrierListAction(carrActData));
+        });
+    };
+    if (!ignore && data.type !== "" && carrierList.length === 0) {
+      carrierCall();
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+  return { carrierList };
+};
+
+export const useAirCarrierList = () => {
+  const carrierList = useSelector((state: any) => state.ocean.airCarrierList);
+  const dispatch = useDispatch();
+  const data = { type: "CARRIER_LIST", mode: "AIR" };
+  const carrActData = {
+    carrList: [],
+    error: "",
+  };
+  useEffect(() => {
+    let ignore = false;
+    const carrierCall = async () => {
+      await oceanCalls(data)
+        .then((res) => {
+          const result = res.data;
+          if (result.statusCode === "200" && res.data.response.success) {
+            carrActData.carrList = result.response.data.sort();
+            dispatch(airCarrierListAction(carrActData));
+          } else {
+            throw { message: res.data.response.data };
+          }
+        })
+        .catch((err) => {
+          carrActData.error = err.message;
+          dispatch(airCarrierListAction(carrActData));
         });
     };
     if (!ignore && data.type !== "" && carrierList.length === 0) {
@@ -141,13 +178,13 @@ export const useLatencyList = (params: any) => {
   return { list, loading, latencyError };
 };
 
-export const useSummaryList = (params: any) => {
+export const useSummaryList = (params: any, mode: string) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [summaryError, setSummaryError] = useState("");
   const data = {
     type: "CRAWL_SUMMARY",
-    mode: "OCEAN",
+    mode: mode,
     report: params.get("queue").toUpperCase(),
     carriers: params.getAll("carriers") || [],
     timeDuration: "",
@@ -277,7 +314,7 @@ export const useReferenceListCount = (param: any, page: any) => {
 
   useEffect(() => {
     let ignore = false;
-    
+
     const defaultCall = async () => {
       setLoadingCount(true);
       await oceanCalls(newData)
@@ -322,7 +359,7 @@ export const useReferenceListCount = (param: any, page: any) => {
       setReferenceCountError("");
       setLoadingCount(false);
     }
-    
+
     return () => {
       ignore = true;
     };
@@ -356,12 +393,12 @@ export const useReferenceList = (param: any) => {
   const referenceQ = param.get("referenceQuery") || "";
   let refType = param.get("referenceType") || "";
   refType = refType.includes("BOOK")
-  ? "BOOKING"
-  : refType.includes("BILL")
-  ? "BILLOFLADING"
-  : refType.includes("CONT")
-  ? "CONTAINER"
-  : ""
+    ? "BOOKING"
+    : refType.includes("BILL")
+    ? "BILLOFLADING"
+    : refType.includes("CONT")
+    ? "CONTAINER"
+    : "";
 
   const data =
     searchQ === "" && referenceQ === ""
@@ -449,80 +486,6 @@ export const useReferenceList = (param: any) => {
     referenceError,
   };
 };
-
-// export const useReferenceList = (data: OceanProp) => {
-//   const [list, setList] = useState([]);
-//   const [frame, setFrame] = useState("default");
-//   const [page, setPage] = useState(1);
-//   const [loading, setLoading] = useState(false);
-//   const dispatch = useDispatch();
-//   const refActData = {
-//     error: "",
-//   };
-
-//   const handlePageReset = () => {
-//     setPage(1);
-//   };
-//   const handlePageChange = (change: string) => {
-//     if (change === "prev" && page > 1) {
-//       setPage(page - 1);
-//     } else if (change === "next") {
-//       setPage(page + 1);
-//     }
-//   };
-
-//   let newData = data;
-//   if (
-//     data.searchQuery === undefined ||
-//     data.searchQuery === null ||
-//     data.searchQuery === ""
-//   ) {
-//     newData = {
-//       ...newData,
-//       limit: 5,
-//       page: page,
-//     };
-//   }
-//   useEffect(() => {
-//     let ignore = false;
-//     const defaultCall = async () => {
-//       setLoading(true);
-//       await oceanCalls(newData)
-//         .then((res) => {
-//           if (res.status === 200 && res.data.statusCode === "200") {
-//             const result = res.data;
-//             setList(result.response);
-//             setLoading(false);
-//           } else {
-//             throw { message: res.message };
-//           }
-//         })
-//         .catch((err) => {
-//           setLoading(false);
-//           refActData.error = err.message;
-//           dispatch(referenceListAction(refActData));
-//         });
-//     };
-
-//     if (!ignore && data.type !== "") {
-//       defaultCall();
-//       if (
-//         data.searchQuery !== undefined &&
-//         data.searchQuery !== null &&
-//         data.searchQuery !== ""
-//       ) {
-//         setFrame("search");
-//       } else {
-//         setFrame("default");
-//       }
-//     }
-//     return () => {
-//       ignore = true;
-//     };
-//   }, [data, page]);
-
-//   return { list, loading, frame, page, handlePageChange, handlePageReset };
-// };
 
 export const useHistoryList = (params: any) => {
   const [list, setList] = useState([]);

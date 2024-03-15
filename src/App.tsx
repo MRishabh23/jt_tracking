@@ -5,8 +5,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Landing from "./routes/main/landing";
 
 // Air Dashboard imports
-// import AirDashboard from "./routes/air/AirDashboard";
-// import AirLatency from "./routes/air/AirLatency";
+import AirDashboard from "./routes/air/AirDashboard";
+import AirSummary from "./routes/air/AirSummary";
 
 // Ocean Dashboard imports
 import OceanLatency from "./routes/ocean/OceanLatency";
@@ -59,10 +59,10 @@ const App: React.FC<props> = () => {
           <Routes>
             <Route path="/" element={<MainPage />} />
             {/* AIR ROUTES LOGIC */}
-            {/* <Route path="/air">
+            <Route path="/air">
               <Route index element={<AirDashboard />} />
-              <Route path="latency" element={<AirLatency />} />
-            </Route> */}
+              <Route path="summary" element={<AirSummary />} />
+            </Route>
             {/* OCEAN ROUTES LOGIC */}
             <Route path="/ocean">
               <Route index element={<OceanDashboard />} />

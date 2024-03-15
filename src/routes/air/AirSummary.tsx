@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useCheckAuth } from "../../api/auth";
 import { Form, Select, Table, DatePicker } from "antd";
-import { useOceanCarrierList } from "../../api/mode";
+import { useAirCarrierList } from "../../api/mode";
 import { FaSpinner } from "react-icons/fa";
 import {
   DataType,
@@ -19,7 +19,7 @@ dayjs.extend(customParseFormat);
 
 const dateFormat = "YYYY-MM-DD hh:mm:ss";
 
-const OceanSummary: React.FC = () => {
+const AirSummary: React.FC = () => {
   useCheckAuth();
   const [selectState, setSelectState] = useState<String[]>([]);
 
@@ -42,14 +42,14 @@ const OceanSummary: React.FC = () => {
     carrierParam.length === 1 ? true : false
   );
 
-  const { list, loading, summaryError } = useSummaryList(summaryParams, "OCEAN");
+  const { list, loading, summaryError } = useSummaryList(summaryParams, "AIR");
 
   const mainList = SummaryCreation(list);
 
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
 
-  const { carrierList } = useOceanCarrierList();
+  const { carrierList } = useAirCarrierList();
   const getSumCol = getSummaryColumns();
 
   const handleChange = (value: any) => {
@@ -323,4 +323,4 @@ const OceanSummary: React.FC = () => {
   );
 };
 
-export default React.memo(OceanSummary);
+export default React.memo(AirSummary);

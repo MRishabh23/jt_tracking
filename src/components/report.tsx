@@ -816,11 +816,11 @@ export const getSummaryColumns = () => {
       key: "queue",
       align: "center",
       render: (queue) =>
-        queue === "NORMAL_CRAWL"
+        queue.includes("NORMAL")
           ? "Normal"
-          : queue === "ADAPTIVE_CRAWL"
+          : queue.includes("ADAPTIVE")
           ? "Adaptive"
-          : queue === "RNF_CRAWL"
+          : queue.includes("RNF")
           ? "RNF"
           : "",
       width: 120,
