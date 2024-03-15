@@ -49,7 +49,7 @@ const AirSummary: React.FC = () => {
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
 
-  const { carrierList } = useAirCarrierList();
+  const { carrierList, airListError } = useAirCarrierList();
   const getSumCol = getSummaryColumns();
 
   const handleChange = (value: any) => {
@@ -192,6 +192,10 @@ const AirSummary: React.FC = () => {
                     {item}
                   </Select.Option>
                 ))
+              ) : airListError !== undefined && airListError !== "" ? (
+                <Select.Option value="error">
+                  <p>{airListError}</p>
+                </Select.Option>
               ) : (
                 <Select.Option value="loading...">
                   <FaSpinner className="text-2xl text-blue-500 animate-spin" />

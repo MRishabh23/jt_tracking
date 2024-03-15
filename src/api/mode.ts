@@ -62,9 +62,9 @@ export const useOceanCarrierList = () => {
   const dispatch = useDispatch();
   const data = { type: "CARRIER_LIST", mode: "OCEAN" };
   const carrActData = {
-    carrList: [],
-    error: "",
+    carrList: []
   };
+  const [oceanListError, setOceanListError] = useState("");
   useEffect(() => {
     let ignore = false;
     const carrierCall = async () => {
@@ -79,7 +79,7 @@ export const useOceanCarrierList = () => {
           }
         })
         .catch((err) => {
-          carrActData.error = err.message;
+          setOceanListError(err.message);
           dispatch(oceanCarrierListAction(carrActData));
         });
     };
@@ -91,7 +91,7 @@ export const useOceanCarrierList = () => {
       ignore = true;
     };
   }, []);
-  return { carrierList };
+  return { carrierList, oceanListError };
 };
 
 export const useAirCarrierList = () => {
@@ -99,9 +99,9 @@ export const useAirCarrierList = () => {
   const dispatch = useDispatch();
   const data = { type: "CARRIER_LIST", mode: "AIR" };
   const carrActData = {
-    carrList: [],
-    error: "",
+    carrList: []
   };
+  const [airListError, setAirListError] = useState("");
   useEffect(() => {
     let ignore = false;
     const carrierCall = async () => {
@@ -116,7 +116,7 @@ export const useAirCarrierList = () => {
           }
         })
         .catch((err) => {
-          carrActData.error = err.message;
+          setAirListError(err.message);
           dispatch(airCarrierListAction(carrActData));
         });
     };
@@ -128,7 +128,7 @@ export const useAirCarrierList = () => {
       ignore = true;
     };
   }, []);
-  return { carrierList };
+  return { carrierList, airListError };
 };
 
 export const useLatencyList = (params: any) => {

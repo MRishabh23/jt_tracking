@@ -25,7 +25,7 @@ const OceanLatency: React.FC<props> = () => {
   const queueParam = params.get("queue") || "";
   const refParam = params.get("referenceType") || "";
 
-  const { carrierList } = useOceanCarrierList();
+  const { carrierList, oceanListError } = useOceanCarrierList();
   const { list, loading, latencyError = "" } = useLatencyList(params);
 
   const onFinish = (values: any) => {
@@ -98,6 +98,10 @@ const OceanLatency: React.FC<props> = () => {
                       {item}
                     </Select.Option>
                   ))
+                ) : oceanListError !== undefined && oceanListError !== "" ? (
+                  <Select.Option value="error">
+                    <p>{oceanListError}</p>
+                  </Select.Option>
                 ) : (
                   <Select.Option value="loading...">
                     <FaSpinner className="text-2xl text-blue-500 animate-spin" />

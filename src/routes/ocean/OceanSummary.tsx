@@ -49,7 +49,7 @@ const OceanSummary: React.FC = () => {
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
 
-  const { carrierList } = useOceanCarrierList();
+  const { carrierList, oceanListError } = useOceanCarrierList();
   const getSumCol = getSummaryColumns();
 
   const handleChange = (value: any) => {
@@ -192,6 +192,10 @@ const OceanSummary: React.FC = () => {
                     {item}
                   </Select.Option>
                 ))
+              ) : oceanListError !== undefined && oceanListError !== "" ? (
+                <Select.Option value="error">
+                  <p>{oceanListError}</p>
+                </Select.Option>
               ) : (
                 <Select.Option value="loading...">
                   <FaSpinner className="text-2xl text-blue-500 animate-spin" />

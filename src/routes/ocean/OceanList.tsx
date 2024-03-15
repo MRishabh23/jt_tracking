@@ -42,7 +42,7 @@ const ReferenceList: React.FC = () => {
     param.get("active") === "yes" ? true : false
   );
 
-  const { carrierList } = useOceanCarrierList();
+  const { carrierList, oceanListError } = useOceanCarrierList();
   const {
     list,
     loading,
@@ -150,6 +150,10 @@ const ReferenceList: React.FC = () => {
                       {item}
                     </Select.Option>
                   ))
+                ) : oceanListError !== undefined && oceanListError !== "" ? (
+                  <Select.Option value="error">
+                    <p>{oceanListError}</p>
+                  </Select.Option>
                 ) : (
                   <Select.Option value="loading...">
                     <FaSpinner className="text-2xl text-blue-500 animate-spin" />
@@ -215,6 +219,10 @@ const ReferenceList: React.FC = () => {
                       {item}
                     </Select.Option>
                   ))
+                ) : oceanListError !== undefined && oceanListError !== "" ? (
+                  <Select.Option value="error">
+                    <p>{oceanListError}</p>
+                  </Select.Option>
                 ) : (
                   <Select.Option value="loading...">
                     <FaSpinner className="text-2xl text-blue-500 animate-spin" />

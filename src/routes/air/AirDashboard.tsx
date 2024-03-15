@@ -30,7 +30,7 @@ const AirDashboard: React.FC = () => {
     <>
       <div className="flex flex-col items-center justify-center h-full p-3">
         <div className="flex items-center justify-center mb-5">
-          <h2 className="text-3xl font-bold">OCEAN DASHBOARD</h2>
+          <h2 className="text-3xl font-bold">AIR DASHBOARD</h2>
         </div>
         <div className="flex flex-col gap-5 md:flex-row">
           {airDashMap.map((item) => (

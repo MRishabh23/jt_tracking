@@ -2,44 +2,26 @@ import { OCEAN_CARRIER_LIST, AIR_CARRIER_LIST } from "../actions/mode.action";
 
 const initialState = {
   oceanCarrierList: [],
-  oceanError: "",
-  airCarrierList: [],
-  airError: "",
+  airCarrierList: []
 };
 
 const modeReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case OCEAN_CARRIER_LIST:
       const oceanList = action.obj.carrList;
-      const oceanError = action.obj.error;
-      if (oceanError !== undefined && oceanError !== "") {
+      if (oceanList !== undefined && oceanList.length > 0) {
         return {
           ...state,
-          oceanError: oceanError,
-          oceanCarrierList: [],
-        };
-      } else if (oceanList !== undefined && oceanList.length > 0) {
-        return {
-          ...state,
-          oceanCarrierList: oceanList,
-          oceanError: "",
+          oceanCarrierList: oceanList
         };
       }
       return state;
     case AIR_CARRIER_LIST:
       const airList = action.obj.carrList;
-      const airError = action.obj.error;
-      if (airError !== undefined && airError !== "") {
+      if (airList !== undefined && airList.length > 0) {
         return {
           ...state,
-          airError: airError,
-          airCarrierList: [],
-        };
-      } else if (airList !== undefined && airList.length > 0) {
-        return {
-          ...state,
-          airCarrierList: airList,
-          airError: "",
+          airCarrierList: airList
         };
       }
       return state;

@@ -61,7 +61,7 @@ const OceanLatencyChart: React.FC = () => {
 
   const monthsList = getMonthsToThisYear();
 
-  const { carrierList } = useOceanCarrierList();
+  const { carrierList, oceanListError } = useOceanCarrierList();
   const [latencyChartParam, setLatencyChartParam] = useSearchParams();
   const [selectState, setSelectState] = useState<String[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<String[]>([]);
@@ -243,6 +243,10 @@ const OceanLatencyChart: React.FC = () => {
                     {item}
                   </Select.Option>
                 ))
+              ) : oceanListError !== undefined && oceanListError !== "" ? (
+                <Select.Option value="error">
+                  <p>{oceanListError}</p>
+                </Select.Option>
               ) : (
                 <Select.Option value="loading...">
                   <FaSpinner className="text-2xl text-blue-500 animate-spin" />
