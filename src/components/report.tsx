@@ -695,7 +695,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           >
             Same as before
           </button>
-        ) : record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
+        ) : record.fkJson !== "" && record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
           <button
             key={fkJson + record.schedulerId}
             onClick={() =>
