@@ -715,7 +715,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           >
             New events found
           </button>
-        ) : (
+        ) : record.fkJson === "" ? "Failed to sent" : (
           convertToTitleCase(fkJson)
         ),
       align: "center",
