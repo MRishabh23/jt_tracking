@@ -53,6 +53,7 @@ export interface DataType {
   lastRun?: string;
   crawlFrequency?: string;
   failCategories?: {};
+  diffCronCategories?: {};
 }
 
 export const latencyCreation = (latencyList: any) => {
@@ -221,6 +222,10 @@ export const SummaryCreation = (summaryList: any) => {
         "Mapping Failure": item.toFKFailedMapping,
         "Validation Failure": item.toFKFailedValidation,
       },
+      diffCronCategories: {
+        "WithIn Cron": item.diffRateCountWithInCron,
+        "Above Cron": item.diffRateCountAboveCron
+      }
     };
   });
   return sList;
@@ -934,9 +939,17 @@ export const getSummaryColumns = () => {
       dataIndex: "diffCount",
       key: "diffCount",
       render: (diffCount, record: any) => (
-        <p style={{ color: record.diffRatio >= 10.0 ? "red" : "inherit" }}>
-          {diffCount} ({record.diffRatio}%)
-        </p>
+        <Tooltip
+          title={Object.keys(record.diffCronCategories).map((key) => (
+            <p key={key}>
+              {key}: {record.diffCronCategories[key]}
+            </p>
+          ))}
+        >
+          <p style={{ color: record.diffRatio >= 10.0 ? "red" : "inherit" }}>
+            {diffCount} ({record.diffRatio}%)
+          </p>
+        </Tooltip>
       ),
       align: "center",
       width: 120,
