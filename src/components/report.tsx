@@ -887,7 +887,7 @@ export const getSummaryColumns = () => {
         <p
           style={{
             color:
-              record.rnfRatio > 20 && record.queue !== "RNF_CRAWL"
+              record.rnfRatio > 20 && !record.queue.includes("RNF")
                 ? "red"
                 : "inherit",
           }}
