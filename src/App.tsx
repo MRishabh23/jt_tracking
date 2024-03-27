@@ -6,7 +6,7 @@ import Landing from "./routes/main/landing";
 
 // Air Dashboard imports
 import AirDashboard from "./routes/air/AirDashboard";
-import AirSummary from "./routes/air/AirSummary";
+// import AirSummary from "./routes/air/AirSummary";
 import AirHistory from "./routes/air/AirHistory";
 
 // Ocean Dashboard imports
@@ -63,7 +63,7 @@ const App: React.FC<props> = () => {
             {/* AIR ROUTES LOGIC */}
             <Route path="/air">
               <Route index element={<AirDashboard />} />
-              <Route path="summary" element={<AirSummary />} />
+              {/* <Route path="summary" element={<AirSummary />} /> */}
               <Route path="history" element={<AirHistory />} />
             </Route>
             {/* OCEAN ROUTES LOGIC */}
