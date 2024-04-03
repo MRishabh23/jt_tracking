@@ -54,6 +54,7 @@ export interface DataType {
   crawlFrequency?: string;
   failCategories?: {};
   diffCronCategories?: {};
+  hitCronCategories?: {};
 }
 
 export const latencyCreation = (latencyList: any) => {
@@ -224,8 +225,12 @@ export const SummaryCreation = (summaryList: any) => {
       },
       diffCronCategories: {
         "WithIn Cron": item.diffRateCountWithInCron,
-        "Above Cron": item.diffRateCountAboveCron
-      }
+        "Above Cron": item.diffRateCountAboveCron,
+      },
+      hitCronCategories: {
+        "WithIn Cron": item.diffHitRateCountWithInCron,
+        "Above Cron": item.diffHitRateCountAboveCron,
+      },
     };
   });
   return sList;
@@ -700,7 +705,9 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           >
             Same as before
           </button>
-        ) : record.fkJson !== "" && record.fkJson !== "No Data" && record.fkJson !== "SAME_PAYLOAD" ? (
+        ) : record.fkJson !== "" &&
+          record.fkJson !== "No Data" &&
+          record.fkJson !== "SAME_PAYLOAD" ? (
           <button
             key={fkJson + record.schedulerId}
             onClick={() =>
@@ -720,7 +727,9 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           >
             New events found
           </button>
-        ) : record.fkJson === "" ? "Failed to sent" : (
+        ) : record.fkJson === "" ? (
+          "Failed to sent"
+        ) : (
           convertToTitleCase(fkJson)
         ),
       align: "center",
@@ -999,11 +1008,22 @@ export const getSummaryColumns = () => {
       key: "hitRateCount",
       align: "center",
       render: (hitRateCount, record: any) => (
-        <p style={{ color: record.hitRatePer >= 1.0 ? "red" : "inherit" }}>
-          {record.queue === "ADAPTIVE_CRAWL"
-            ? `${hitRateCount} (${record.hitRatePer}%)`
-            : "NA"}
-        </p>
+        <Tooltip
+          title={
+            record.queue.includes("ADAPTIVE") &&
+            Object.keys(record.hitCronCategories).map((key) => (
+              <p key={key}>
+                {key}: {record.hitCronCategories[key]}
+              </p>
+            ))
+          }
+        >
+          <p style={{ color: record.hitRatePer >= 1.0 ? "red" : "inherit" }}>
+            {record.queue.includes("ADAPTIVE")
+              ? `${hitRateCount} (${record.hitRatePer}%)`
+              : "NA"}
+          </p>
+        </Tooltip>
       ),
       width: 120,
     },
