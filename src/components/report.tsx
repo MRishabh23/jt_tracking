@@ -55,6 +55,7 @@ export interface DataType {
   failCategories?: {};
   diffCronCategories?: {};
   hitCronCategories?: {};
+  avgAge?: number;
 }
 
 export const latencyCreation = (latencyList: any) => {
@@ -231,6 +232,7 @@ export const SummaryCreation = (summaryList: any) => {
         "WithIn Cron": item.diffHitRateCountWithInCron,
         "Above Cron": item.diffHitRateCountAboveCron,
       },
+      avgAge: item.AvgAge,
     };
   });
   return sList;
@@ -846,6 +848,18 @@ export const getSummaryColumns = () => {
       align: "center",
       width: 120,
       sorter: (a: any, b: any) => a.activeCount - b.activeCount,
+    },
+    {
+      title: "Avg Age",
+      dataIndex: "avgAge",
+      key: "avgAge",
+      align: "center",
+      render: (avgAge, record: any) => (
+        <p style={{ color: record.avgAge >= 90 ? "red" : "inherit" }}>
+          {avgAge} days
+        </p>
+      ),
+      width: 120,
     },
     {
       title: "Last Run",
