@@ -687,6 +687,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           record.error
         ) : record.fkJson !== "No Data" &&
           record.fkJson === "SAME_PAYLOAD" &&
+          record.fkLatestJson !== "" &&
           record.fkLatestJson !== "No Data" ? (
           <button
             key={`${index} + ${record.schedulerId}`}
@@ -697,7 +698,12 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
                 data: {
                   type: "FETCH_HISTORY",
                   mode: "OCEAN",
-                  resourceId: record.fkLatestJson?.includes("customfunction") ? record.fkLatestJson?.replace("customfunction", "custom function") : record.fkLatestJson,
+                  resourceId: record.fkLatestJson?.includes("customfunction")
+                    ? record.fkLatestJson?.replace(
+                        "customfunction",
+                        "custom function"
+                      )
+                    : record.fkLatestJson,
                   jsonType: "FK",
                   schId: record.schedulerId,
                 },
@@ -731,6 +737,10 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
           </button>
         ) : record.fkJson === "" ? (
           "Failed to sent"
+        ) : record.fkJson !== "No Data" &&
+          record.fkJson === "SAME_PAYLOAD" &&
+          record.fkLatestJson === "" ? (
+          "SAME_PAYLOAD"
         ) : (
           convertToTitleCase(fkJson)
         ),
