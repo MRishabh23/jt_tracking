@@ -697,7 +697,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
                 data: {
                   type: "FETCH_HISTORY",
                   mode: "OCEAN",
-                  resourceId: record.fkLatestJson,
+                  resourceId: record.fkLatestJson?.includes("customfunction") ? record.fkLatestJson?.replace("customfunction", "custom function") : record.fkLatestJson,
                   jsonType: "FK",
                   schId: record.schedulerId,
                 },
