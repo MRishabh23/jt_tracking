@@ -5,14 +5,14 @@ import { useCheckAuth } from "../../api/auth";
 const AirDashboard: React.FC = () => {
   useCheckAuth();
   const airDashMap = [
-    // {
-    //   route: "LATENCY",
-    //   param: ""
-    // },
-    // {
-    //   route: "REFERENCE",
-    //   param: "carriers=acl&active=yes&referenceType=BOOKING"
-    // },
+    {
+      route: "LATENCY",
+      param: ""
+    },
+    {
+      route: "REFERENCE",
+      param: "carriers=atlasair&active=yes&referenceType=AWB"
+    },
     {
       route: "HISTORY",
       param: "",

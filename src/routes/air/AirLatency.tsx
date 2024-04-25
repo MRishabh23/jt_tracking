@@ -5,14 +5,14 @@ import {
   getLatencyColumns,
   latencyCreation,
 } from "../../components/report";
-import { useOceanCarrierList, useLatencyList } from "../../api/mode";
+import { useLatencyList, useAirCarrierList } from "../../api/mode";
 import { useCheckAuth } from "../../api/auth";
 import { FaSpinner } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 
 interface props {}
 
-const OceanLatency: React.FC<props> = () => {
+const AirLatency: React.FC<props> = () => {
   useCheckAuth();
 
   const [params, setParams] = useSearchParams({
@@ -25,8 +25,8 @@ const OceanLatency: React.FC<props> = () => {
   const queueParam = params.get("queue") || "";
   const refParam = params.get("referenceType") || "";
 
-  const { carrierList, oceanListError } = useOceanCarrierList();
-  const { list, loading, latencyError = "" } = useLatencyList(params, "OCEAN");
+  const { carrierList, airListError } = useAirCarrierList();
+  const { list, loading, latencyError = "" } = useLatencyList(params, "AIR");
 
   const onFinish = (values: any) => {
     const carrArr = [values.carrier];
@@ -50,7 +50,7 @@ const OceanLatency: React.FC<props> = () => {
   };
 
   const mainList = latencyCreation(list);
-  const getLatCol = getLatencyColumns(mainList, "OCEAN");
+  const getLatCol = getLatencyColumns(mainList, "AIR");
 
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;
@@ -98,9 +98,9 @@ const OceanLatency: React.FC<props> = () => {
                       {item}
                     </Select.Option>
                   ))
-                ) : oceanListError !== undefined && oceanListError !== "" ? (
+                ) : airListError !== undefined && airListError !== "" ? (
                   <Select.Option value="error">
-                    <p>{oceanListError}</p>
+                    <p>{airListError}</p>
                   </Select.Option>
                 ) : (
                   <Select.Option value="loading...">
@@ -128,9 +128,7 @@ const OceanLatency: React.FC<props> = () => {
               className="min-w-[200px] lg:flex-1 mb-3 lg:mb-0"
             >
               <Select placeholder="select reference type..." allowClear={true}>
-                <Select.Option value="BOOKING">Booking</Select.Option>
-                <Select.Option value="BILLOFLADING">BillOfLading</Select.Option>
-                <Select.Option value="CONTAINER">Container</Select.Option>
+                <Select.Option value="AWB">AWB</Select.Option>
               </Select>
             </Form.Item>
 
@@ -181,4 +179,4 @@ const OceanLatency: React.FC<props> = () => {
   );
 };
 
-export default React.memo(OceanLatency);
+export default React.memo(AirLatency);

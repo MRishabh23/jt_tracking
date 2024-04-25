@@ -5,9 +5,9 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 
 import {
-  useOceanCarrierList,
-  useReferenceList,
-  useReferenceListCount,
+    useAirCarrierList,
+    useReferenceList,
+    useReferenceListCount,
 } from "../../api/mode";
 import type { TablePaginationConfig } from "antd";
 import { useSearchParams } from "react-router-dom";
@@ -33,16 +33,16 @@ const ReferenceList: React.FC = () => {
   const [form2] = Form.useForm();
 
   const [param, setParam] = useSearchParams({
-    carriers: ["acl"],
+    carriers: ["atlasair"],
     active: "yes",
-    referenceType: "BOOKING",
+    referenceType: "AWB",
   });
 
   const [isActiveYes, setIsActiveYes] = useState(
     param.get("active") === "yes" ? true : false
   );
 
-  const { carrierList, oceanListError } = useOceanCarrierList();
+  const { carrierList, airListError } = useAirCarrierList();
   const {
     list,
     loading,
@@ -50,11 +50,11 @@ const ReferenceList: React.FC = () => {
     tableParams,
     handleTableChange,
     referenceError,
-  } = useReferenceList(param, "OCEAN");
+  } = useReferenceList(param, "AIR");
   const { count, loadingCount, referenceCountError } = useReferenceListCount(
     param,
     tableParams.pagination?.current,
-    "OCEAN"
+    "AIR"
   );
 
   const mainList = referenceCreation(list);
@@ -151,9 +151,9 @@ const ReferenceList: React.FC = () => {
                       {item}
                     </Select.Option>
                   ))
-                ) : oceanListError !== undefined && oceanListError !== "" ? (
+                ) : airListError !== undefined && airListError !== "" ? (
                   <Select.Option value="error">
-                    <p>{oceanListError}</p>
+                    <p>{airListError}</p>
                   </Select.Option>
                 ) : (
                   <Select.Option value="loading...">
@@ -220,9 +220,9 @@ const ReferenceList: React.FC = () => {
                       {item}
                     </Select.Option>
                   ))
-                ) : oceanListError !== undefined && oceanListError !== "" ? (
+                ) : airListError !== undefined && airListError !== "" ? (
                   <Select.Option value="error">
-                    <p>{oceanListError}</p>
+                    <p>{airListError}</p>
                   </Select.Option>
                 ) : (
                   <Select.Option value="loading...">
@@ -269,9 +269,7 @@ const ReferenceList: React.FC = () => {
                 placeholder="select reference type..."
                 disabled={!isActiveYes}
               >
-                <Select.Option value="BOOKING">Booking</Select.Option>
-                <Select.Option value="BILLOFLADING">BillOfLading</Select.Option>
-                <Select.Option value="CONTAINER">Container</Select.Option>
+                <Select.Option value="AWB">AWB</Select.Option>
               </Select>
             </Form.Item>
 
@@ -321,7 +319,7 @@ const ReferenceList: React.FC = () => {
       param.get("referenceType") !== undefined &&
       param.get("referenceType") !== ""
         ? form1.setFieldValue("refType", param.get("referenceType"))
-        : form1.setFieldValue("refType", "BOOKING");
+        : form1.setFieldValue("refType", "AWB");
 
       param.get("queue") !== null &&
       param.get("queue") !== undefined &&

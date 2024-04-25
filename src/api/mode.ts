@@ -1,7 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { oceanCarrierListAction, airCarrierListAction } from "../store/actions/mode.action";
+import {
+  oceanCarrierListAction,
+  airCarrierListAction,
+} from "../store/actions/mode.action";
 import type { TablePaginationConfig } from "antd/es/table";
 import { notification } from "antd";
 //import type { NotificationPlacement } from 'antd/es/notification/interface';
@@ -38,7 +41,7 @@ async function oceanCalls(data: OceanProp) {
   }
   return axios({
     url: import.meta.env.VITE_REST_URL,
-    timeout: 120000,
+    timeout: 120000, //120000
     method: "post",
     headers: {
       "Content-Type": "application/json",
@@ -62,7 +65,7 @@ export const useOceanCarrierList = () => {
   const dispatch = useDispatch();
   const data = { type: "CARRIER_LIST", mode: "OCEAN" };
   const carrActData = {
-    carrList: []
+    carrList: [],
   };
   const [oceanListError, setOceanListError] = useState("");
   useEffect(() => {
@@ -99,7 +102,7 @@ export const useAirCarrierList = () => {
   const dispatch = useDispatch();
   const data = { type: "CARRIER_LIST", mode: "AIR" };
   const carrActData = {
-    carrList: []
+    carrList: [],
   };
   const [airListError, setAirListError] = useState("");
   useEffect(() => {
@@ -131,13 +134,13 @@ export const useAirCarrierList = () => {
   return { carrierList, airListError };
 };
 
-export const useLatencyList = (params: any) => {
+export const useLatencyList = (params: any, mode: string) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [latencyError, setLatencyError] = useState("");
   const data = {
     type: "LATENCY",
-    mode: "OCEAN",
+    mode: mode,
     report: params.get("queue").toUpperCase(),
     carriers: params.getAll("carriers") || [],
     referenceType: params.get("referenceType") || "",
@@ -283,7 +286,7 @@ export const useLatencyChart = (params: any) => {
   return { list, loading, latencyChartError };
 };
 
-export const useReferenceListCount = (param: any, page: any) => {
+export const useReferenceListCount = (param: any, page: any, mode: string) => {
   const [count, setCount] = useState(0);
   const [loadingCount, setLoadingCount] = useState(false);
   const [referenceCountError, setReferenceCountError] = useState("");
@@ -294,7 +297,7 @@ export const useReferenceListCount = (param: any, page: any) => {
     bucket: "",
     active: param.get("active") || "yes",
     searchQuery: param.get("searchQuery") || "",
-    mode: "OCEAN",
+    mode: mode,
     type: "REFERENCE_LIST",
     referenceQuery: param.get("referenceQuery") || "",
   };
@@ -368,7 +371,7 @@ export const useReferenceListCount = (param: any, page: any) => {
   return { count, loadingCount, referenceCountError };
 };
 
-export const useReferenceList = (param: any) => {
+export const useReferenceList = (param: any, mode: string) => {
   const [list, setList] = useState([]);
   const [frame, setFrame] = useState("default");
   const [loading, setLoading] = useState(false);
@@ -398,6 +401,8 @@ export const useReferenceList = (param: any) => {
     ? "BILLOFLADING"
     : refType.includes("CONT")
     ? "CONTAINER"
+    : refType.includes("AWB")
+    ? "AWB"
     : "";
 
   const data =
@@ -409,17 +414,17 @@ export const useReferenceList = (param: any) => {
           bucket: param.get("bucket") || "",
           searchQuery: param.get("searchQuery") || "",
           active: param.get("active") || "yes",
-          mode: "OCEAN",
+          mode: mode,
           type: "REFERENCE_LIST",
         }
       : referenceQ === ""
       ? {
-          mode: "OCEAN",
+          mode: mode,
           type: "REFERENCE_LIST",
           searchQuery: param.get("searchQuery") || "",
         }
       : {
-          mode: "OCEAN",
+          mode: mode,
           type: "REFERENCE_LIST",
           referenceQuery: param.get("referenceQuery") || "",
         };
@@ -498,7 +503,7 @@ export const useHistoryList = (params: any, mode: string) => {
       showSizeChanger: false,
     },
   });
-  
+
   const handleTableChange = (pagination: TablePaginationConfig) => {
     setTableParams({
       pagination,

@@ -242,7 +242,7 @@ const colors = ["geekblue", "green", "volcano"];
 const colorStatus = ["green", "red"];
 let color: any;
 
-export const getLatencyColumns = (mainList: any) => {
+export const getLatencyColumns = (mainList: any, mode: string) => {
   let carrierL = mainList.map((item: any) => {
     return item.carrier;
   });
@@ -250,6 +250,32 @@ export const getLatencyColumns = (mainList: any) => {
     return [...new Set(carrierL)];
   }
   carrierL = removeDuplicates(carrierL);
+
+  let filter: any = [];
+
+  if(mode === "OCEAN"){
+    filter = [
+      {
+        text: "BOOKING_NUMBER",
+        value: "BOOKING_NUMBER",
+      },
+      {
+        text: "BILL_OF_LADING",
+        value: "BILL_OF_LADING",
+      },
+      {
+        text: "CONTAINER_NUMBER",
+        value: "CONTAINER_NUMBER",
+      },
+    ];
+  }else if(mode === "AIR"){
+    filter = [
+      {
+        text: "AWB",
+        value: "AWB",
+      }
+    ]
+  }
 
   const columns: ColumnsType<DataType> = [
     {
@@ -290,20 +316,7 @@ export const getLatencyColumns = (mainList: any) => {
           {referenceType}
         </Tag>
       ),
-      filters: [
-        {
-          text: "BOOKING_NUMBER",
-          value: "BOOKING_NUMBER",
-        },
-        {
-          text: "BILL_OF_LADING",
-          value: "BILL_OF_LADING",
-        },
-        {
-          text: "CONTAINER_NUMBER",
-          value: "CONTAINER_NUMBER",
-        },
-      ],
+      filters: filter,
       filterSearch: true,
       onFilter: (value: any, record) => record.referenceType.includes(value),
       fixed: true,

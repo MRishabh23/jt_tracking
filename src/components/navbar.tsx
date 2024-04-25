@@ -64,7 +64,7 @@ const Navbar: React.FC<props> = () => {
         <div className="flex flex-col gap-3">
           <CustomMenu
             name="Air"
-            child={["History", "Summary"]}
+            child={["Latency", "Reference", "History", "Summary"]}
             open={air}
             setOpen={setAir}
             drawer={open}

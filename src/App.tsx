@@ -6,6 +6,8 @@ import Landing from "./routes/main/landing";
 
 // Air Dashboard imports
 import AirDashboard from "./routes/air/AirDashboard";
+import AirLatency from "./routes/air/AirLatency";
+import AirList from "./routes/air/AirList";
 import AirSummary from "./routes/air/AirSummary";
 import AirHistory from "./routes/air/AirHistory";
 
@@ -22,7 +24,6 @@ import Login from "./routes/auth/login";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { useSelector } from "react-redux";
-
 
 interface props {}
 
@@ -63,6 +64,8 @@ const App: React.FC<props> = () => {
             {/* AIR ROUTES LOGIC */}
             <Route path="/air">
               <Route index element={<AirDashboard />} />
+              <Route path="latency" element={<AirLatency />} />
+              <Route path="reference" element={<AirList />} />
               <Route path="summary" element={<AirSummary />} />
               <Route path="history" element={<AirHistory />} />
             </Route>
