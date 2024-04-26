@@ -58,7 +58,7 @@ const ReferenceList: React.FC = () => {
   );
 
   const mainList = referenceCreation(list);
-  const getRefCol = getReferenceColumns();
+  const getRefCol = getReferenceColumns("OCEAN");
 
   const data2: DataType[] =
     list === null || mainList.length === 0 ? [] : mainList;

@@ -544,7 +544,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
   return columns;
 };
 
-export const getReferenceColumns = () => {
+export const getReferenceColumns = (mode: string) => {
   const columns: ColumnsType<DataType> = [
     {
       title: "Subscription Id",
@@ -554,7 +554,7 @@ export const getReferenceColumns = () => {
         record.subscriptionId !== "" ? (
           <Link
             to={{
-              pathname: "/ocean/history",
+              pathname: `/${mode.toLowerCase()}/history`,
               search: `?subscriptionId=${record.subscriptionId}&history=DIFF_HISTORY`,
             }}
             target="_blank"
