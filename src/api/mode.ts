@@ -41,7 +41,7 @@ async function oceanCalls(data: OceanProp) {
   }
   return axios({
     url: import.meta.env.VITE_REST_URL,
-    timeout: 120000, //120000
+    timeout: 300000, //old -> 120000, new -> 300000
     method: "post",
     headers: {
       "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export const useOceanCarrierList = () => {
             carrActData.carrList = result.response.data.sort();
             dispatch(oceanCarrierListAction(carrActData));
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -115,7 +115,7 @@ export const useAirCarrierList = () => {
             carrActData.carrList = result.response.data.sort();
             dispatch(airCarrierListAction(carrActData));
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -161,7 +161,7 @@ export const useLatencyList = (params: any, mode: string) => {
             setList(result.response.data);
             setLoading(true);
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -210,7 +210,7 @@ export const useSummaryList = (params: any, mode: string) => {
             setList(result.response.data);
             setLoading(false);
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -259,7 +259,7 @@ export const useLatencyChart = (params: any) => {
             setList(result.response.data);
             setLoading(false);
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -338,7 +338,7 @@ export const useReferenceListCount = (param: any, page: any, mode: string) => {
             setCount(result.response.data[0].count);
             setLoadingCount(false);
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -460,7 +460,7 @@ export const useReferenceList = (param: any, mode: string) => {
             setList(result.response.data);
             setLoading(false);
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -552,7 +552,7 @@ export const useHistoryList = (params: any, mode: string) => {
 
             setLoading(false);
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -613,7 +613,7 @@ export const useHistoryListCount = (params: any, page: any, mode: string) => {
             setHistoryCountError("");
             setCount(result.response.data[0].count);
           } else {
-            throw { message: res.data.response.data };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
@@ -670,7 +670,7 @@ export const useFetchHistoryData = (data: OceanProp) => {
             setObj(result.response.data);
             setObjLoad(false);
           } else {
-            throw { message: res.response.data.response };
+            throw { message: res.data !== undefined ? res.data.response.data : res.message };
           }
         })
         .catch((err) => {
