@@ -349,7 +349,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.first > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=first&queue=${record.queue}&count=${record.first}`,
             }}
             target="_blank"
@@ -371,7 +371,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.second > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=second&queue=${record.queue}&count=${record.second}`,
             }}
             target="_blank"
@@ -393,7 +393,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.third > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=third&queue=${record.queue}&count=${record.third}`,
             }}
             target="_blank"
@@ -415,7 +415,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.fourth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=fourth&queue=${record.queue}&count=${record.fourth}`,
             }}
             target="_blank"
@@ -437,7 +437,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.fifth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=fifth&queue=${record.queue}&count=${record.fifth}`,
             }}
             target="_blank"
@@ -459,7 +459,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.sixth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=sixth&queue=${record.queue}&count=${record.sixth}`,
             }}
             target="_blank"
@@ -481,7 +481,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.seventh > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=seventh&queue=${record.queue}&count=${record.seventh}`,
             }}
             target="_blank"
@@ -503,7 +503,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.eight > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=eight&queue=${record.queue}&count=${record.eight}`,
             }}
             target="_blank"
@@ -525,7 +525,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         record.ninth > 0 ? (
           <Link
             to={{
-              pathname: "/ocean/reference",
+              pathname: `/${mode.toLowerCase()}/reference`,
               search: `?carriers=${record.carrier}&referenceType=${record.referenceType}&bucket=ninth&queue=${record.queue}&count=${record.ninth}`,
             }}
             target="_blank"
