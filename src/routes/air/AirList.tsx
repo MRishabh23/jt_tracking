@@ -284,7 +284,7 @@ const ReferenceList: React.FC = () => {
                 disabled={!isActiveYes}
               >
                 <Select.Option value="NORMAL">Normal</Select.Option>
-                <Select.Option value="ADAPTIVE">Adaptive</Select.Option>
+                {/* <Select.Option value="ADAPTIVE">Adaptive</Select.Option> */}
                 <Select.Option value="RNF">Reference not found</Select.Option>
               </Select>
             </Form.Item>
