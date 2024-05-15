@@ -50,7 +50,7 @@ const AirSummary: React.FC = () => {
     list === null || mainList.length === 0 ? [] : mainList;
 
   const { carrierList, airListError } = useAirCarrierList();
-  const getSumCol = getSummaryColumns();
+  const getSumCol = getSummaryColumns("AIR");
 
   const handleChange = (value: any) => {
     if (value.length === 1) {

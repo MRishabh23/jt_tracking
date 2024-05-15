@@ -253,7 +253,7 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
 
   let filter: any = [];
 
-  if(mode === "OCEAN"){
+  if (mode === "OCEAN") {
     filter = [
       {
         text: "BOOKING_NUMBER",
@@ -268,13 +268,13 @@ export const getLatencyColumns = (mainList: any, mode: string) => {
         value: "CONTAINER_NUMBER",
       },
     ];
-  }else if(mode === "AIR"){
+  } else if (mode === "AIR") {
     filter = [
       {
         text: "AWB",
         value: "AWB",
-      }
-    ]
+      },
+    ];
   }
 
   const columns: ColumnsType<DataType> = [
@@ -839,7 +839,7 @@ export const getHistoryColumns = (isModalOpen: any, setIsModalOpen: any) => {
   return columns;
 };
 
-export const getSummaryColumns = () => {
+export const getSummaryColumns = (mode: string) => {
   const columns: ColumnsType<DataType> = [
     {
       title: "Carrier",
@@ -877,11 +877,16 @@ export const getSummaryColumns = () => {
       dataIndex: "avgAge",
       key: "avgAge",
       align: "center",
-      render: (avgAge, record: any) => (
-        <p style={{ color: record.avgAge >= 90 ? "red" : "inherit" }}>
-          {avgAge} days
-        </p>
-      ),
+      render: (avgAge, record: any) => {
+        let color = "inherit";
+        if (mode === "OCEAN" && record.avgAge >= 90) {
+          color = "red";
+        } else if (mode === "AIR" && record.avgAge >= 14) {
+          color = "red";
+        }
+
+        return <p style={{ color: `${color}` }}>{avgAge} days</p>;
+      },
       width: 120,
     },
     {
@@ -904,11 +909,16 @@ export const getSummaryColumns = () => {
       dataIndex: "duration",
       key: "duration",
       align: "center",
-      render: (duration, record: any) => (
-        <p style={{ color: record.durationMin >= 90 ? "red" : "inherit" }}>
-          {duration}
-        </p>
-      ),
+      render: (duration, record: any) => {
+        let color = "inherit";
+        if (mode === "OCEAN" && record.durationMin >= 90) {
+          color = "red";
+        } else if (mode === "AIR" && record.durationMin >= 60) {
+          color = "red";
+        }
+
+        return <p style={{ color: `${color}` }}>{duration}</p>;
+      },
       width: 120,
     },
     {
@@ -929,18 +939,32 @@ export const getSummaryColumns = () => {
       dataIndex: "rnfCount",
       key: "rnfCount",
       align: "center",
-      render: (rnfCount, record: any) => (
-        <p
-          style={{
-            color:
-              record.rnfRatio > 20 && !record.queue.includes("RNF")
-                ? "red"
-                : "inherit",
-          }}
-        >
-          {rnfCount} ({record.rnfRatio}%)
-        </p>
-      ),
+      render: (rnfCount, record: any) => {
+        let color = "inherit";
+        if (
+          mode === "OCEAN" &&
+          record.rnfRatio > 20 &&
+          !record.queue.includes("RNF")
+        ) {
+          color = "red";
+        } else if (
+          mode === "AIR" &&
+          record.rnfRatio > 5 &&
+          !record.queue.includes("RNF")
+        ) {
+          color = "red";
+        }
+
+        return (
+          <p
+            style={{
+              color: `${color}`,
+            }}
+          >
+            {rnfCount} ({record.rnfRatio}%)
+          </p>
+        );
+      },
       width: 120,
       sorter: (a: any, b: any) => a.rnfCount - b.rnfCount,
     },
@@ -984,19 +1008,28 @@ export const getSummaryColumns = () => {
       title: "DiffRate",
       dataIndex: "diffCount",
       key: "diffCount",
-      render: (diffCount, record: any) => (
-        <Tooltip
-          title={Object.keys(record.diffCronCategories).map((key) => (
-            <p key={key}>
-              {key}: {record.diffCronCategories[key]}
+      render: (diffCount, record: any) => {
+        let color = "inherit";
+        if (mode === "OCEAN" && record.diffRatio >= 10.0) {
+          color = "red";
+        } else if (mode === "AIR" && record.diffRatio >= 20.0) {
+          color = "red";
+        }
+
+        return (
+          <Tooltip
+            title={Object.keys(record.diffCronCategories).map((key) => (
+              <p key={key}>
+                {key}: {record.diffCronCategories[key]}
+              </p>
+            ))}
+          >
+            <p style={{ color: `${color}` }}>
+              {diffCount} ({record.diffRatio}%)
             </p>
-          ))}
-        >
-          <p style={{ color: record.diffRatio >= 10.0 ? "red" : "inherit" }}>
-            {diffCount} ({record.diffRatio}%)
-          </p>
-        </Tooltip>
-      ),
+          </Tooltip>
+        );
+      },
       align: "center",
       width: 120,
       sorter: (a: any, b: any) => a.diffCount - b.diffCount,

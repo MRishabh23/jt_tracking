@@ -50,7 +50,7 @@ const OceanSummary: React.FC = () => {
     list === null || mainList.length === 0 ? [] : mainList;
 
   const { carrierList, oceanListError } = useOceanCarrierList();
-  const getSumCol = getSummaryColumns();
+  const getSumCol = getSummaryColumns("OCEAN");
 
   const handleChange = (value: any) => {
     if (value.length === 1) {
